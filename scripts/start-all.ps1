@@ -160,7 +160,7 @@ try {
     }
     $started | ConvertTo-Json | Set-Content -LiteralPath $pidFile -Encoding UTF8
 
-    $deadline = (Get-Date).AddSeconds(210)
+    $deadline = (Get-Date).AddSeconds(420)
     do {
         $allUp = $true
         foreach ($service in $services) {
@@ -187,7 +187,7 @@ try {
     if ($allUp) {
         Write-Host "All Tongbiao grading services are UP."
     } else {
-        throw "Some services did not become healthy within 210 seconds. Check logs in $logs."
+        throw "Some services did not become healthy within 420 seconds. Check logs in $logs."
     }
     Write-Host "Web console: http://127.0.0.1:5173"
     Write-Host "Gateway:     http://127.0.0.1:8080"

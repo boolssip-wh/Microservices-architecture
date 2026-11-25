@@ -1,4 +1,4 @@
-CREATE TABLE undo_log (
+CREATE TABLE IF NOT EXISTS undo_log (
     branch_id BIGINT NOT NULL,
     xid VARCHAR(128) NOT NULL,
     context VARCHAR(128) NOT NULL,
@@ -7,7 +7,6 @@ CREATE TABLE undo_log (
     log_created TIMESTAMP(6) NOT NULL,
     log_modified TIMESTAMP(6) NOT NULL,
     ext VARCHAR(100),
-    CONSTRAINT ux_undo_log UNIQUE (xid, branch_id)
+    CONSTRAINT ux_undo_log UNIQUE (xid, branch_id),
+    INDEX ix_undo_log_status (log_status)
 );
-
-CREATE INDEX ix_undo_log_status ON undo_log(log_status);

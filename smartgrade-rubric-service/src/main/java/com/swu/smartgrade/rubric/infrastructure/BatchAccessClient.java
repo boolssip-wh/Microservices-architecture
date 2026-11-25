@@ -8,10 +8,9 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 @FeignClient(name = "smartgrade-answer-service")
 public interface BatchAccessClient {
-    @GetMapping("/api/batches/{batchId}")
+    @GetMapping("/internal/batches/{batchId}")
     ApiResponse<java.util.Map<String, Object>> detail(@PathVariable String batchId,
             @RequestHeader("X-User-Id") String teacherId,
-            @RequestHeader("X-Role") String role,
             @RequestHeader("X-Trace-Id") String traceId,
             @RequestHeader("X-Service-Token") String serviceToken);
 }

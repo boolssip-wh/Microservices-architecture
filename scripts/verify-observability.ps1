@@ -53,4 +53,37 @@ $missing = @($ExpectedServices | Where-Object { $_ -notin $services })
 if ($missing.Count) {
     throw "SkyWalking has not observed: $($missing -join ', '). Run the full contract flow and retry."
 }
+
+$localNow = [DateTime]::Now
+$traceStart = $localNow.AddMinutes(-30).ToString("yyyy-MM-dd HHmm")
+$traceEnd = $localNow.AddMinutes(1).ToString("yyyy-MM-dd HHmm")
+$traceQuery = @"
+query {
+  queryBasicTraces(condition: {
+    queryDuration: {start: "$traceStart", end: "$traceEnd", step: MINUTE}
+    traceState: ALL
+    queryOrder: BY_START_TIME
+    paging: {pageNum: 1, pageSize: 20}
+  }) {
+    traces {
+      traceIds
+      endpointNames
+      duration
+      start
+      isError
+    }
+  }
+}
+"@
+$traceResponse = Invoke-RestMethod -Method Post -Uri "$SkyWalkingUrl/graphql" `
+    -ContentType "application/json" `
+    -Body (@{ query = $traceQuery } | ConvertTo-Json -Depth 5) `
+    -TimeoutSec 15
+$traces = @($traceResponse.data.queryBasicTraces.traces)
+if (-not $traces.Count) {
+    throw "SkyWalking has no Trace in the last 30 minutes."
+}
+$traces | Select-Object -First 5 @{Name="traceId";Expression={$_.traceIds[0]}}, `
+    @{Name="endpoint";Expression={$_.endpointNames[0]}}, duration, isError | Format-Table -AutoSize
 Write-Host "PASS: all expected services are visible in SkyWalking."
+Write-Host "PASS: SkyWalking returned $($traces.Count) recent cross-service trace records."

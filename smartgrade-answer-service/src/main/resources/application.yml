@@ -6,10 +6,10 @@ spring:
   config:
     import: "optional:nacos:smartgrade-common.yaml?group=DEFAULT_GROUP&refreshEnabled=true"
   datasource:
-    url: ${DB_URL:jdbc:h2:mem:smartgrade_answer;MODE=MySQL;DB_CLOSE_DELAY=-1}
+    url: ${ANSWER_DB_URL:${DB_URL:jdbc:h2:mem:smartgrade_answer;MODE=MySQL;DB_CLOSE_DELAY=-1}}
     username: ${DB_USERNAME:sa}
     password: ${DB_PASSWORD:}
-    driver-class-name: ${DB_DRIVER:org.h2.Driver}
+    driver-class-name: ${ANSWER_DB_DRIVER:${DB_DRIVER:org.h2.Driver}}
   servlet:
     multipart:
       max-file-size: 20MB
@@ -52,6 +52,8 @@ spring:
 app:
   storage:
     root: ${STORAGE_ROOT:./.data/objects}
+  seata-demo:
+    fail-after-remote: ${SEATA_DEMO_FAIL_AFTER_REMOTE:false}
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
@@ -69,9 +71,6 @@ seata:
     type: file
   config:
     type: file
-app:
-  seata-demo:
-    fail-after-remote: ${SEATA_DEMO_FAIL_AFTER_REMOTE:false}
 management:
   health:
     redis:

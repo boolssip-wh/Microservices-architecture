@@ -37,7 +37,7 @@ public class RubricAccessService {
     private java.util.Map<String, Object> ownedBatch(String batchId) {
         AuthPrincipal principal = AuthPrincipal.required();
         try {
-            var response = batches.detail(batchId, principal.userId().toString(), principal.role(),
+            var response = batches.detail(batchId, principal.userId().toString(),
                     TraceId.current(), serviceToken);
             if (response == null || response.code() != 0 || response.data() == null) {
                 throw BusinessException.forbidden("无权访问该批次评分规则");

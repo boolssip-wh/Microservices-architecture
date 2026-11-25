@@ -4,16 +4,25 @@ param(
 
 $ErrorActionPreference = "Stop"
 $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
-if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
-    throw "Docker Desktop is required to start Seata Server and SkyWalking OAP/UI."
-}
+$toolsRoot = if ($env:SMARTGRADE_TOOLS) { $env:SMARTGRADE_TOOLS } else { "D:\SmartGradeTools" }
+$standaloneSeata = Join-Path $toolsRoot "seata-2.1.0"
+$standaloneSkyWalking = Join-Path $toolsRoot "skywalking-9.7.0"
 
 Push-Location $projectRoot
 try {
-    & docker compose -f ".\deploy\docker-compose-infra.yml" --profile governance up -d `
-        seata-server skywalking-oap skywalking-ui
-    if ($LASTEXITCODE -ne 0) {
-        throw "Governance containers failed to start."
+    if ((Test-Path -LiteralPath $standaloneSeata) -and
+        (Test-Path -LiteralPath $standaloneSkyWalking)) {
+        & (Join-Path $PSScriptRoot "start-seata-standalone.ps1") -SeataHome $standaloneSeata
+        & (Join-Path $PSScriptRoot "start-skywalking-standalone.ps1") -SkyWalkingHome $standaloneSkyWalking
+    } else {
+        if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
+            throw "Install the standalone distributions under $toolsRoot or install Docker Desktop."
+        }
+        & docker compose -f ".\deploy\docker-compose-infra.yml" --profile governance up -d `
+            seata-server skywalking-oap skywalking-ui
+        if ($LASTEXITCODE -ne 0) {
+            throw "Governance containers failed to start."
+        }
     }
 
     $deadline = (Get-Date).AddMinutes(3)

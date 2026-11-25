@@ -6,10 +6,10 @@ spring:
   config:
     import: "optional:nacos:smartgrade-common.yaml?group=DEFAULT_GROUP&refreshEnabled=true"
   datasource:
-    url: ${DB_URL:jdbc:h2:mem:smartgrade_review;MODE=MySQL;DB_CLOSE_DELAY=-1}
+    url: ${REVIEW_DB_URL:${DB_URL:jdbc:h2:mem:smartgrade_review;MODE=MySQL;DB_CLOSE_DELAY=-1}}
     username: ${DB_USERNAME:sa}
     password: ${DB_PASSWORD:}
-    driver-class-name: ${DB_DRIVER:org.h2.Driver}
+    driver-class-name: ${REVIEW_DB_DRIVER:${DB_DRIVER:org.h2.Driver}}
   jpa:
     open-in-view: false
     hibernate:

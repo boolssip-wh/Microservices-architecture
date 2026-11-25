@@ -12,6 +12,9 @@ spring:
     username: ${MYSQL_USER:smartgrade}
     password: ${MYSQL_PASSWORD:smartgrade123}
     driver-class-name: com.mysql.cj.jdbc.Driver
+  flyway:
+    baseline-on-migrate: true
+    baseline-version: 0
   cloud:
     nacos:
       discovery:

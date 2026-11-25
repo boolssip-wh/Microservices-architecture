@@ -31,7 +31,7 @@ class RubricBaseScoreAccessTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setAttribute(AuthPrincipal.ATTR, new AuthPrincipal(1L, "teacher", "教师", "TEACHER"));
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
-        when(batches.detail(eq("B1"), eq("1"), eq("TEACHER"), any(), eq("local-service-token")))
+        when(batches.detail(eq("B1"), eq("1"), any(), eq("local-service-token")))
                 .thenReturn(ApiResponse.ok(Map.<String, Object>of("maxScore", 20, "baseScore", 8), "trace-test"));
     }
 
