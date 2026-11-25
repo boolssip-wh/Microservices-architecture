@@ -10,12 +10,23 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @Component
 public class AuthHeaderInterceptor implements HandlerInterceptor {
     private final String serviceToken;
+    private final String gatewayToken;
 
-    public AuthHeaderInterceptor(@Value("${SERVICE_TOKEN:local-service-token}") String serviceToken) {
+    public AuthHeaderInterceptor(@Value("${SERVICE_TOKEN:local-service-token}") String serviceToken,
+                                 @Value("${GATEWAY_TOKEN:local-gateway-token}") String gatewayToken) {
         this.serviceToken = serviceToken;
+        this.gatewayToken = gatewayToken;
     }
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        if (request.getRequestURI().startsWith("/api/")) {
+            String suppliedGateway = request.getHeader("X-Gateway-Token");
+            if (gatewayToken.isBlank() || suppliedGateway == null || !java.security.MessageDigest.isEqual(
+                    gatewayToken.getBytes(java.nio.charset.StandardCharsets.UTF_8),
+                    suppliedGateway.getBytes(java.nio.charset.StandardCharsets.UTF_8))) {
+                throw BusinessException.unauthorized("请求必须通过统一网关");
+            }
+        }
         if (request.getRequestURI().startsWith("/internal/")) {
             String supplied = request.getHeader("X-Service-Token");
             if (serviceToken.isBlank() || supplied == null || !java.security.MessageDigest.isEqual(

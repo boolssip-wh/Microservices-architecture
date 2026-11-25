@@ -55,6 +55,23 @@ app:
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
+seata:
+  enabled: ${SEATA_ENABLED:false}
+  application-id: ${spring.application.name}
+  tx-service-group: smartgrade_tx_group
+  enable-auto-data-source-proxy: true
+  service:
+    vgroup-mapping:
+      smartgrade_tx_group: default
+    grouplist:
+      default: ${SEATA_SERVER_ADDR:127.0.0.1:8091}
+  registry:
+    type: file
+  config:
+    type: file
+app:
+  seata-demo:
+    fail-after-remote: ${SEATA_DEMO_FAIL_AFTER_REMOTE:false}
 management:
   health:
     redis:

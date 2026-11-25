@@ -29,7 +29,7 @@ public class GradingOrchestrator {
     private final BatchRepository batchRepository;
     private final RubricClient rubricClient;
     private final GradingClient gradingClient;
-    private final ReviewClient reviewClient;
+    private final ReviewDeliveryCoordinator reviewDelivery;
     private final DomainEventPublisher eventPublisher;
     private final IdempotencyStore guards;
 
@@ -38,14 +38,14 @@ public class GradingOrchestrator {
                                BatchRepository batchRepository,
                                RubricClient rubricClient,
                                GradingClient gradingClient,
-                               ReviewClient reviewClient,
+                               ReviewDeliveryCoordinator reviewDelivery,
                                DomainEventPublisher eventPublisher, IdempotencyStore guards) {
         this.jobRepository = jobRepository;
         this.answerRepository = answerRepository;
         this.batchRepository = batchRepository;
         this.rubricClient = rubricClient;
         this.gradingClient = gradingClient;
-        this.reviewClient = reviewClient;
+        this.reviewDelivery = reviewDelivery;
         this.eventPublisher = eventPublisher;
         this.guards = guards;
     }
@@ -121,11 +121,11 @@ public class GradingOrchestrator {
     }
 
     private void deliverManualReview(Batch batch, RubricClient.RemoteRubric rubric, Answer answer) {
-        try { reviewClient.create(new ReviewClient.CreateResultRequest(answer.getAnswerId(), batch.getBatchId(),
+        try { reviewDelivery.deliver(new ReviewClient.CreateResultRequest(answer.getAnswerId(), batch.getBatchId(),
                 answer.getStudentNo(), answer.getOcrText() == null ? "" : answer.getOcrText(), batch.getTeacherId(),
                 rubric.rubricVersion(), BigDecimal.ZERO, batch.getMaxScore(), answer.getOcrCoverageRatio(),
-                BigDecimal.ZERO, List.of(), "MANUAL_REVIEW", scoringPoints(rubric), batch.getBaseScore()));
-            answer.setStatus("MANUAL_REVIEW"); answerRepository.save(answer);
+                BigDecimal.ZERO, List.of(), "MANUAL_REVIEW", scoringPoints(rubric), batch.getBaseScore()),
+                answer, "MANUAL_REVIEW");
             safeNotify(batch, "grading.failed", "答卷需人工处理", "答卷 " + answer.getStudentNo() + " 初筛失败，已进入人工复核清单。");
         } catch (Exception ex) { answer.setStatus("FAILED"); answerRepository.save(answer); log.warn("人工复核投递失败 {}", answer.getAnswerId(), ex); }
     }
@@ -156,13 +156,12 @@ public class GradingOrchestrator {
             if (match == null) {
                 throw BusinessException.unavailable("评分服务暂时不可用，已触发服务降级");
             }
-            reviewClient.create(new ReviewClient.CreateResultRequest(
+            reviewDelivery.deliver(new ReviewClient.CreateResultRequest(
                     answer.getAnswerId(), batch.getBatchId(), answer.getStudentNo(), ocr.text(),
                     batch.getTeacherId(), rubric.rubricVersion(), match.suggestedScore(), batch.getMaxScore(),
                     ocr.answerCoverageRatio(),
-                    match.confidence(), match.hits(), "WAITING_REVIEW", scoringPoints(rubric), batch.getBaseScore()));
-            answer.setStatus("WAITING_REVIEW");
-            answerRepository.save(answer);
+                    match.confidence(), match.hits(), "WAITING_REVIEW", scoringPoints(rubric), batch.getBaseScore()),
+                    answer, "WAITING_REVIEW");
             return true;
         } catch (Exception ex) {
             log.warn("答卷 {} 初筛失败", answer.getAnswerId(), ex);

@@ -77,6 +77,45 @@ services:
     volumes:
       - smartgrade_minio:/data
 
+  seata-server:
+    image: seataio/seata-server:2.1.0
+    container_name: smartgrade-seata
+    profiles: ["governance"]
+    environment:
+      SEATA_PORT: "8091"
+      STORE_MODE: file
+      TZ: Asia/Shanghai
+    ports:
+      - "8091:8091"
+      - "7091:7091"
+    volumes:
+      - smartgrade_seata:/root/seata-server
+
+  skywalking-oap:
+    image: apache/skywalking-oap-server:9.7.0
+    container_name: smartgrade-skywalking-oap
+    profiles: ["governance"]
+    environment:
+      SW_STORAGE: h2
+      SW_CORE_GRPC_PORT: "11800"
+      SW_CORE_REST_PORT: "12800"
+      TZ: Asia/Shanghai
+    ports:
+      - "11800:11800"
+      - "12800:12800"
+
+  skywalking-ui:
+    image: apache/skywalking-ui:9.7.0
+    container_name: smartgrade-skywalking-ui
+    profiles: ["governance"]
+    depends_on:
+      - skywalking-oap
+    environment:
+      SW_OAP_ADDRESS: http://skywalking-oap:12800
+      TZ: Asia/Shanghai
+    ports:
+      - "12801:8080"
+
   nginx:
     image: nginx:1.26-alpine
     container_name: smartgrade-nginx
@@ -94,3 +133,4 @@ volumes:
   smartgrade_redis:
   smartgrade_kafka:
   smartgrade_minio:
+  smartgrade_seata:

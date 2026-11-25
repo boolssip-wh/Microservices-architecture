@@ -20,6 +20,16 @@ foreach ($environmentName in @(
 }
 $toolsRoot = if ($env:SMARTGRADE_TOOLS) { $env:SMARTGRADE_TOOLS } else { "D:\SmartGradeTools" }
 $java = Join-Path $toolsRoot "jdk17\bin\java.exe"
+$skyWalkingAgent = if ($env:SKYWALKING_AGENT_JAR) {
+    $env:SKYWALKING_AGENT_JAR
+} else {
+    Join-Path $toolsRoot "skywalking-agent\skywalking-agent.jar"
+}
+$skyWalkingCollector = if ($env:SKYWALKING_BACKEND_SERVICE) {
+    $env:SKYWALKING_BACKEND_SERVICE
+} else {
+    "127.0.0.1:11800"
+}
 $runtime = Join-Path $projectRoot ".runtime"
 $logs = Join-Path $projectRoot "logs"
 $jdkTmp = Join-Path $runtime "jdk-tmp"
@@ -74,14 +84,14 @@ try {
     & (Join-Path $PSScriptRoot "start-sentinel-dashboard.ps1")
 
     $services = @(
-        @{ Name = "user"; Jar = "smartgrade-user-service\target\smartgrade-user-service-1.0.0.jar"; Port = 8081 },
-        @{ Name = "rubric"; Jar = "smartgrade-rubric-service\target\smartgrade-rubric-service-1.0.0.jar"; Port = 8082 },
-        @{ Name = "answer"; Jar = "smartgrade-answer-service\target\smartgrade-answer-service-1.0.0.jar"; Port = 8083 },
-        @{ Name = "grading"; Jar = "smartgrade-grading-service\target\smartgrade-grading-service-1.0.0.jar"; Port = 8084 },
-        @{ Name = "review"; Jar = "smartgrade-review-service\target\smartgrade-review-service-1.0.0.jar"; Port = 8085 },
-        @{ Name = "report"; Jar = "smartgrade-report-service\target\smartgrade-report-service-1.0.0.jar"; Port = 8086 },
-        @{ Name = "notification"; Jar = "smartgrade-notification-service\target\smartgrade-notification-service-1.0.0.jar"; Port = 8087 },
-        @{ Name = "gateway"; Jar = "smartgrade-gateway\target\smartgrade-gateway-1.0.0.jar"; Port = 8080 }
+        @{ Name = "user"; AgentName = "smartgrade-user-service"; Jar = "smartgrade-user-service\target\smartgrade-user-service-1.0.0.jar"; Port = 8081 },
+        @{ Name = "rubric"; AgentName = "smartgrade-rubric-service"; Jar = "smartgrade-rubric-service\target\smartgrade-rubric-service-1.0.0.jar"; Port = 8082 },
+        @{ Name = "answer"; AgentName = "smartgrade-answer-service"; Jar = "smartgrade-answer-service\target\smartgrade-answer-service-1.0.0.jar"; Port = 8083 },
+        @{ Name = "grading"; AgentName = "smartgrade-grading-service"; Jar = "smartgrade-grading-service\target\smartgrade-grading-service-1.0.0.jar"; Port = 8084 },
+        @{ Name = "review"; AgentName = "smartgrade-review-service"; Jar = "smartgrade-review-service\target\smartgrade-review-service-1.0.0.jar"; Port = 8085 },
+        @{ Name = "report"; AgentName = "smartgrade-report-service"; Jar = "smartgrade-report-service\target\smartgrade-report-service-1.0.0.jar"; Port = 8086 },
+        @{ Name = "notification"; AgentName = "smartgrade-notification-service"; Jar = "smartgrade-notification-service\target\smartgrade-notification-service-1.0.0.jar"; Port = 8087 },
+        @{ Name = "gateway"; AgentName = "smartgrade-gateway"; Jar = "smartgrade-gateway\target\smartgrade-gateway-1.0.0.jar"; Port = 8080 }
     )
 
     foreach ($service in $services) {
@@ -92,17 +102,26 @@ try {
         $stdout = Join-Path $logs ($service.Name + ".out.log")
         $stderr = Join-Path $logs ($service.Name + ".err.log")
         $applicationLog = Join-Path $logs ($service.Name + ".log")
+        $javaArguments = @()
+        if (Test-Path -LiteralPath $skyWalkingAgent) {
+            $javaArguments += @(
+                "-javaagent:`"$skyWalkingAgent`"",
+                "-Dskywalking.agent.service_name=$($service.AgentName)",
+                "-Dskywalking.collector.backend_service=$skyWalkingCollector"
+            )
+        }
+        $javaArguments += @(
+            "-Djdk.net.unixdomain.tmpdir=`"$jdkTmp`"",
+            "-Dcsp.sentinel.log.dir=`"$sentinelLogs`"",
+            "-Dcsp.sentinel.log.use.pid=true",
+            "-DEAGLEEYE.LOG.PATH=`"$sentinelLogs`"",
+            "-Dfile.encoding=UTF-8",
+            "-jar",
+            "`"$jar`"",
+            "--logging.file.name=`"$applicationLog`""
+        )
         $process = Start-Process -FilePath $java `
-            -ArgumentList @(
-                "-Djdk.net.unixdomain.tmpdir=`"$jdkTmp`"",
-                "-Dcsp.sentinel.log.dir=`"$sentinelLogs`"",
-                "-Dcsp.sentinel.log.use.pid=true",
-                "-DEAGLEEYE.LOG.PATH=`"$sentinelLogs`"",
-                "-Dfile.encoding=UTF-8",
-                "-jar",
-                "`"$jar`"",
-                "--logging.file.name=`"$applicationLog`""
-            ) `
+            -ArgumentList $javaArguments `
             -WorkingDirectory $projectRoot -RedirectStandardOutput $stdout -RedirectStandardError $stderr `
             -WindowStyle Hidden -PassThru
         $started += [PSCustomObject]@{

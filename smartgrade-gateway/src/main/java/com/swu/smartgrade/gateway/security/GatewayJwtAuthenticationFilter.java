@@ -26,30 +26,34 @@ import java.util.UUID;
 public class GatewayJwtAuthenticationFilter implements GlobalFilter, Ordered {
     private final SecretKey key;
     private final ObjectMapper objectMapper;
+    private final String gatewayToken;
 
     public GatewayJwtAuthenticationFilter(
             @Value("${app.jwt.secret:smartgrade-platform-demo-secret-key-2026-change-me}") String secret,
+            @Value("${app.gateway.token:local-gateway-token}") String gatewayToken,
             ObjectMapper objectMapper) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        this.gatewayToken = gatewayToken;
         this.objectMapper = objectMapper;
     }
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        String path = exchange.getRequest().getURI().getPath();
+        ServerWebExchange external = stripUntrustedHeaders(exchange);
+        String path = external.getRequest().getURI().getPath();
         if (!path.startsWith("/api/") || "/api/auth/login".equals(path)) {
-            return chain.filter(withTraceId(exchange));
+            return chain.filter(withTraceId(external));
         }
 
-        String authorization = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        String authorization = external.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
         if (authorization == null || !authorization.startsWith("Bearer ")) {
-            return unauthorized(exchange, "请先登录");
+            return unauthorized(external, "请先登录");
         }
 
         try {
             Claims claims = Jwts.parser().verifyWith(key).build()
                     .parseSignedClaims(authorization.substring(7)).getPayload();
-            ServerWebExchange authenticated = withTraceId(exchange).mutate()
+            ServerWebExchange authenticated = withTraceId(external).mutate()
                     .request(builder -> builder.headers(headers -> {
                         headers.set("X-User-Id", claims.getSubject());
                         headers.set("X-Username", claims.get("username", String.class));
@@ -59,7 +63,7 @@ public class GatewayJwtAuthenticationFilter implements GlobalFilter, Ordered {
                     .build();
             return chain.filter(authenticated);
         } catch (Exception ex) {
-            return unauthorized(exchange, "登录状态无效或已过期");
+            return unauthorized(external, "登录状态无效或已过期");
         }
     }
 
@@ -71,7 +75,21 @@ public class GatewayJwtAuthenticationFilter implements GlobalFilter, Ordered {
         String finalTraceId = traceId;
         exchange.getResponse().getHeaders().set("X-Trace-Id", traceId);
         exchange.getResponse().getHeaders().set("X-SmartGrade-Gateway", "smartgrade-gateway");
-        return exchange.mutate().request(builder -> builder.header("X-Trace-Id", finalTraceId)).build();
+        return exchange.mutate().request(builder -> builder.headers(headers -> {
+            headers.set("X-Trace-Id", finalTraceId);
+            headers.set("X-Gateway-Token", gatewayToken);
+        })).build();
+    }
+
+    private ServerWebExchange stripUntrustedHeaders(ServerWebExchange exchange) {
+        return exchange.mutate().request(builder -> builder.headers(headers -> {
+            headers.remove("X-User-Id");
+            headers.remove("X-Username");
+            headers.remove("X-Real-Name");
+            headers.remove("X-Role");
+            headers.remove("X-Gateway-Token");
+            headers.remove("X-Service-Token");
+        })).build();
     }
 
     private Mono<Void> unauthorized(ServerWebExchange exchange, String message) {

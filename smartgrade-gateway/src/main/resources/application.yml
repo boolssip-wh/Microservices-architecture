@@ -74,6 +74,8 @@ spring:
 app:
   jwt:
     secret: ${JWT_SECRET:smartgrade-platform-demo-secret-key-2026-change-me}
+  gateway:
+    token: ${GATEWAY_TOKEN:local-gateway-token}
 
 management:
   endpoints:

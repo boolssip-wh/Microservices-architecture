@@ -27,7 +27,7 @@ public interface ImportJobClient {
         }
         @Bean
         public Request.Options importJobTimeouts() {
-            return new Request.Options(5, TimeUnit.SECONDS, 3500, TimeUnit.SECONDS, true);
+            return new Request.Options(5, TimeUnit.SECONDS, 120, TimeUnit.SECONDS, true);
         }
     }
 }

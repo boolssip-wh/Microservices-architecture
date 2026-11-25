@@ -20,8 +20,9 @@ class GradingRecoveryTest {
     private final RubricClient rubrics = mock(RubricClient.class);
     private final GradingClient grading = mock(GradingClient.class);
     private final ReviewClient reviews = mock(ReviewClient.class);
+    private final ReviewDeliveryCoordinator delivery = new ReviewDeliveryCoordinator(reviews, answers, false);
     private final GradingOrchestrator service = new GradingOrchestrator(jobs, answers, batches,
-            rubrics, grading, reviews, mock(DomainEventPublisher.class), new LocalIdempotencyStore());
+            rubrics, grading, delivery, mock(DomainEventPublisher.class), new LocalIdempotencyStore());
     private final Batch batch = new Batch();
     private final Answer answer = new Answer();
     private final ImportJob job = new ImportJob();

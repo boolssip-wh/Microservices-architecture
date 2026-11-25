@@ -39,7 +39,7 @@ class OriginalAnswerTest {
         var batchService = new BatchApplicationService(batches, answers, mock(RubricClient.class), mock(ReviewClient.class));
         var service = new OriginalAnswerService(batchService, answers, storage);
         mvc = MockMvcBuilders.standaloneSetup(new OriginalAnswerController(service))
-                .addInterceptors(new AuthHeaderInterceptor("test-token"))
+                .addInterceptors(new AuthHeaderInterceptor("test-token", "gateway-test-token"))
                 .setControllerAdvice(new GlobalExceptionHandler()).build();
     }
 
@@ -50,7 +50,8 @@ class OriginalAnswerTest {
         answer.setSourceType(sourceType);
         answer.setObjectKey("answers/A1/2026001." + extension);
         when(storage.read(answer.getObjectKey())).thenReturn(bytes);
-        var response = mvc.perform(get("/api/batches/B1/answers/A1/original").header("X-User-Id", "1"))
+        var response = mvc.perform(get("/api/batches/B1/answers/A1/original")
+                        .header("X-Gateway-Token", "gateway-test-token").header("X-User-Id", "1"))
                 .andExpect(status().isOk()).andExpect(content().bytes(bytes))
                 .andExpect(header().string("Content-Type", mime))
                 .andExpect(header().string("Cache-Control", "private, no-store"))
@@ -61,13 +62,16 @@ class OriginalAnswerTest {
 
     @Test
     void unauthenticatedRequestCannotReadStorage() throws Exception {
-        mvc.perform(get("/api/batches/B1/answers/A1/original")).andExpect(status().isUnauthorized());
+        mvc.perform(get("/api/batches/B1/answers/A1/original")
+                        .header("X-Gateway-Token", "gateway-test-token"))
+                .andExpect(status().isUnauthorized());
         verifyNoInteractions(storage, answers, batches);
     }
 
     @Test
     void anotherTeacherCannotReadStorage() throws Exception {
-        mvc.perform(get("/api/batches/B1/answers/A1/original").header("X-User-Id", "2"))
+        mvc.perform(get("/api/batches/B1/answers/A1/original")
+                        .header("X-Gateway-Token", "gateway-test-token").header("X-User-Id", "2"))
                 .andExpect(status().isForbidden());
         verifyNoInteractions(storage, answers);
     }
@@ -75,7 +79,8 @@ class OriginalAnswerTest {
     @Test
     void answerMustBelongToTheRequestedBatch() throws Exception {
         answer.setBatchId("B2");
-        mvc.perform(get("/api/batches/B1/answers/A1/original").header("X-User-Id", "1"))
+        mvc.perform(get("/api/batches/B1/answers/A1/original")
+                        .header("X-Gateway-Token", "gateway-test-token").header("X-User-Id", "1"))
                 .andExpect(status().isNotFound());
         verifyNoInteractions(storage);
     }
@@ -83,7 +88,8 @@ class OriginalAnswerTest {
     @Test
     void missingObjectHasReadableErrorWithoutExposingStoragePath() throws Exception {
         when(storage.read(answer.getObjectKey())).thenThrow(new IllegalStateException("C:\\private\\secret"));
-        mvc.perform(get("/api/batches/B1/answers/A1/original").header("X-User-Id", "1"))
+        mvc.perform(get("/api/batches/B1/answers/A1/original")
+                        .header("X-Gateway-Token", "gateway-test-token").header("X-User-Id", "1"))
                 .andExpect(status().isServiceUnavailable()).andExpect(jsonPath("code").value(50300))
                 .andExpect(jsonPath("message").value("原始文件暂时无法读取，请稍后重试或联系管理员"));
     }
