@@ -51,10 +51,16 @@ if (-not $mysqlListening.TcpTestSucceeded) {
     throw "Isolated MySQL did not become ready. Check .runtime\mysql-demo.*.log."
 }
 
-$schema = Get-Content -Raw -LiteralPath (Join-Path $projectRoot "deploy\mysql\init.sql") -Encoding UTF8
-$schema | & $mysql --protocol=TCP --host=127.0.0.1 --port=$MySqlPort --user=root
-if ($LASTEXITCODE -ne 0) {
-    throw "Could not initialize the isolated MySQL schemas."
+$schemaReady = & $mysql --protocol=TCP --host=127.0.0.1 --port=$MySqlPort --user=root `
+    --batch --skip-column-names -e "SELECT COUNT(*) FROM information_schema.schemata WHERE schema_name='smartgrade_answer';"
+if ([int]($schemaReady | Select-Object -First 1) -eq 0) {
+    $schema = Get-Content -Raw -LiteralPath (Join-Path $projectRoot "deploy\mysql\init.sql") -Encoding UTF8
+    $schema | & $mysql --protocol=TCP --host=127.0.0.1 --port=$MySqlPort --user=root
+    if ($LASTEXITCODE -ne 0) {
+        throw "Could not initialize the isolated MySQL schemas."
+    }
+} else {
+    Write-Host "Isolated MySQL schemas already exist; skipping schema initialization."
 }
 
 & (Join-Path $PSScriptRoot "start-governance.ps1")

@@ -69,14 +69,18 @@ public class GradingOrchestrator {
                 throw BusinessException.unavailable("评分规则服务暂时不可用，已触发服务降级");
             }
             List<Answer> answers = answerRepository.findByImportJobIdOrderByStudentNo(job.getJobId());
+            safeNotify(batch, "grading.started", "开始识别",
+                    "正在识别 " + answers.size() + " 份答卷，请稍候。");
             for (Answer answer : answers) {
                 if (List.of("PENDING", "RUNNING", "FAILED").contains(answer.getStatus())) processOne(job, batch, rubric, answer);
             }
             boolean failures = answers.stream().anyMatch(a -> List.of("FAILED", "MANUAL_REVIEW").contains(a.getStatus()));
             job.setStatus(failures ? "PARTIAL_FAILED" : "COMPLETED");
             batch.setStatus("REVIEWING");
-            safeNotify(batch, failures ? "grading.failed" : "grading.completed", "初筛处理结束",
-                    failures ? "部分答卷需人工处理，请查看复核清单。" : "答卷已完成初筛，请复核。");
+            safeNotify(batch, failures ? "grading.failed" : "grading.completed", "识别结束",
+                    failures
+                            ? "识别结束，共 " + answers.size() + " 份答卷，部分需人工处理。"
+                            : "识别成功，共 " + answers.size() + " 份答卷进入待复核。");
         } catch (Exception ex) {
             log.error("批次 {} 初筛编排失败", batch.getBatchId(), ex);
             // Every accepted answer must remain reachable through the failed-task retry API.

@@ -101,9 +101,8 @@ async function loadNotificationChannel() {
 async function saveNotificationChannel() {
   const contact = sms.contactInput.replace(/\s+/g, '')
   const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact)
-  const isPhone = /^(?:\+?86)?1[3-9]\d{9}$/.test(contact)
-  if (!isEmail && !isPhone) {
-    notify('请输入有效的手机号或邮箱', true)
+  if (!isEmail) {
+    notify('请输入有效的邮箱地址', true)
     return
   }
   sms.saving = true
@@ -113,7 +112,7 @@ async function saveNotificationChannel() {
         method: 'PUT',
         body: { contact, enabled: sms.enabled },
       }),
-      sms.enabled ? '接收方式已绑定并开启任务提醒' : '接收方式已绑定，任务提醒已关闭',
+      sms.enabled ? '邮箱已绑定并开启任务提醒' : '邮箱已绑定，任务提醒已关闭',
     )
     sms.contactInput = ''
     sms.bound = Boolean(data.bound)
@@ -202,8 +201,8 @@ onBeforeUnmount(() => {
         </div>
         <div class="form-grid sms-form-grid">
           <label>
-            手机号或邮箱
-            <input v-model="sms.contactInput" maxlength="64" placeholder="请输入手机号或邮箱" />
+            接收邮箱
+            <input v-model="sms.contactInput" type="email" maxlength="128" placeholder="请输入QQ邮箱地址" />
           </label>
           <label class="toggle-label">
             任务短信提醒
@@ -222,8 +221,8 @@ onBeforeUnmount(() => {
           </button>
         </div>
         <p class="sms-provider-note">
-          当前默认使用模拟网关，只生成可核验记录；配置 SMTP 后可真实发送中文邮件提醒，
-          页面不会显示完整手机号或邮箱。
+          识别开始和识别结束会各发一封简短中文邮件；实时进度请查看本页面，不做邮件进度轰炸。
+          页面只显示脱敏邮箱，不会显示完整地址。
         </p>
         <div v-if="smsDeliveries.length" class="sms-delivery-list">
           <article v-for="item in smsDeliveries.slice(0, 5)" :key="item.deliveryId">

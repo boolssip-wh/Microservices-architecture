@@ -32,7 +32,7 @@ import java.util.UUID;
 public class SmsDispatchService {
     private static final Logger log = LoggerFactory.getLogger(SmsDispatchService.class);
     private static final Set<String> SMS_EVENTS =
-            Set.of("grading.completed", "grading.failed", "review.completed");
+            Set.of("grading.started", "grading.completed", "review.completed");
 
     private final NotificationChannelClient channelClient;
     private final SmsDeliveryRepository deliveries;

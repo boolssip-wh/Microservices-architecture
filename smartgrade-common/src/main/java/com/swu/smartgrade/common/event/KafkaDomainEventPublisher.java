@@ -16,7 +16,7 @@ public class KafkaDomainEventPublisher extends AfterCommitEventPublisher {
         this.kafka = kafka; this.json = json;
     }
     protected void send(DomainEvent event) throws Exception {
-        if (!java.util.Set.of("grading.completed", "grading.failed", "report.completed",
+        if (!java.util.Set.of("grading.started", "grading.completed", "grading.failed", "report.completed",
                 "report.failed", "review.confirmed", "review.completed").contains(event.type())) {
             throw new IllegalArgumentException("Unsupported domain event type");
         }
