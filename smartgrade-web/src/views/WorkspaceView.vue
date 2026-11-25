@@ -4,6 +4,7 @@ import { api, guarded } from '../api.js'
 import AnimatedNumber from '../components/AnimatedNumber.vue'
 import { notify, selectBatch, session } from '../session.js'
 import { createImportAttempts } from '../importAttempts.js'
+import { useSpeechToText } from '../speech.js'
 
 const props = defineProps({ newCaseRequest: { type: Number, default: 0 } })
 
@@ -67,6 +68,23 @@ const rubricSource = ref(
   '肯奋斗：肯奋斗|不懈奋斗|拼搏奋斗|接续奋斗|努力奋斗\n' +
   '作答篇幅：LENGTH_COVERAGE',
 )
+
+const rubricSpeech = useSpeechToText({
+  onFinal(text) {
+    const current = rubricSource.value.trimEnd()
+    rubricSource.value = current ? `${current}\n${text}` : text
+    notify('语音内容已转成文字，可继续修改')
+  },
+  onError: (message) => notify(message, true),
+})
+
+function toggleRubricVoice() {
+  if (rubricSpeech.listening.value) {
+    rubricSpeech.stop()
+    return
+  }
+  rubricSpeech.start()
+}
 
 const canReview = computed(() => ['WAITING_REVIEW', 'REVIEWING'].includes(batch.value?.status))
 const processingCount = computed(() => progress.value
@@ -542,7 +560,27 @@ onBeforeUnmount(() => {
             <i>＝</i>
             <span class="formula-total"><b>{{ batch.maxScore }}</b>满分</span>
           </div>
-          <textarea v-model="rubricSource" class="source-editor" rows="7"></textarea>
+          <div class="voice-field">
+            <div class="voice-field-head">
+              <span>可直接编辑，也可以口述规则；系统只提交识别后的文字，不保存录音。</span>
+              <button
+                type="button"
+                class="secondary voice-button"
+                :class="{ listening: rubricSpeech.listening.value }"
+                :disabled="!!compiled"
+                @click="toggleRubricVoice"
+              >
+                {{ rubricSpeech.listening.value ? '停止识别' : '语音录入要点' }}
+              </button>
+            </div>
+            <p v-if="rubricSpeech.interimText.value" class="voice-interim">
+              正在识别：{{ rubricSpeech.interimText.value }}
+            </p>
+            <textarea v-model="rubricSource" class="source-editor" rows="7"></textarea>
+            <small v-if="!rubricSpeech.supported.value" class="voice-hint">
+              当前浏览器不支持语音识别，请使用最新版 Edge 或 Chrome。
+            </small>
+          </div>
           <div class="action-row">
             <button class="secondary" @click="createRubric">创建并解析</button>
             <button class="secondary" :disabled="!!compiled" @click="parseRubric">重新解析</button>

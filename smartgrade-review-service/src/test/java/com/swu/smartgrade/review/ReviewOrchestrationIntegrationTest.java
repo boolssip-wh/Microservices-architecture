@@ -53,13 +53,14 @@ class ReviewOrchestrationIntegrationTest {
         );
 
         var suggestion = service.suggestComment(1L, "A-TEST-001",
-                new CommentSuggestionRequest(new BigDecimal("9"), 2));
+                new CommentSuggestionRequest(new BigDecimal("9"), 2, "请突出证据，语气温和"));
         var finalized = service.finalizeScore(1L, "A-TEST-001",
                 new com.swu.smartgrade.review.api.dto.FinalScoreRequest(
                         new BigDecimal("9"), "证据充分", "继续保持，注意检验。", 2));
 
         assertThat(suggestion.suggestedComments()).hasSize(2);
         assertThat(suggestion.evidenceRefs()).isNotEmpty();
+        assertThat(suggestion.generationMode()).isEqualTo("TEMPLATE");
         assertThat(finalized.finalScore()).isEqualByComparingTo("9");
         assertThat(service.detail(1L, "A-TEST-001").comment().suggestedText()).isNotBlank();
         assertThat(service.states(1L, "B-TEST-001")).extracting(ReviewApplicationService.ResultState::status)

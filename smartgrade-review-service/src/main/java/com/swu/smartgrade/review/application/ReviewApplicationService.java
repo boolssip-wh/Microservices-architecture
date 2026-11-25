@@ -8,6 +8,7 @@ import com.swu.smartgrade.review.domain.*;
 import com.swu.smartgrade.common.event.DomainEvent;
 import com.swu.smartgrade.common.event.DomainEventPublisher;
 import com.swu.smartgrade.review.infrastructure.client.UserClient;
+import com.swu.smartgrade.review.infrastructure.ai.CommentAiClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +31,7 @@ public class ReviewApplicationService {
     private final CommentDraftRepository commentRepository;
     private final AuditLogRepository auditRepository;
     private final UserClient userClient;
+    private final CommentAiClient commentAiClient;
     private final DomainEventPublisher eventPublisher;
     private final ObjectMapper objectMapper;
 
@@ -40,6 +42,7 @@ public class ReviewApplicationService {
                                     CommentDraftRepository commentRepository,
                                     AuditLogRepository auditRepository,
                                     UserClient userClient,
+                                    CommentAiClient commentAiClient,
                                     DomainEventPublisher eventPublisher,
                                     ObjectMapper objectMapper) {
         this.resultRepository = resultRepository;
@@ -49,6 +52,7 @@ public class ReviewApplicationService {
         this.commentRepository = commentRepository;
         this.auditRepository = auditRepository;
         this.userClient = userClient;
+        this.commentAiClient = commentAiClient;
         this.eventPublisher = eventPublisher;
         this.objectMapper = objectMapper;
     }
@@ -144,36 +148,55 @@ public class ReviewApplicationService {
         List<HitEvidence> evidence = evidenceRepository.findByResultId(result.getResultId());
         String hits = evidence.isEmpty() ? "暂未识别到明确命中要点"
                 : String.join("、", evidence.stream().map(HitEvidence::getPointName).toList());
-        String opening = switch (profile.openingStyle()) {
-            case "DIRECT" -> "根据本次作答";
-            case "QUESTION" -> "你是否还能补充遗漏的关键要点";
-            case "PRAISE_FIRST" -> "已看到你在相关要点上的努力";
-            default -> profile.openingStyle();
-        };
-        String encouragement = switch (profile.tone()) {
-            case "ENCOURAGING" -> "继续保持，逐项补充会更完整。";
-            case "STRICT" -> "请严格按评分要点补全依据。";
-            default -> "请结合原文证据核对遗漏。";
-        };
-        String first = opening + "。本题得分 " + request.finalScore() + "/" + result.getMaxScore()
-                + "，已识别要点：" + hits + "。建议结合证据继续完善关键步骤。";
-        String second = "从现有作答看，" + (evidence.isEmpty() ? "需要重新核对题意与评分要点"
-                : "你已经覆盖了 " + hits + "；可再检查遗漏要点和表达准确性") + "。";
-        first += encouragement;
-        second += encouragement;
-        if ("SHORT".equals(profile.lengthMode())) {
-            first = opening + "。已识别：" + hits + "。" + encouragement;
-            second = "本题 " + request.finalScore() + "/" + result.getMaxScore() + "。" + encouragement;
-        } else if ("LONG".equals(profile.lengthMode())) {
-            first += "建议逐句比对参考要点，补充概念之间的联系，并用具体例子说明推理过程。";
-            second += "完成修改后，请再次核对题意、证据与结论是否一致。";
+        String evidenceContext = "本题最终分：" + request.finalScore() + "/" + result.getMaxScore()
+                + "；命中要点：" + hits + "；"
+                + (evidence.isEmpty() ? "无明确证据。"
+                : "证据：" + String.join("；", evidence.stream()
+                .map(item -> item.getPointName() + "：“" + item.getSentence() + "”")
+                .toList()))
+                + "；教师偏好：" + profile.styleTag() + "；篇幅偏好：" + profile.lengthMode() + "。";
+        List<String> generated = commentAiClient.generate(evidenceContext, request.teacherInstruction())
+                .orElse(null);
+        String styleFirst;
+        String styleSecond;
+        String generationMode;
+        if (generated != null) {
+            styleFirst = generated.get(0);
+            styleSecond = generated.get(1);
+            generationMode = "AI";
+        } else {
+            String opening = switch (profile.openingStyle()) {
+                case "DIRECT" -> "根据本次作答";
+                case "QUESTION" -> "你是否还能补充遗漏的关键要点";
+                case "PRAISE_FIRST" -> "已看到你在相关要点上的努力";
+                default -> profile.openingStyle();
+            };
+            String encouragement = switch (profile.tone()) {
+                case "ENCOURAGING" -> "继续保持，逐项补充会更完整。";
+                case "STRICT" -> "请严格按评分要点补全依据。";
+                default -> "请结合原文证据核对遗漏。";
+            };
+            String first = opening + "。本题得分 " + request.finalScore() + "/" + result.getMaxScore()
+                    + "，已识别要点：" + hits + "。建议结合证据继续完善关键步骤。";
+            String second = "从现有作答看，" + (evidence.isEmpty() ? "需要重新核对题意与评分要点"
+                    : "你已经覆盖了 " + hits + "；可再检查遗漏要点和表达准确性") + "。";
+            first += encouragement;
+            second += encouragement;
+            if ("SHORT".equals(profile.lengthMode())) {
+                first = opening + "。已识别：" + hits + "。" + encouragement;
+                second = "本题 " + request.finalScore() + "/" + result.getMaxScore() + "。" + encouragement;
+            } else if ("LONG".equals(profile.lengthMode())) {
+                first += "建议逐句比对参考要点，补充概念之间的联系，并用具体例子说明推理过程。";
+                second += "完成修改后，请再次核对题意、证据与结论是否一致。";
+            }
+            styleFirst = applyBans(first, profile.bannedPhrases());
+            styleSecond = second;
+            if (!profile.commonPhrases().isEmpty()) {
+                styleSecond = styleSecond + " " + profile.commonPhrases().get(0);
+            }
+            styleSecond = applyBans(styleSecond, profile.bannedPhrases());
+            generationMode = "TEMPLATE";
         }
-        String styleFirst = applyBans(first, profile.bannedPhrases());
-        String styleSecond = second;
-        if (!profile.commonPhrases().isEmpty()) {
-            styleSecond = styleSecond + " " + profile.commonPhrases().get(0);
-        }
-        styleSecond = applyBans(styleSecond, profile.bannedPhrases());
         ReviewRecord review = reviewRepository.findByResultId(result.getResultId()).orElseGet(ReviewRecord::new);
         if (review.getReviewId() == null) {
             review.setReviewId(id("RV"));
@@ -198,7 +221,7 @@ public class ReviewApplicationService {
         commentRepository.save(draft);
         return new CommentSuggestionResponse(List.of(styleFirst, styleSecond),
                 evidence.stream().map(HitEvidence::getEvidenceId).toList(),
-                profile.styleTag(), profile.profileVersion());
+                profile.styleTag(), profile.profileVersion(), generationMode);
     }
 
     @Transactional

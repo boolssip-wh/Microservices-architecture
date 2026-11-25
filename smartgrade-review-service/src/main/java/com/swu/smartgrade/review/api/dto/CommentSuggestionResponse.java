@@ -6,6 +6,7 @@ public record CommentSuggestionResponse(
         List<String> suggestedComments,
         List<String> evidenceRefs,
         String styleTag,
-        Integer profileVersion
+        Integer profileVersion,
+        String generationMode
 ) {
 }

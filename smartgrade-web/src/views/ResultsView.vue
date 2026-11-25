@@ -3,10 +3,12 @@ import { onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { api, guarded } from '../api.js'
 import { notify, session } from '../session.js'
 import OriginalAnswerViewer from '../components/OriginalAnswerViewer.vue'
+import { useSpeechToText } from '../speech.js'
 
 const results = ref([])
 const selected = ref(null)
 const suggestions = ref([])
+const generationMode = ref('')
 const loading = ref(false)
 const statusFilter = ref('WAITING_REVIEW')
 let resultsRequest = 0
@@ -18,6 +20,23 @@ const review = reactive({
   reviewNote: '教师已核对证据并确认给分。',
   finalComment: '',
 })
+
+const commentSpeech = useSpeechToText({
+  onFinal(text) {
+    const current = review.finalComment.trim()
+    review.finalComment = current ? `${current}\n${text}` : text
+    notify('语音评语已转成文字，可继续口述或修改')
+  },
+  onError: (message) => notify(message, true),
+})
+
+function toggleCommentVoice() {
+  if (commentSpeech.listening.value) {
+    commentSpeech.stop()
+    return
+  }
+  commentSpeech.start()
+}
 
 function isCurrentResult(batchId, answerId, request) {
   return !disposed && request === selectionRequest
@@ -33,6 +52,7 @@ async function loadResults() {
   results.value = []
   selected.value = null
   suggestions.value = []
+  generationMode.value = ''
   if (!batchId) {
     notify('请先在阅卷工作台选择批次', true)
     return
@@ -58,6 +78,7 @@ async function openResult(item) {
   ++suggestionRequest
   selected.value = null
   suggestions.value = []
+  generationMode.value = ''
   try {
     const result = await api(`/api/results/${item.answerId}`)
     if (disposed || request !== selectionRequest || session.selectedBatchId !== batchId) return
@@ -81,15 +102,16 @@ async function suggest() {
   try {
     const data = await api(`/api/results/${answerId}/comment-suggestion`, {
       method: 'POST',
-      body: { finalScore, profileVersion },
+      body: { finalScore, profileVersion, teacherInstruction: review.finalComment.trim() },
     })
     if (!isCurrentResult(batchId, answerId, currentSelection) || request !== suggestionRequest || Number(review.finalScore) !== finalScore) return
     suggestions.value = data.suggestedComments || []
+    generationMode.value = data.generationMode || ''
     selected.value.comment = { ...selected.value.comment, profileVersion: data.profileVersion }
     if (!review.finalComment && suggestions.value[0]) {
       review.finalComment = suggestions.value[0]
     }
-    notify('已生成两条评语草稿')
+    notify(generationMode.value === 'AI' ? 'AI 已根据口述内容和评分证据生成两条评语' : '已生成本地模板评语草稿')
   } catch (error) {
     if (isCurrentResult(batchId, answerId, currentSelection) && request === suggestionRequest) notify(error.message, true)
   }
@@ -177,7 +199,7 @@ onBeforeUnmount(() => { disposed = true })
       <div class="panel">
         <div class="panel-head">
           <div><p class="eyebrow">FINAL DECISION</p><h2>教师定分</h2></div>
-          <button class="secondary" @click="suggest">生成评语草稿</button>
+          <button class="secondary" @click="suggest">AI 生成两条评语</button>
         </div>
         <div class="review-form">
           <label>
@@ -189,11 +211,34 @@ onBeforeUnmount(() => { disposed = true })
             <input v-model="review.reviewNote" />
           </label>
           <label class="span-2">
-            最终评语
-            <textarea v-model="review.finalComment" rows="5" placeholder="先点击生成评语草稿，再由教师确认修改"></textarea>
+            <span class="voice-label-row">
+              <span>最终评语</span>
+              <button
+                type="button"
+                class="text-button voice-button"
+                :class="{ listening: commentSpeech.listening.value }"
+                @click="toggleCommentVoice"
+              >
+                {{ commentSpeech.listening.value ? '停止识别' : '语音口述评语' }}
+              </button>
+            </span>
+            <textarea
+              v-model="review.finalComment"
+              rows="5"
+              placeholder="可以口述评语要求，再让 AI 结合命中证据生成；也可以直接手工填写"
+            ></textarea>
+            <small v-if="commentSpeech.interimText.value" class="voice-interim">
+              正在识别：{{ commentSpeech.interimText.value }}
+            </small>
+            <small v-else-if="!commentSpeech.supported.value" class="voice-hint">
+              当前浏览器不支持语音识别，请使用最新版 Edge 或 Chrome。
+            </small>
           </label>
         </div>
         <div v-if="suggestions.length" class="suggestion-list">
+          <p class="generation-mode">
+            {{ generationMode === 'AI' ? 'AI 结合口述要求与命中证据生成' : '外部 AI 未启用，当前使用本地模板' }}
+          </p>
           <button v-for="text in suggestions" :key="text" @click="review.finalComment = text">{{ text }}</button>
         </div>
         <button class="primary" @click="finalize">确认定分并写入快照</button>

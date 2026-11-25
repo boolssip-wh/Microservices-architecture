@@ -458,6 +458,47 @@ input:focus, textarea:focus, select:focus {
   box-shadow: 0 0 0 4px rgba(104, 104, 104, .1);
 }
 .source-editor { resize: vertical; line-height: 1.75; font-size: 12px; }
+
+.voice-field {
+  display: grid;
+  gap: 9px;
+}
+
+.voice-field-head,
+.voice-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.voice-field-head > span,
+.voice-hint {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.voice-button.listening {
+  color: #7b3229;
+  border-color: rgba(155, 62, 49, 0.38);
+  background: rgba(196, 90, 73, 0.12);
+}
+
+.voice-interim {
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(181, 150, 91, 0.1);
+  color: #66543b;
+  font-size: 11px;
+}
+
+.generation-mode {
+  margin: 0 0 2px;
+  color: var(--muted);
+  font-size: 11px;
+}
 .action-row { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 12px; }
 .criteria-grid {
   display: grid;
@@ -706,6 +747,7 @@ input:focus, textarea:focus, select:focus {
 .evidence-card small { color: var(--muted); font-size: 9px; }
 .match-type { font-size: 8px; letter-spacing: .7px; color: var(--ink); background: #e9e9e9; padding: 4px 7px; border-radius: 6px; }
 .review-form { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.review-form > label:last-child textarea { margin-top: 7px; }
 .suggestion-list { display: grid; gap: 7px; margin-top: 12px; }
 .suggestion-list button { text-align: left; border: 1px solid #dbdbdb; background: #f9f9f9; border-radius: 13px; padding: 11px 13px; color: #4b4b4b; font-size: 11px; line-height: 1.6; }
 .empty-state { color: var(--muted); font-size: 11px; padding: 15px 0; }

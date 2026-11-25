@@ -45,6 +45,27 @@ spring:
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
+app:
+  ai-comment:
+    enabled: ${AI_COMMENT_ENABLED:true}
+    base-url: ${AI_COMMENT_BASE_URL:${VISION_API_BASE_URL:}}
+    model: ${AI_COMMENT_MODEL:${VISION_MODEL:}}
+    api-key: ${AI_COMMENT_API_KEY:${VISION_API_KEY:}}
+    timeout-seconds: ${AI_COMMENT_TIMEOUT_SECONDS:30}
+seata:
+  enabled: ${SEATA_ENABLED:false}
+  application-id: ${spring.application.name}
+  tx-service-group: smartgrade_tx_group
+  enable-auto-data-source-proxy: true
+  service:
+    vgroup-mapping:
+      smartgrade_tx_group: default
+    grouplist:
+      default: ${SEATA_SERVER_ADDR:127.0.0.1:8091}
+  registry:
+    type: file
+  config:
+    type: file
 management:
   health:
     redis:
