@@ -24,9 +24,9 @@ public class CommentAiClient {
     private static final Logger log = LoggerFactory.getLogger(CommentAiClient.class);
     private static final String SYSTEM_PROMPT = """
             你是高校主观题阅卷的评语润色助手。教师保留最终判断权。
-            根据评分证据和教师口述要求，生成两条可直接编辑的中文评语草稿。
+            根据评分证据生成两条可直接编辑的中文评语草稿；如教师提供口述要求，应在不改变分数和证据的前提下落实这些要求。
             不得编造未提供的命中证据；不得改变分数；不得使用侮辱、歧视或确定性人格评价。
-            两条草稿应有明显表达差异，并优先落实教师口述中的语气、重点和篇幅要求。
+            两条草稿应有明显表达差异，篇幅精炼；如教师提供口述要求，优先落实其中的语气、重点和篇幅要求。
             只返回 JSON：{"comments":["第一条","第二条"]}，不要输出 Markdown。
             """;
 
@@ -60,7 +60,7 @@ public class CommentAiClient {
             ObjectNode payload = objectMapper.createObjectNode();
             payload.put("model", model.trim());
             payload.put("temperature", 0.35);
-            payload.put("max_tokens", 900);
+            payload.put("max_tokens", 600);
             ArrayNode messages = payload.putArray("messages");
             messages.addObject().put("role", "system").put("content", SYSTEM_PROMPT);
             messages.addObject().put("role", "user").put("content", userPrompt(
@@ -99,12 +99,12 @@ public class CommentAiClient {
     }
 
     private String userPrompt(String evidenceContext, String teacherInstruction) {
-        String instruction = teacherInstruction == null || teacherInstruction.isBlank()
-                ? "教师未额外口述要求，请保持客观、具体、温和，并指出一个可改进方向。"
-                : teacherInstruction.trim();
-        return "评分与证据材料：\n" + evidenceContext
-                + "\n\n教师口述要求：\n" + instruction
-                + "\n\n请生成两条 80 至 260 字的中文评语草稿。";
+        String base = "评分与证据材料：\n" + evidenceContext
+                + "\n\n请生成两条 80 至 220 字的中文评语草稿。";
+        if (teacherInstruction == null || teacherInstruction.isBlank()) {
+            return base + "\n保持客观、具体、温和，并指出一个可改进方向。";
+        }
+        return base + "\n\n教师语音生成要求：\n" + teacherInstruction.trim();
     }
 
     private List<String> parse(String body) throws Exception {

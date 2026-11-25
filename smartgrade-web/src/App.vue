@@ -23,9 +23,6 @@ function logout() {
 
 <template>
   <div v-if="showShell" class="app-shell">
-    <i class="ambient-light light-one" aria-hidden="true"></i>
-    <i class="ambient-light light-two" aria-hidden="true"></i>
-    <i class="ambient-light light-three" aria-hidden="true"></i>
     <aside class="sidebar">
       <RouterLink to="/workspace" class="brand" aria-label="返回答卷批次">
         <span class="brand-mark">阅</span>

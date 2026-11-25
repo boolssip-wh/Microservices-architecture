@@ -12,6 +12,16 @@ const profile = reactive({
 })
 const notifications = ref([])
 const unreadCount = ref(0)
+const smsDeliveries = ref([])
+const sms = reactive({
+  phoneInput: '',
+  maskedPhone: '',
+  bound: false,
+  enabled: true,
+  updatedAt: '',
+  saving: false,
+  testing: false,
+})
 let streamController
 let notificationTimer
 let reconnectTimer
@@ -80,6 +90,58 @@ async function loadNotifications() {
   unreadCount.value = data.unreadCount
 }
 
+async function loadNotificationChannel() {
+  const data = await api('/api/teachers/me/notification-channel')
+  sms.bound = Boolean(data.bound)
+  sms.maskedPhone = data.maskedPhone || ''
+  sms.enabled = Boolean(data.enabled)
+  sms.updatedAt = data.updatedAt || ''
+}
+
+async function saveNotificationChannel() {
+  const phone = sms.phoneInput.replace(/\s+/g, '')
+  if (!/^(?:\+?86)?1[3-9]\d{9}$/.test(phone)) {
+    notify('请输入有效的中国大陆手机号', true)
+    return
+  }
+  sms.saving = true
+  try {
+    const data = await guarded(
+      () => api('/api/teachers/me/notification-channel', {
+        method: 'PUT',
+        body: { phone, enabled: sms.enabled },
+      }),
+      sms.enabled ? '手机号已绑定并开启任务提醒' : '手机号已绑定，任务提醒已关闭',
+    )
+    sms.phoneInput = ''
+    sms.bound = Boolean(data.bound)
+    sms.maskedPhone = data.maskedPhone || ''
+    sms.enabled = Boolean(data.enabled)
+    sms.updatedAt = data.updatedAt || ''
+  } catch { /* guarded already displayed the failure */ }
+  finally { sms.saving = false }
+}
+
+async function loadSmsDeliveries() {
+  smsDeliveries.value = await api('/api/notifications/sms-deliveries')
+}
+
+async function testSms() {
+  if (sms.testing) return
+  sms.testing = true
+  try {
+    const delivery = await guarded(
+      () => api('/api/notifications/test', { method: 'POST' }),
+      '测试提醒已写入发送记录',
+    )
+    if (delivery?.status === 'MOCKED') {
+      notify(`模拟发送已完成，目标 ${delivery.targetMasked}；未调用真实短信平台`)
+    }
+    await loadSmsDeliveries()
+  } catch { /* guarded already displayed the failure */ }
+  finally { sms.testing = false }
+}
+
 async function markRead(item) {
   if (item.readAt) return
   await api(`/api/notifications/${item.notificationId}/read`, { method: 'PUT' })
@@ -89,6 +151,8 @@ async function markRead(item) {
 onMounted(() => {
   loadProfile().catch((error) => notify(error.message, true))
   loadNotifications().catch((error) => notify(error.message, true))
+  loadNotificationChannel().catch((error) => notify(error.message, true))
+  loadSmsDeliveries().catch((error) => notify(error.message, true))
   connectNotifications()
   notificationTimer = window.setInterval(() => loadNotifications().catch(() => {}), 5000)
 })
@@ -118,27 +182,80 @@ onBeforeUnmount(() => {
       <button class="primary" @click="saveProfile">保存偏好</button>
     </section>
 
-    <section class="panel">
-      <div class="panel-head">
-        <div><p class="eyebrow">INBOX</p><h2>任务通知</h2></div>
-        <span class="count-pill">{{ unreadCount }} 条未读</span>
-      </div>
-      <div class="notification-list">
-        <button
-          v-for="item in notifications"
-          :key="item.notificationId"
-          class="notification-item"
-          :class="{ unread: !item.readAt }"
-          @click="markRead(item)"
-        >
-          <span class="notice-dot"></span>
-          <span>
-            <b>{{ item.title }}</b>
-            <small>{{ item.content }}</small>
+    <div class="column">
+      <section class="panel sms-channel-card">
+        <div class="panel-head">
+          <div><p class="eyebrow">MOBILE REMINDER</p><h2>手机任务提醒</h2></div>
+          <span class="state-tag" :class="sms.bound && sms.enabled ? 'success' : 'warning'">
+            {{ sms.bound && sms.enabled ? '已开启' : '未开启' }}
           </span>
-        </button>
-        <p v-if="!notifications.length" class="empty-state">暂无通知。</p>
-      </div>
-    </section>
+        </div>
+        <p class="muted">
+          初筛完成和整批复核完成时发送关键节点提醒。电脑端仍通过页面实时查看处理进度；
+          短信不承担实时百分比推送。
+        </p>
+        <div class="sms-binding-summary">
+          <span>绑定号码</span>
+          <b>{{ sms.bound ? sms.maskedPhone : '尚未绑定' }}</b>
+        </div>
+        <div class="form-grid sms-form-grid">
+          <label>
+            手机号
+            <input v-model="sms.phoneInput" inputmode="tel" maxlength="14" placeholder="请输入11位手机号" />
+          </label>
+          <label class="toggle-label">
+            任务短信提醒
+            <span class="toggle-row">
+              <input v-model="sms.enabled" type="checkbox" />
+              <span>{{ sms.enabled ? '开启' : '关闭' }}</span>
+            </span>
+          </label>
+        </div>
+        <div class="action-row">
+          <button class="primary" :disabled="sms.saving" @click="saveNotificationChannel">
+            {{ sms.saving ? '正在保存…' : (sms.bound ? '更新绑定' : '绑定手机') }}
+          </button>
+          <button class="secondary" :disabled="sms.testing || !sms.bound || !sms.enabled" @click="testSms">
+            {{ sms.testing ? '正在发送…' : '发送测试提醒' }}
+          </button>
+        </div>
+        <p class="sms-provider-note">
+          当前默认使用模拟短信网关，只生成可核验记录，不会把手机号暴露到页面或日志；
+          接入真实短信服务商后改为通用 Webhook 即可。
+        </p>
+        <div v-if="smsDeliveries.length" class="sms-delivery-list">
+          <article v-for="item in smsDeliveries.slice(0, 5)" :key="item.deliveryId">
+            <span>
+              <b>{{ item.eventType === 'sms.test' ? '通道测试' : item.eventType }}</b>
+              <small>{{ item.targetMasked }} · {{ item.provider }} · {{ item.status }}</small>
+            </span>
+            <time>{{ new Date(item.createdAt).toLocaleString('zh-CN') }}</time>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div><p class="eyebrow">INBOX</p><h2>站内任务通知</h2></div>
+          <span class="count-pill">{{ unreadCount }} 条未读</span>
+        </div>
+        <div class="notification-list">
+          <button
+            v-for="item in notifications"
+            :key="item.notificationId"
+            class="notification-item"
+            :class="{ unread: !item.readAt }"
+            @click="markRead(item)"
+          >
+            <span class="notice-dot"></span>
+            <span>
+              <b>{{ item.title }}</b>
+              <small>{{ item.content }}</small>
+            </span>
+          </button>
+          <p v-if="!notifications.length" class="empty-state">暂无通知。</p>
+        </div>
+      </section>
+    </div>
   </div>
 </template>

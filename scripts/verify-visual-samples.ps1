@@ -40,10 +40,18 @@ $login = Invoke-RestMethod -Method Post -Uri "$BaseUrl/api/auth/login" `
 $script:auth = @{ Authorization = "Bearer $($login.data.accessToken)" }
 
 $batch = Call-Api POST "/api/batches" @{
-    examName = "Visual sample verification"
+    examName = "五四青年节 · 新时代好青年论述题"
     questionNo = "Q1"
-    questionTitle = "New-era youth essay"
-    questionText = "How should a new-era youth become an outstanding young person and join the Party?"
+    questionTitle = "如何争做新时代好青年，早日入党"
+    questionText = @"
+在今年五四青年节到来之际，中共中央总书记、国家主席、中央军委主席习近平代表党中央，向全国广大青年致以节日祝贺和诚挚问候。
+
+习近平总书记指出，新时代新征程上，全国各族青年听从党和人民的召唤，在科技创新、乡村振兴、绿色发展、社会服务、卫国戍边等各领域各方面勇当排头兵和生力军，展现出自信自强、刚健有为的精神风貌。党中央对广大青年充分信任、寄予厚望！
+
+习近平总书记强调，今年是新中国成立75周年，是五四运动105周年。广大青年要继承和发扬五四精神，坚定不移听党话、跟党走，争做有理想、敢担当能吃苦、肯奋斗的新时代好青年，在推进强国建设、民族复兴伟业中展现青春作为、彰显青春风采、贡献青春力量，奋力书写为中国式现代化挺膺担当的青春篇章。
+
+作为一名入党积极分子，通过校史、院史和众多优秀校友的学习、了解，请你结合学习心得和自身实际，来谈谈如何争做新时代好青年，早日入党。
+"@
     maxScore = 20
     baseScore = 10
 }

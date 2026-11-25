@@ -26,7 +26,7 @@ C04 保存 `grading_task`、`grading_result` 和 `hit_evidence`。C05 保存复�
 
 默认 local 模式使用 H2、Spring 事务提交后事件、本地对象文件和内存幂等存储，便于无 Docker 演示。infra 模式启用真实 MySQL、Redis、Kafka 与 MinIO；七服务数据库地址分别使用 `USER_DB_URL`、`RUBRIC_DB_URL`、`ANSWER_DB_URL`、`GRADING_DB_URL`、`REVIEW_DB_URL`、`REPORT_DB_URL`、`NOTIFICATION_DB_URL`。
 
-`grading.requested` 传递导入任务标识，由 C04 消费，再通过内部接口委托 C03 推进持久化的批次编排；OCR、匹配与初筛结果仍由 C04 执行和保存。派发前已有导入任务持久化记录；发送失败后扫描 PENDING 任务补发。通知使用 grading.completed、grading.failed、report.completed、report.failed、review.confirmed 事件，通知失败不回滚人工最终分。业务幂等和通知 eventId 去重分别承担各自职责。
+`grading.requested` 传递导入任务标识，由 C04 消费，再通过内部接口委托 C03 推进持久化的批次编排；OCR、匹配与初筛结果仍由 C04 执行和保存。派发前已有导入任务持久化记录；发送失败后扫描 PENDING 任务补发。通知使用 grading.completed、grading.failed、report.completed、report.failed、review.confirmed、review.completed 事件，通知失败不回滚人工最终分。业务幂等和通知 eventId 去重分别承担各自职责。`review.completed` 只在批次内全部答卷完成最终定分时产生一次，避免逐份触发整批短信。
 
 ## 验收
 
@@ -71,3 +71,16 @@ Gateway 会删除外部请求伪造的 `X-User-Id`、`X-Role`、`X-Gateway-Token
 
 Seata 只覆盖短事务投递，不覆盖长耗时 OCR 和模型调用。SkyWalking 由启动脚本动态附加 Java
 Agent，缺少 Agent 时不影响普通业务启动，但治理验收会明确报告 Trace 缺失。
+
+## 最终演示体验修订
+
+阅卷空间仅保留一个完整五四案例时显示 `Q1`；新建下一案例会自动取已有 `Qx` 的最大值加一。
+顶部案例条允许横向滚动并展示完整标题。电脑端移除相机入口，答卷“识别轨迹”改为与页面可用
+高度匹配的固定面板，在面板内部滚动。
+
+AI 评语拆分为直接生成与结合语音生成：直接生成不发送语音字段；语音文本只作为生成要求，
+不直接覆盖教师最终评语。前端生成期间禁用按钮并显示进行中状态，后端缩短输出上限并将默认
+文本模型改为 `qwen-plus`。模型不可用时仍明确回退本地模板。
+
+用户服务新增手机通知通道绑定，通知服务新增模拟/Webhook 短信网关和发送记录。手机号在
+API、页面、日志和发送记录中均脱敏。Web Speech API 不保存原始录音。

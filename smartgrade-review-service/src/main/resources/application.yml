@@ -49,7 +49,7 @@ app:
   ai-comment:
     enabled: ${AI_COMMENT_ENABLED:true}
     base-url: ${AI_COMMENT_BASE_URL:${VISION_API_BASE_URL:}}
-    model: ${AI_COMMENT_MODEL:${VISION_MODEL:}}
+    model: ${AI_COMMENT_MODEL:qwen-plus}
     api-key: ${AI_COMMENT_API_KEY:${VISION_API_KEY:}}
     timeout-seconds: ${AI_COMMENT_TIMEOUT_SECONDS:30}
 seata:

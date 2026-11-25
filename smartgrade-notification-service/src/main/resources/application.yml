@@ -45,3 +45,7 @@ management:
     web:
       exposure:
         include: health,info
+app:
+  sms:
+    provider: ${SMS_PROVIDER:mock}
+    webhook-url: ${SMS_WEBHOOK_URL:}

@@ -2,7 +2,9 @@ package com.swu.smartgrade.notification;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 
+@EnableFeignClients
 @SpringBootApplication(scanBasePackages = "com.swu.smartgrade")
 public class NotificationServiceApplication {
     public static void main(String[] args) {

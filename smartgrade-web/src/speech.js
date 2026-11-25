@@ -24,7 +24,7 @@ export function useSpeechToText({ onFinal, onError } = {}) {
 
   function start() {
     if (!Recognition) {
-      onError?.('当前浏览器不支持语音识别，请使用最新版 Edge 或 Chrome。')
+      onError?.('语音识别服务不可用，请检查浏览器麦克风权限后重试。')
       return false
     }
     stop()

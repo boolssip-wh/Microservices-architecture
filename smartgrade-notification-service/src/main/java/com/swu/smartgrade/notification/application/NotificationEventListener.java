@@ -14,7 +14,7 @@ public class NotificationEventListener {
     public NotificationEventListener(NotificationApplicationService service, ObjectMapper json) {
         this.service = service; this.json = json;
     }
-    @KafkaListener(topics = {"grading.completed", "grading.failed", "report.completed", "report.failed", "review.confirmed"},
+    @KafkaListener(topics = {"grading.completed", "grading.failed", "report.completed", "report.failed", "review.confirmed", "review.completed"},
             groupId = "smartgrade-notification-service")
     public void receive(String payload) throws Exception {
         service.consume(json.readValue(payload, DomainEvent.class));

@@ -9,6 +9,9 @@ const results = ref([])
 const selected = ref(null)
 const suggestions = ref([])
 const generationMode = ref('')
+const suggestionSource = ref('')
+const voiceInstruction = ref('')
+const suggesting = ref(false)
 const loading = ref(false)
 const statusFilter = ref('WAITING_REVIEW')
 let resultsRequest = 0
@@ -23,9 +26,9 @@ const review = reactive({
 
 const commentSpeech = useSpeechToText({
   onFinal(text) {
-    const current = review.finalComment.trim()
-    review.finalComment = current ? `${current}\n${text}` : text
-    notify('语音评语已转成文字，可继续口述或修改')
+    const current = voiceInstruction.value.trim()
+    voiceInstruction.value = current ? `${current}\n${text}` : text
+    notify('语音要求已转成文字，可继续修改后再生成评语')
   },
   onError: (message) => notify(message, true),
 })
@@ -53,6 +56,9 @@ async function loadResults() {
   selected.value = null
   suggestions.value = []
   generationMode.value = ''
+  suggestionSource.value = ''
+  voiceInstruction.value = ''
+  suggesting.value = false
   if (!batchId) {
     notify('请先在阅卷工作台选择批次', true)
     return
@@ -79,6 +85,9 @@ async function openResult(item) {
   selected.value = null
   suggestions.value = []
   generationMode.value = ''
+  suggestionSource.value = ''
+  voiceInstruction.value = ''
+  suggesting.value = false
   try {
     const result = await api(`/api/results/${item.answerId}`)
     if (disposed || request !== selectionRequest || session.selectedBatchId !== batchId) return
@@ -91,29 +100,47 @@ async function openResult(item) {
   }
 }
 
-async function suggest() {
-  if (!selected.value) return
+async function suggest(mode = 'DIRECT') {
+  if (!selected.value || suggesting.value) return
+  const instruction = mode === 'VOICE' ? voiceInstruction.value.trim() : ''
+  if (mode === 'VOICE' && !instruction) {
+    notify('请先口述或填写评语生成要求', true)
+    return
+  }
   const batchId = session.selectedBatchId
   const answerId = selected.value.answerId
   const currentSelection = selectionRequest
   const request = ++suggestionRequest
   const finalScore = Number(review.finalScore)
   const profileVersion = selected.value.comment?.profileVersion
+  suggesting.value = true
   try {
     const data = await api(`/api/results/${answerId}/comment-suggestion`, {
       method: 'POST',
-      body: { finalScore, profileVersion, teacherInstruction: review.finalComment.trim() },
+      body: {
+        finalScore,
+        profileVersion,
+        ...(mode === 'VOICE' ? { teacherInstruction: instruction } : {}),
+      },
     })
     if (!isCurrentResult(batchId, answerId, currentSelection) || request !== suggestionRequest || Number(review.finalScore) !== finalScore) return
     suggestions.value = data.suggestedComments || []
     generationMode.value = data.generationMode || ''
+    suggestionSource.value = mode
     selected.value.comment = { ...selected.value.comment, profileVersion: data.profileVersion }
     if (!review.finalComment && suggestions.value[0]) {
       review.finalComment = suggestions.value[0]
     }
-    notify(generationMode.value === 'AI' ? 'AI 已根据口述内容和评分证据生成两条评语' : '已生成本地模板评语草稿')
+    const prefix = generationMode.value === 'AI' ? 'AI ' : '本地模板'
+    notify(mode === 'VOICE'
+      ? `${prefix}已结合语音要求和评分证据生成两条评语`
+      : `${prefix}已根据评分证据生成两条评语`)
   } catch (error) {
     if (isCurrentResult(batchId, answerId, currentSelection) && request === suggestionRequest) notify(error.message, true)
+  } finally {
+    if (isCurrentResult(batchId, answerId, currentSelection) && request === suggestionRequest) {
+      suggesting.value = false
+    }
   }
 }
 
@@ -199,7 +226,9 @@ onBeforeUnmount(() => { disposed = true })
       <div class="panel">
         <div class="panel-head">
           <div><p class="eyebrow">FINAL DECISION</p><h2>教师定分</h2></div>
-          <button class="secondary" @click="suggest">AI 生成两条评语</button>
+          <button class="secondary" :disabled="suggesting" @click="suggest('DIRECT')">
+            {{ suggesting ? 'AI 正在生成…' : 'AI 直接生成' }}
+          </button>
         </div>
         <div class="review-form">
           <label>
@@ -210,12 +239,12 @@ onBeforeUnmount(() => { disposed = true })
             复核说明
             <input v-model="review.reviewNote" />
           </label>
-          <label class="span-2">
+          <label class="span-2 voice-instruction-field">
             <span class="voice-label-row">
-              <span>最终评语</span>
+              <span>语音生成要求（可选）</span>
               <button
                 type="button"
-                class="text-button voice-button"
+                class="secondary voice-button"
                 :class="{ listening: commentSpeech.listening.value }"
                 @click="toggleCommentVoice"
               >
@@ -223,21 +252,34 @@ onBeforeUnmount(() => { disposed = true })
               </button>
             </span>
             <textarea
-              v-model="review.finalComment"
-              rows="5"
-              placeholder="可以口述评语要求，再让 AI 结合命中证据生成；也可以直接手工填写"
+              v-model="voiceInstruction"
+              rows="3"
+              placeholder="例如：语气鼓励，先肯定结构完整，再提醒补充“肯奋斗”，控制在120字以内"
             ></textarea>
             <small v-if="commentSpeech.interimText.value" class="voice-interim">
               正在识别：{{ commentSpeech.interimText.value }}
             </small>
-            <small v-else-if="!commentSpeech.supported.value" class="voice-hint">
-              当前浏览器不支持语音识别，请使用最新版 Edge 或 Chrome。
-            </small>
+            <div class="voice-generate-row">
+              <span>语音只作为生成要求，不会覆盖下面的最终评语。</span>
+              <button class="secondary" :disabled="suggesting || !voiceInstruction.trim()" @click="suggest('VOICE')">
+                {{ suggesting ? 'AI 正在生成…' : '结合语音生成' }}
+              </button>
+            </div>
+          </label>
+          <label class="span-2">
+            <span>最终评语（教师确认）</span>
+            <textarea
+              v-model="review.finalComment"
+              rows="5"
+              placeholder="AI 草稿会显示在下方；可选择、修改或直接手工填写"
+            ></textarea>
           </label>
         </div>
         <div v-if="suggestions.length" class="suggestion-list">
           <p class="generation-mode">
-            {{ generationMode === 'AI' ? 'AI 结合口述要求与命中证据生成' : '外部 AI 未启用，当前使用本地模板' }}
+            {{ generationMode === 'AI'
+              ? (suggestionSource === 'VOICE' ? 'AI 已结合语音要求与命中证据生成' : 'AI 已根据评分证据直接生成')
+              : '外部 AI 未启用，当前使用本地模板' }}
           </p>
           <button v-for="text in suggestions" :key="text" @click="review.finalComment = text">{{ text }}</button>
         </div>

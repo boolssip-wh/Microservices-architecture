@@ -38,7 +38,12 @@ if ($env:SENTINEL_DASHBOARD_JAR) {
     $sentinelPaths += [IO.Path]::GetFullPath($env:SENTINEL_DASHBOARD_JAR)
 }
 $nacosPath = [IO.Path]::GetFullPath($NacosHome).TrimEnd('\') + '\'
-$candidates = Get-CimInstance Win32_Process -Filter "Name='java.exe' OR Name='node.exe'"
+try {
+    $candidates = Get-CimInstance Win32_Process -Filter "Name='java.exe' OR Name='node.exe'"
+} catch {
+    Write-Warning "CIM process discovery is unavailable; falling back to project ports and PID records."
+    $candidates = @()
+}
 foreach ($candidate in $candidates) {
     # Nacos startup.cmd quotes only the home segment: "C:\...\nacos"\target\...
     $command = ([string]$candidate.CommandLine).Replace('/', '\').Replace('"', '')
@@ -67,6 +72,38 @@ foreach ($candidate in $candidates) {
             processName = [IO.Path]::GetFileNameWithoutExtension($candidate.Name)
             startTimeUtcTicks = $candidate.CreationDate.ToUniversalTime().Ticks
         }
+    }
+}
+
+# Some restricted terminals deny CIM access. The fixed project ports let the
+# same checkout stop safely without terminating unrelated Java or Node apps.
+$portMap = @{
+    8080 = @{ name = "gateway"; processName = "java" }
+    8081 = @{ name = "user"; processName = "java" }
+    8082 = @{ name = "rubric"; processName = "java" }
+    8083 = @{ name = "answer"; processName = "java" }
+    8084 = @{ name = "grading"; processName = "java" }
+    8085 = @{ name = "review"; processName = "java" }
+    8086 = @{ name = "report"; processName = "java" }
+    8087 = @{ name = "notification"; processName = "java" }
+    5173 = @{ name = "web"; processName = "node" }
+    8858 = @{ name = "sentinel-dashboard"; processName = "java" }
+}
+$listeners = & netstat.exe -ano -p tcp 2>$null
+foreach ($line in @($listeners)) {
+    if ($line -notmatch "^\s*TCP\s+\S+:(\d+)\s+\S+\s+LISTENING\s+(\d+)\s*$") { continue }
+    $port = [int]$Matches[1]
+    $processId = [int]$Matches[2]
+    $descriptor = $portMap[$port]
+    if (-not $descriptor) { continue }
+    $process = Get-Process -Id $processId -ErrorAction SilentlyContinue
+    if (-not $process -or $process.ProcessName -ne $descriptor.processName) { continue }
+    $items = @($items | Where-Object { $_.pid -ne $processId })
+    $items += [PSCustomObject]@{
+        name = $descriptor.name
+        pid = $processId
+        processName = $descriptor.processName
+        startTimeUtcTicks = $process.StartTime.ToUniversalTime().Ticks
     }
 }
 $items = @($items | Sort-Object pid -Unique)

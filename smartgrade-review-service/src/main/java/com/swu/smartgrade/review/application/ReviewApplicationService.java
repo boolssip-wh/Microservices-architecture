@@ -227,6 +227,7 @@ public class ReviewApplicationService {
     @Transactional
     public FinalScoreResponse finalizeScore(Long teacherId, String answerId, FinalScoreRequest request) {
         GradingResult result = requireResult(teacherId, answerId);
+        boolean firstReview = result.getFinalScore() == null && !"REVIEWED".equals(result.getStatus());
         if (request.finalScore().compareTo(BigDecimal.ZERO) < 0
                 || request.finalScore().compareTo(result.getMaxScore()) > 0) {
             throw BusinessException.badRequest("最终分必须在 0 到 " + result.getMaxScore() + " 之间");
@@ -280,6 +281,7 @@ public class ReviewApplicationService {
         auditRepository.save(audit);
         safeNotify(result, "复核完成", "答卷 " + result.getStudentNo() + " 已确认最终分："
                 + finalScore + "/" + result.getMaxScore());
+        if (firstReview) notifyIfBatchCompleted(result);
         return new FinalScoreResponse(review.getReviewId(), finalScore,
                 snapshot.getSnapshotId(), audit.getAuditId());
     }
@@ -423,6 +425,21 @@ public class ReviewApplicationService {
                     result.getTeacherId(), result.getBatchId(), title, content));
         } catch (Exception ignored) {
             // 通知失败不回滚教师已经确认的分数。
+        }
+    }
+
+    private void notifyIfBatchCompleted(GradingResult current) {
+        List<GradingResult> batchResults = resultRepository.findByBatchId(current.getBatchId());
+        if (batchResults.isEmpty() || !batchResults.stream().allMatch(item -> item.getFinalScore() != null)) {
+            return;
+        }
+        try {
+            eventPublisher.publish(new DomainEvent("review-complete-" + UUID.randomUUID(),
+                    "review.completed", current.getTeacherId(), current.getBatchId(),
+                    "批次复核全部完成",
+                    "本批次 " + batchResults.size() + " 份答卷已全部完成复核，可以查看统计报告。"));
+        } catch (Exception ignored) {
+            // 批次提醒失败不影响教师确认的最终成绩。
         }
     }
 

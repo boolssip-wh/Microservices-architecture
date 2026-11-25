@@ -31,7 +31,6 @@ const compiled = ref(null)
 const importing = ref(false)
 const dragActive = ref(false)
 const fileInput = ref(null)
-const cameraInput = ref(null)
 const pollTimer = ref(null)
 const questionExpanded = ref(false)
 const createCaseOpen = ref(false)
@@ -47,6 +46,7 @@ function isCurrentBatch(batchId, request) {
 }
 
 watch(() => props.newCaseRequest, async () => {
+  batchForm.questionNo = nextQuestionNo.value
   createCaseOpen.value = true
   await nextTick()
   document.getElementById('create-case')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -59,6 +59,14 @@ const batchForm = reactive({
   questionText: QUESTION_TEXT,
   maxScore: 20,
   baseScore: 10,
+})
+
+const nextQuestionNo = computed(() => {
+  const greatest = batches.value.reduce((max, item) => {
+    const match = String(item.questionNo || '').match(/^Q(\d+)$/i)
+    return match ? Math.max(max, Number(match[1])) : max
+  }, 0)
+  return `Q${greatest + 1}`
 })
 
 const rubricSource = ref(
@@ -333,10 +341,6 @@ function openFilePicker() {
   fileInput.value?.click()
 }
 
-function openCamera() {
-  cameraInput.value?.click()
-}
-
 async function chooseFiles(event) {
   await addFiles(event.target.files)
   event.target.value = ''
@@ -577,9 +581,6 @@ onBeforeUnmount(() => {
               正在识别：{{ rubricSpeech.interimText.value }}
             </p>
             <textarea v-model="rubricSource" class="source-editor" rows="7"></textarea>
-            <small v-if="!rubricSpeech.supported.value" class="voice-hint">
-              当前浏览器不支持语音识别，请使用最新版 Edge 或 Chrome。
-            </small>
           </div>
           <div class="action-row">
             <button class="secondary" @click="createRubric">创建并解析</button>
@@ -665,15 +666,6 @@ onBeforeUnmount(() => {
             </span>
             <strong>{{ dragActive ? '松手放下答卷' : '拖入答卷，或点击选择' }}</strong>
             <small>保留上传原文件供复核查看；单文件不超过 20 MB</small>
-            <button type="button" class="ghost-chip" @click.stop="openCamera">打开相机拍照</button>
-            <input
-              ref="cameraInput"
-              class="visually-hidden"
-              type="file"
-              accept="image/*"
-              capture="environment"
-              @change="chooseFiles"
-            />
           </div>
 
           <div v-if="importEntries.length" class="file-wall">

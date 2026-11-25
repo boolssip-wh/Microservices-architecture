@@ -21,11 +21,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @Service
 public class NotificationApplicationService {
     private final NotificationRepository repository;
+    private final SmsDispatchService smsDispatcher;
     private record Subscription(Long teacherId, SseEmitter emitter) {}
     private final CopyOnWriteArrayList<Subscription> emitters = new CopyOnWriteArrayList<>();
 
-    public NotificationApplicationService(NotificationRepository repository) {
+    public NotificationApplicationService(NotificationRepository repository,
+                                          SmsDispatchService smsDispatcher) {
         this.repository = repository;
+        this.smsDispatcher = smsDispatcher;
     }
 
     @Transactional
@@ -41,8 +44,10 @@ public class NotificationApplicationService {
         }
         var existing = repository.findByEventId(event.eventId());
         if (existing.isPresent()) return view(existing.get());
-        return persist(new CreateNotificationRequest(event.teacherId(), event.type(), event.title(),
-                event.content(), event.batchId()), event.eventId());
+        NotificationView result = persist(new CreateNotificationRequest(event.teacherId(), event.type(),
+                event.title(), event.content(), event.batchId()), event.eventId());
+        smsDispatcher.dispatch(event);
+        return result;
     }
 
     private NotificationView persist(CreateNotificationRequest request, String eventId) {
@@ -60,9 +65,13 @@ public class NotificationApplicationService {
         if (org.springframework.transaction.support.TransactionSynchronizationManager.isSynchronizationActive()) {
             org.springframework.transaction.support.TransactionSynchronizationManager.registerSynchronization(
                     new org.springframework.transaction.support.TransactionSynchronization() {
-                        @Override public void afterCommit() { broadcast(request.teacherId(), view); }
+                        @Override public void afterCommit() {
+                            broadcast(request.teacherId(), view);
+                        }
                     });
-        } else { broadcast(request.teacherId(), view); }
+        } else {
+            broadcast(request.teacherId(), view);
+        }
         return view;
     }
 

@@ -5,9 +5,11 @@ import com.swu.smartgrade.review.api.dto.CommentSuggestionRequest;
 import com.swu.smartgrade.review.api.dto.HitInput;
 import com.swu.smartgrade.review.api.dto.CreateResultRequest;
 import com.swu.smartgrade.review.application.ReviewApplicationService;
+import com.swu.smartgrade.common.event.DomainEvent;
 import com.swu.smartgrade.common.event.DomainEventPublisher;
 import com.swu.smartgrade.review.infrastructure.client.UserClient;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -19,6 +21,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(properties = {
@@ -66,7 +69,10 @@ class ReviewOrchestrationIntegrationTest {
         assertThat(service.states(1L, "B-TEST-001")).extracting(ReviewApplicationService.ResultState::status)
                 .containsExactly("REVIEWED");
         verify(userClient).profile(1L, "teacher", "教师", "TEACHER");
-        verify(eventPublisher).publish(any());
+        ArgumentCaptor<DomainEvent> events = ArgumentCaptor.forClass(DomainEvent.class);
+        verify(eventPublisher, times(2)).publish(events.capture());
+        assertThat(events.getAllValues()).extracting(DomainEvent::type)
+                .containsExactlyInAnyOrder("review.confirmed", "review.completed");
     }
 
     @Test

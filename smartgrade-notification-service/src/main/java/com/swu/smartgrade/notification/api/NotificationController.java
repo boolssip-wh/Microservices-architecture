@@ -5,12 +5,15 @@ import com.swu.smartgrade.common.api.TraceId;
 import com.swu.smartgrade.common.security.AuthPrincipal;
 import com.swu.smartgrade.notification.api.dto.NotificationPage;
 import com.swu.smartgrade.notification.api.dto.ReadResponse;
+import com.swu.smartgrade.notification.api.dto.SmsDeliveryView;
 import com.swu.smartgrade.notification.application.NotificationApplicationService;
+import com.swu.smartgrade.notification.application.SmsDispatchService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,9 +25,12 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @RequestMapping("/api/notifications")
 public class NotificationController {
     private final NotificationApplicationService service;
+    private final SmsDispatchService smsService;
 
-    public NotificationController(NotificationApplicationService service) {
+    public NotificationController(NotificationApplicationService service,
+                                  SmsDispatchService smsService) {
         this.service = service;
+        this.smsService = smsService;
     }
 
     @GetMapping
@@ -41,6 +47,18 @@ public class NotificationController {
     public ApiResponse<ReadResponse> markRead(@PathVariable String notificationId) {
         return ApiResponse.ok(service.markRead(AuthPrincipal.required().userId(), notificationId),
                 TraceId.current());
+    }
+
+    @GetMapping("/sms-deliveries")
+    @Operation(operationId = "C07-5-01", summary = "查看最近短信发送记录")
+    public ApiResponse<java.util.List<SmsDeliveryView>> smsDeliveries() {
+        return ApiResponse.ok(smsService.recent(AuthPrincipal.required().userId()), TraceId.current());
+    }
+
+    @PostMapping("/test")
+    @Operation(operationId = "C07-5-02", summary = "向已绑定手机发送测试提醒")
+    public ApiResponse<SmsDeliveryView> testSms() {
+        return ApiResponse.ok(smsService.test(AuthPrincipal.required().userId()), TraceId.current());
     }
 
     @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
