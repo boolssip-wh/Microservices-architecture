@@ -54,6 +54,7 @@ app:
     root: ${STORAGE_ROOT:./.data/objects}
   seata-demo:
     fail-after-remote: ${SEATA_DEMO_FAIL_AFTER_REMOTE:false}
+    remote-control-enabled: ${SEATA_DEMO_REMOTE_CONTROL:true}
 springdoc:
   swagger-ui:
     path: /swagger-ui.html

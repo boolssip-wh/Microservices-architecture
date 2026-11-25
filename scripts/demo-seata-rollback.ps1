@@ -4,11 +4,29 @@ param(
     [int]$MysqlPort = 3307,
     [string]$MysqlUser = "smartgrade",
     [string]$MysqlPassword = "smartgrade123",
-    [string]$StudentNo = "RBTEST2026"
+    [string]$StudentNo = "RBTEST2026",
+    [string]$ServiceToken = "local-service-token"
 )
 
 $ErrorActionPreference = "Stop"
 Add-Type -AssemblyName System.Net.Http
+$script:serviceToken = $ServiceToken
+
+function Set-FailMode {
+    param([bool]$Enabled)
+    $value = $Enabled.ToString().ToLowerInvariant()
+    $response = Invoke-RestMethod -Method Put `
+        -Uri "http://127.0.0.1:8083/internal/demo/seata/fail-after-remote/$value" `
+        -Headers @{ "X-Service-Token" = $script:serviceToken } -TimeoutSec 10
+    if ($response.code -ne 0) {
+        throw "Could not set Seata demo fault mode: $($response.message)"
+    }
+}
+
+trap {
+    try { Set-FailMode $false } catch { }
+    throw
+}
 
 function Call-Api {
     param([string]$Method, [string]$Path, $Body)
@@ -43,6 +61,7 @@ $login = Invoke-RestMethod -Method Post -Uri "$BaseUrl/api/auth/login" `
     -Body '{"username":"teacher1","password":"Teach2026"}'
 $script:auth = @{ Authorization = "Bearer $($login.data.accessToken)" }
 
+Set-FailMode $true
 $before = Review-Count
 $nonce = [guid]::NewGuid().ToString("N").Substring(0, 8)
 $batch = Call-Api POST "/api/batches" @{
@@ -109,6 +128,7 @@ if ($after -ne $before) {
 if ($answer.processStatus -ne "FAILED") {
     throw "Expected FAILED answer status after injected failure, got $($answer.processStatus)."
 }
+Set-FailMode $false
 
 @{
     batchId = $batch.batchId

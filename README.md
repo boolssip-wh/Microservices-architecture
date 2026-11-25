@@ -258,6 +258,14 @@ $env:AI_COMMENT_API_KEY = "你的 API Key"
 
 Seata 控制台为 `http://127.0.0.1:7091`，SkyWalking UI 为 `http://127.0.0.1:12801`。
 
+现场验证全局回滚：
+
+```powershell
+.\scripts\demo-seata-rollback.ps1
+```
+
+脚本会开启受控故障、执行真实跨服务投递、核对复核记录回滚，再自动关闭故障开关。
+
 本机同时安装 MySQL 时，可用一条命令启动完整治理演示：
 
 ```powershell

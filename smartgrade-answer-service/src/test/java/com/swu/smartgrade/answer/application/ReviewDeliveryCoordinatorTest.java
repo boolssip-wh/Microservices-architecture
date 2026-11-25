@@ -74,6 +74,22 @@ class ReviewDeliveryCoordinatorTest {
         verify(answers).save(answer);
     }
 
+    @Test
+    void demoFaultSwitchCanBeEnabledAndDisabledWithoutRestart() {
+        Answer answer = answer("A-SEATA-5");
+        when(reviews.create(any())).thenReturn(
+                ApiResponse.ok(new ReviewClient.CreatedResult("R-5", "WAITING_REVIEW"), "trace-5"));
+
+        coordinator.setFailAfterRemote(true);
+        assertThatThrownBy(() -> coordinator.deliver(request("A-SEATA-5"), answer, "WAITING_REVIEW"))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("SEATA_DEMO_FAIL_AFTER_REMOTE");
+        coordinator.setFailAfterRemote(false);
+        coordinator.deliver(request("A-SEATA-5"), answer, "WAITING_REVIEW");
+
+        assertThat(answer.getStatus()).isEqualTo("WAITING_REVIEW");
+    }
+
     private Answer answer(String answerId) {
         Answer answer = new Answer();
         answer.setAnswerId(answerId);
