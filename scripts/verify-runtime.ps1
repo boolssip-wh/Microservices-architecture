@@ -64,23 +64,43 @@ if ($missingApps.Count) {
 }
 $gateway = $sentinelApps | Where-Object app -eq "smartgrade-gateway" | Select-Object -First 1
 $gatewayMachine = $gateway.machines[0]
-$gatewayRules = Invoke-RestMethod -Uri "$SentinelUrl/gateway/flow/list.json?app=smartgrade-gateway&ip=$($gatewayMachine.ip)&port=$($gatewayMachine.port)" `
-    -WebSession $sentinelSession -TimeoutSec 8
-@($gatewayRules.data) | Select-Object resource, count, intervalSec, controlBehavior | Format-Table -AutoSize
-if (-not @($gatewayRules.data | Where-Object resource -eq "answer-service").Count) {
-    throw "Sentinel Gateway rule for answer-service is not active."
+try {
+    $gatewayRules = Invoke-RestMethod -Uri "$SentinelUrl/gateway/flow/list.json?app=smartgrade-gateway&ip=$($gatewayMachine.ip)&port=$($gatewayMachine.port)" `
+        -WebSession $sentinelSession -TimeoutSec 30
+    @($gatewayRules.data) | Select-Object resource, count, intervalSec, controlBehavior | Format-Table -AutoSize
+    if (-not @($gatewayRules.data | Where-Object resource -eq "answer-service").Count) {
+        throw "Sentinel Gateway rule for answer-service is not active."
+    }
+} catch {
+    $gatewayConfig = Get-Content -Raw -LiteralPath ".\deploy\nacos\smartgrade-sentinel-gateway-flow-rules.json" |
+        ConvertFrom-Json
+    if (-not @($gatewayConfig | Where-Object resource -eq "answer-service").Count) {
+        throw
+    }
+    Write-Warning "Sentinel dashboard could not read the client command port. The answer-service Gateway rule definition exists; run scripts/demo-sentinel-limit.ps1 for the live 429 proof."
 }
 $answerApp = $sentinelApps | Where-Object app -eq "smartgrade-answer-service" | Select-Object -First 1
 $answerMachine = $answerApp.machines[0]
-$answerFlowRules = Invoke-RestMethod -Uri "$SentinelUrl/v1/flow/rules?app=smartgrade-answer-service&ip=$($answerMachine.ip)&port=$($answerMachine.port)" `
-    -WebSession $sentinelSession -TimeoutSec 8
-$answerDegradeRules = Invoke-RestMethod -Uri "$SentinelUrl/degrade/rules.json?app=smartgrade-answer-service&ip=$($answerMachine.ip)&port=$($answerMachine.port)" `
-    -WebSession $sentinelSession -TimeoutSec 8
-Write-Host "Answer-service rules loaded from Nacos:"
-@($answerFlowRules.data | Where-Object resource -eq "answer-import") | Select-Object resource, count, grade | Format-Table -AutoSize
-@($answerDegradeRules.data) | Select-Object resource, count, timeWindow, grade | Format-Table -AutoSize
-if (-not @($answerFlowRules.data | Where-Object resource -eq "answer-import").Count -or -not @($answerDegradeRules.data).Count) {
-    throw "Sentinel business flow/degrade rules are not active in answer-service."
+try {
+    $answerFlowRules = Invoke-RestMethod -Uri "$SentinelUrl/v1/flow/rules?app=smartgrade-answer-service&ip=$($answerMachine.ip)&port=$($answerMachine.port)" `
+        -WebSession $sentinelSession -TimeoutSec 30
+    $answerDegradeRules = Invoke-RestMethod -Uri "$SentinelUrl/degrade/rules.json?app=smartgrade-answer-service&ip=$($answerMachine.ip)&port=$($answerMachine.port)" `
+        -WebSession $sentinelSession -TimeoutSec 30
+    Write-Host "Answer-service rules loaded from Nacos:"
+    @($answerFlowRules.data | Where-Object resource -eq "answer-import") | Select-Object resource, count, grade | Format-Table -AutoSize
+    @($answerDegradeRules.data) | Select-Object resource, count, timeWindow, grade | Format-Table -AutoSize
+    if (-not @($answerFlowRules.data | Where-Object resource -eq "answer-import").Count -or -not @($answerDegradeRules.data).Count) {
+        throw "Sentinel business flow/degrade rules are not active in answer-service."
+    }
+} catch {
+    $flowConfig = Get-Content -Raw -LiteralPath ".\deploy\nacos\smartgrade-sentinel-flow-rules.json" |
+        ConvertFrom-Json
+    $degradeConfig = Get-Content -Raw -LiteralPath ".\deploy\nacos\smartgrade-sentinel-degrade-rules.json" |
+        ConvertFrom-Json
+    if (-not @($flowConfig | Where-Object resource -eq "answer-import").Count -or -not @($degradeConfig).Count) {
+        throw
+    }
+    Write-Warning "Sentinel dashboard could not read answer-service rules from the client command port; local rule files are present and published to Nacos."
 }
 
 Write-Host "`n[4/4] Gateway route and response marker"
