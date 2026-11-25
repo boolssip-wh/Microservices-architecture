@@ -49,3 +49,8 @@ app:
   sms:
     provider: ${SMS_PROVIDER:mock}
     webhook-url: ${SMS_WEBHOOK_URL:}
+    smtp-host: ${SMTP_HOST:smtp.qq.com}
+    smtp-port: ${SMTP_PORT:465}
+    smtp-username: ${SMTP_USERNAME:}
+    smtp-password: ${SMTP_PASSWORD:}
+    smtp-from: ${SMTP_FROM:}

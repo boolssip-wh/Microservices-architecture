@@ -16,6 +16,8 @@ public class TeacherNotificationChannel {
     @Column(nullable = false)
     private String phone;
 
+    private String contact;
+
     @Column(nullable = false)
     private boolean smsEnabled;
 
@@ -36,6 +38,14 @@ public class TeacherNotificationChannel {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getContact() {
+        return contact;
+    }
+
+    public void setContact(String contact) {
+        this.contact = contact;
     }
 
     public boolean isSmsEnabled() {

@@ -42,7 +42,10 @@ public class NotificationChannelApplicationService {
                     created.setTeacherId(principal.userId());
                     return created;
                 });
-        channel.setPhone(normalize(request.phone()));
+        channel.setContact(normalizeContact(request.contact()));
+        if (channel.getPhone() == null) {
+            channel.setPhone(channel.getContact());
+        }
         channel.setSmsEnabled(Boolean.TRUE.equals(request.enabled()));
         channel.setUpdatedAt(LocalDateTime.now());
         channels.save(channel);
@@ -55,7 +58,7 @@ public class NotificationChannelApplicationService {
                 .map(channel -> new NotificationChannelView(
                         teacherId,
                         true,
-                        mask(channel.getPhone()),
+                        mask(channel.getContact() == null ? channel.getPhone() : channel.getContact()),
                         channel.isSmsEnabled(),
                         channel.getUpdatedAt().atZone(ZoneId.systemDefault()).toOffsetDateTime()))
                 .orElseGet(() -> new NotificationChannelView(teacherId, false, null, false, null));
@@ -64,26 +67,40 @@ public class NotificationChannelApplicationService {
     @Transactional(readOnly = true)
     public RawChannel raw(Long teacherId) {
         return channels.findById(teacherId)
-                .map(channel -> new RawChannel(true, channel.isSmsEnabled(), channel.getPhone()))
+                .map(channel -> new RawChannel(true, channel.isSmsEnabled(),
+                        channel.getContact() == null ? channel.getPhone() : channel.getContact()))
                 .orElseGet(() -> new RawChannel(false, false, null));
     }
 
-    private String normalize(String phone) {
-        String value = phone == null ? "" : phone.replaceAll("\\s+", "");
-        if (value.startsWith("+86")) {
-            value = value.substring(3);
-        } else if (value.startsWith("86") && value.length() == 13) {
-            value = value.substring(2);
+    private String normalizeContact(String value) {
+        String contact = value == null ? "" : value.replaceAll("\\s+", "");
+        if (contact.contains("@")) {
+            if (!contact.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+                throw BusinessException.badRequest("请输入有效的邮箱地址");
+            }
+            return contact.toLowerCase();
         }
-        if (!value.matches("1[3-9]\\d{9}")) {
-            throw BusinessException.badRequest("请输入有效的中国大陆手机号");
+        if (contact.startsWith("+86")) {
+            contact = contact.substring(3);
+        } else if (contact.startsWith("86") && contact.length() == 13) {
+            contact = contact.substring(2);
         }
-        return value;
+        if (!contact.matches("1[3-9]\\d{9}")) {
+            throw BusinessException.badRequest("请输入有效的手机号或邮箱");
+        }
+        return contact;
     }
 
-    private String mask(String phone) {
-        if (phone == null || phone.length() != 11) return null;
-        return phone.substring(0, 3) + "****" + phone.substring(7);
+    private String mask(String contact) {
+        if (contact == null || contact.isBlank()) return null;
+        if (contact.contains("@")) {
+            int at = contact.indexOf('@');
+            String local = contact.substring(0, at);
+            String shown = local.length() <= 2 ? local : local.substring(0, 2);
+            return shown + "***" + contact.substring(at);
+        }
+        if (contact.length() != 11) return null;
+        return contact.substring(0, 3) + "****" + contact.substring(7);
     }
 
     private void requireTeacher(AuthPrincipal principal) {
@@ -92,6 +109,6 @@ public class NotificationChannelApplicationService {
         }
     }
 
-    public record RawChannel(boolean bound, boolean enabled, String phone) {
+    public record RawChannel(boolean bound, boolean enabled, String contact) {
     }
 }

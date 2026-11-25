@@ -13,6 +13,6 @@ public interface NotificationChannelClient {
             @PathVariable Long teacherId,
             @RequestHeader("X-Service-Token") String serviceToken);
 
-    record Channel(boolean bound, boolean enabled, String phone) {
+    record Channel(boolean bound, boolean enabled, String contact) {
     }
 }

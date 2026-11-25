@@ -209,9 +209,9 @@ $env:AI_COMMENT_API_KEY = "你的 API Key"
 
 未配置或调用失败时，页面明确显示“当前使用本地模板”，原有教师偏好模板继续可用，不会阻断最终定分。
 
-### 手机任务提醒
+### 手机/邮箱任务提醒
 
-教师可在“教师偏好与任务通知”绑定手机并开启关键节点提醒。初筛完成、初筛部分失败和整批
+教师可在“教师偏好与任务通知”绑定手机号或邮箱并开启关键节点提醒。初筛完成、初筛部分失败和整批
 复核完成时，通知服务会读取教师开关并调用可插拔短信网关。页面只显示脱敏号码，发送记录可在
 设置页查看。
 
@@ -225,6 +225,17 @@ $env:SMS_WEBHOOK_URL = "https://你的短信网关/webhook"
 
 实际短信平台仍需要签名、模板、密钥和审核。网页端实时处理数量继续通过 SSE/轮询展示；短信
 只承担“可以开始复核”和“整批已完成”两个里程碑提醒，不适合展示实时百分比。
+
+邮箱方式示例（QQ 邮箱使用授权码，不是 QQ 密码）：
+
+```powershell
+$env:SMS_PROVIDER = "smtp"
+$env:SMTP_HOST = "smtp.qq.com"
+$env:SMTP_PORT = "465"
+$env:SMTP_USERNAME = "3865327010@qq.com"
+$env:SMTP_PASSWORD = "你的QQ邮箱授权码"
+$env:SMTP_FROM = "3865327010@qq.com"
+```
 
 ## 六、Nacos、Sentinel、Seata、SkyWalking 与 Gateway
 

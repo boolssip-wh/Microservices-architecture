@@ -14,7 +14,7 @@ const notifications = ref([])
 const unreadCount = ref(0)
 const smsDeliveries = ref([])
 const sms = reactive({
-  phoneInput: '',
+  contactInput: '',
   maskedPhone: '',
   bound: false,
   enabled: true,
@@ -99,9 +99,11 @@ async function loadNotificationChannel() {
 }
 
 async function saveNotificationChannel() {
-  const phone = sms.phoneInput.replace(/\s+/g, '')
-  if (!/^(?:\+?86)?1[3-9]\d{9}$/.test(phone)) {
-    notify('请输入有效的中国大陆手机号', true)
+  const contact = sms.contactInput.replace(/\s+/g, '')
+  const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact)
+  const isPhone = /^(?:\+?86)?1[3-9]\d{9}$/.test(contact)
+  if (!isEmail && !isPhone) {
+    notify('请输入有效的手机号或邮箱', true)
     return
   }
   sms.saving = true
@@ -109,11 +111,11 @@ async function saveNotificationChannel() {
     const data = await guarded(
       () => api('/api/teachers/me/notification-channel', {
         method: 'PUT',
-        body: { phone, enabled: sms.enabled },
+        body: { contact, enabled: sms.enabled },
       }),
-      sms.enabled ? '手机号已绑定并开启任务提醒' : '手机号已绑定，任务提醒已关闭',
+      sms.enabled ? '接收方式已绑定并开启任务提醒' : '接收方式已绑定，任务提醒已关闭',
     )
-    sms.phoneInput = ''
+    sms.contactInput = ''
     sms.bound = Boolean(data.bound)
     sms.maskedPhone = data.maskedPhone || ''
     sms.enabled = Boolean(data.enabled)
@@ -200,8 +202,8 @@ onBeforeUnmount(() => {
         </div>
         <div class="form-grid sms-form-grid">
           <label>
-            手机号
-            <input v-model="sms.phoneInput" inputmode="tel" maxlength="14" placeholder="请输入11位手机号" />
+            手机号或邮箱
+            <input v-model="sms.contactInput" maxlength="64" placeholder="请输入手机号或邮箱" />
           </label>
           <label class="toggle-label">
             任务短信提醒
@@ -220,8 +222,8 @@ onBeforeUnmount(() => {
           </button>
         </div>
         <p class="sms-provider-note">
-          当前默认使用模拟短信网关，只生成可核验记录，不会把手机号暴露到页面或日志；
-          接入真实短信服务商后改为通用 Webhook 即可。
+          当前默认使用模拟网关，只生成可核验记录；配置 SMTP 后可真实发送中文邮件提醒，
+          页面不会显示完整手机号或邮箱。
         </p>
         <div v-if="smsDeliveries.length" class="sms-delivery-list">
           <article v-for="item in smsDeliveries.slice(0, 5)" :key="item.deliveryId">

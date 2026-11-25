@@ -42,7 +42,7 @@ class NotificationChannelServiceTest {
         ArgumentCaptor<TeacherNotificationChannel> saved =
                 ArgumentCaptor.forClass(TeacherNotificationChannel.class);
         verify(channels).save(saved.capture());
-        assertThat(saved.getValue().getPhone()).isEqualTo("13800138000");
+        assertThat(saved.getValue().getContact()).isEqualTo("13800138000");
     }
 
     @Test

@@ -8,6 +8,7 @@ const router = useRouter()
 const username = ref('teacher1')
 const password = ref('Teach2026')
 const loading = ref(false)
+const showPassword = ref(false)
 
 async function login(account = username.value) {
   loading.value = true
@@ -63,7 +64,23 @@ async function login(account = username.value) {
         </label>
         <label>
           密码
-          <input v-model="password" type="password" autocomplete="current-password" placeholder="请输入密码" />
+          <span class="password-field">
+            <input
+              v-model="password"
+              :type="showPassword ? 'text' : 'password'"
+              autocomplete="current-password"
+              placeholder="请输入密码"
+            />
+            <button
+              type="button"
+              class="password-toggle"
+              :aria-label="showPassword ? '隐藏密码' : '显示密码'"
+              :title="showPassword ? '隐藏密码' : '显示密码'"
+              @click="showPassword = !showPassword"
+            >
+              {{ showPassword ? '隐藏' : '显示' }}
+            </button>
+          </span>
         </label>
         <button class="primary wide" :disabled="loading">{{ loading ? '正在登录…' : '进入工作台' }}</button>
         <button type="button" class="secondary wide" @click="login('admin')">以管理员账号演示</button>

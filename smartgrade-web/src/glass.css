@@ -643,42 +643,6 @@ select:focus {
 .answer-state { color: #757575; }
 .coverage-pill { color: #6e6e6e; background: rgba(238, 227, 200, 0.7); }
 .answer-row { border-bottom-color: rgba(90, 90, 90, 0.09); }
-.studio-grid { align-items: stretch; }
-.studio-main { height: 100%; }
-.studio-side {
-  position: static;
-  align-self: stretch;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  overflow: hidden;
-}
-.studio-side > .status-card,
-.studio-side > .upload-card { flex: 0 0 auto; }
-.answer-queue-card {
-  flex: 1 1 auto;
-  min-height: 210px;
-  margin-top: 0 !important;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-.answer-queue-card .panel-head { flex: 0 0 auto; }
-.answer-queue-card .answer-list {
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  padding-right: 6px;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(105, 105, 105, 0.45) transparent;
-}
-.answer-queue-card .answer-list::-webkit-scrollbar { width: 7px; }
-.answer-queue-card .answer-list::-webkit-scrollbar-thumb {
-  border-radius: 99px;
-  background: rgba(105, 105, 105, 0.42);
-}
 .answer-queue-card .eyebrow { font-size: 12px; }
 .answer-queue-card h3 { font-size: 22px; }
 .answer-queue-card .text-button { font-size: 14px; }
@@ -1211,20 +1175,6 @@ select:focus {
   .topbar { flex-wrap: wrap; }
   .topbar-batches { flex-basis: 190px; }
   .topbar-actions { flex-wrap: nowrap; }
-}
-
-@media (max-width: 980px) {
-  .studio-side {
-    display: grid;
-    height: auto;
-    overflow: visible;
-  }
-  .answer-queue-card {
-    min-height: 320px;
-  }
-  .answer-queue-card .answer-list {
-    max-height: 440px;
-  }
 }
 
 @media (max-width: 760px) {

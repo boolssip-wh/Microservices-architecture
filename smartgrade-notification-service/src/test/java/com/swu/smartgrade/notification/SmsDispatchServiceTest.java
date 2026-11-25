@@ -23,7 +23,8 @@ class SmsDispatchServiceTest {
                 new NotificationChannelClient.Channel(true, true, "13800138000"), "test"));
         when(deliveries.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
         var service = new SmsDispatchService(
-                channelClient, deliveries, "service-token", "mock", "");
+                channelClient, deliveries, "service-token", "mock", "",
+                "smtp.qq.com", 465, "", "", "");
 
         var view = service.test(1L);
 

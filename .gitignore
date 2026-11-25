@@ -3,6 +3,7 @@
 **/target/
 **/target-qa/
 **/target-qa-*/
+**/target-qa*/
 **/node_modules/
 .m2/
 .npm-cache/

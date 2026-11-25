@@ -946,6 +946,20 @@ input:focus, textarea:focus, select:focus {
 .login-card h2 { font: 33px Georgia, "Microsoft YaHei", serif; margin: 10px 0; }
 .login-card label { display: block; color: #5f5f5f; font-size: 11px; margin-top: 18px; }
 .login-card input { padding: 14px; background: rgba(255, 255, 255, .72); }
+.password-field { position: relative; display: block; }
+.password-field input { padding-right: 62px; }
+.password-toggle {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 0;
+  padding: 7px 9px;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.66);
+  color: #626262;
+  font-size: 11px;
+}
 .demo-tip { font-size: 10px; color: var(--muted); text-align: center; margin-top: 16px; line-height: 1.6; }
 
 .reveal-enter-active, .reveal-leave-active { transition: .3s ease; }
