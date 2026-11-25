@@ -1,0 +1,14 @@
+.idea/
+.vscode/
+**/target/
+**/target-qa/
+**/node_modules/
+.m2/
+.npm-cache/
+.tools/
+.data/
+.runtime/
+logs/
+*.log
+.env
+smartgrade-web/dist/

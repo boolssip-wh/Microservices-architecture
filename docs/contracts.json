@@ -1,0 +1,429 @@
+{
+  "revision": "2026-11-12",
+  "services": [
+    {
+      "id": "C01",
+      "name": "身份与教师偏好服务",
+      "module": "smartgrade-user-service",
+      "port": 8081
+    },
+    {
+      "id": "C02",
+      "name": "评分规则服务",
+      "module": "smartgrade-rubric-service",
+      "port": 8082
+    },
+    {
+      "id": "C03",
+      "name": "答卷批次服务",
+      "module": "smartgrade-answer-service",
+      "port": 8083
+    },
+    {
+      "id": "C04",
+      "name": "可解释初筛服务",
+      "module": "smartgrade-grading-service",
+      "port": 8084
+    },
+    {
+      "id": "C05",
+      "name": "复核定分服务",
+      "module": "smartgrade-review-service",
+      "port": 8085
+    },
+    {
+      "id": "C06",
+      "name": "统计报告服务",
+      "module": "smartgrade-report-service",
+      "port": 8086
+    },
+    {
+      "id": "C07",
+      "name": "任务通知服务",
+      "module": "smartgrade-notification-service",
+      "port": 8087
+    }
+  ],
+  "apis": [
+    {
+      "name": "读取本人批次中答卷的原始上传文件",
+      "path": "/api/batches/{batchId}/answers/{answerId}/original",
+      "function": "C03-4 C05-2",
+      "method": "GET",
+      "id": "C03-4-03"
+    },
+    {
+      "name": "校验教师账号密码并签发 JWT",
+      "path": "/api/auth/login",
+      "function": "C01-1",
+      "method": "POST",
+      "id": "C01-1-01"
+    },
+    {
+      "name": "读取当前令牌对应的教师身份和角色",
+      "path": "/api/auth/me",
+      "function": "C01-2 C01-3",
+      "method": "GET",
+      "id": "C01-2-01"
+    },
+    {
+      "name": "读取当前教师的五类评语偏好",
+      "path": "/api/teachers/me/comment-profile",
+      "function": "C01-4",
+      "method": "GET",
+      "id": "C01-4-01"
+    },
+    {
+      "name": "更新当前教师的五类评语偏好",
+      "path": "/api/teachers/me/comment-profile",
+      "function": "C01-4",
+      "method": "PUT",
+      "id": "C01-4-02"
+    },
+    {
+      "name": "供 C05 读取指定教师的评语偏好",
+      "path": "/internal/teachers/{teacherId}/comment-profile",
+      "function": "C01-4 C05-4",
+      "method": "GET",
+      "id": "C01-4-03"
+    },
+    {
+      "name": "为批次创建评分规则聚合根",
+      "path": "/api/rubrics",
+      "function": "C02-1",
+      "method": "POST",
+      "id": "C02-1-01"
+    },
+    {
+      "name": "将评分细则拆分为可编辑要点",
+      "path": "/api/rubrics/{rubricId}/parse",
+      "function": "C02-2",
+      "method": "POST",
+      "id": "C02-2-01"
+    },
+    {
+      "name": "保存要点 关键词 变体 权重和分值",
+      "path": "/api/rubrics/{rubricId}/points",
+      "function": "C02-3",
+      "method": "PUT",
+      "id": "C02-3-01"
+    },
+    {
+      "name": "校验权重后冻结不可变规则版本",
+      "path": "/api/rubrics/{rubricId}/compile",
+      "function": "C02-4",
+      "method": "POST",
+      "id": "C02-4-01"
+    },
+    {
+      "name": "读取指定不可变规则版本",
+      "path": "/api/rubrics/{rubricId}/versions/{version}",
+      "function": "C02-4",
+      "method": "GET",
+      "id": "C02-4-02"
+    },
+    {
+      "name": "供 C04 读取批次当前冻结规则",
+      "path": "/internal/rubrics/batches/{batchId}/current",
+      "function": "C02-4 C04-1",
+      "method": "GET",
+      "id": "C02-4-03"
+    },
+    {
+      "name": "创建阅卷批次",
+      "path": "/api/batches",
+      "function": "C03-1",
+      "method": "POST",
+      "id": "C03-1-01"
+    },
+    {
+      "name": "分页读取本人批次",
+      "path": "/api/batches",
+      "function": "C03-1",
+      "method": "GET",
+      "id": "C03-1-02"
+    },
+    {
+      "name": "读取批次详情和当前规则版本",
+      "path": "/api/batches/{batchId}",
+      "function": "C03-1",
+      "method": "GET",
+      "id": "C03-1-03"
+    },
+    {
+      "name": "上传答卷并创建导入任务",
+      "path": "/api/batches/{batchId}/answers/import",
+      "function": "C03-2",
+      "method": "POST",
+      "id": "C03-2-01"
+    },
+    {
+      "name": "读取文件级校验结果",
+      "path": "/api/import-jobs/{jobId}/validation",
+      "function": "C03-3",
+      "method": "GET",
+      "id": "C03-3-01"
+    },
+    {
+      "name": "读取批次处理进度",
+      "path": "/api/batches/{batchId}/progress",
+      "function": "C03-4",
+      "method": "GET",
+      "id": "C03-4-01"
+    },
+    {
+      "name": "分页读取批次答卷和处理状态",
+      "path": "/api/batches/{batchId}/answers",
+      "function": "C03-4",
+      "method": "GET",
+      "id": "C03-4-02"
+    },
+    {
+      "name": "读取当前初筛适配器能力",
+      "path": "/internal/grading/capabilities",
+      "function": "C04-1",
+      "method": "GET",
+      "id": "C04-1-01"
+    },
+    {
+      "name": "执行 OCR 适配或文本直读",
+      "path": "/internal/grading/{taskId}/ocr",
+      "function": "C04-1",
+      "method": "POST",
+      "id": "C04-1-02"
+    },
+    {
+      "name": "按冻结规则匹配并生成证据和建议分",
+      "path": "/internal/grading/{taskId}/match",
+      "function": "C04-2 C04-3",
+      "method": "POST",
+      "id": "C04-2-01"
+    },
+    {
+      "name": "读取初筛任务状态和失败信息",
+      "path": "/internal/grading/{taskId}",
+      "function": "C04-4",
+      "method": "GET",
+      "id": "C04-4-01"
+    },
+    {
+      "name": "教师对本人失败任务发起重试",
+      "path": "/api/grading-tasks/{taskId}/retry",
+      "function": "C04-4",
+      "method": "POST",
+      "id": "C04-4-02"
+    },
+    {
+      "name": "接收初筛结果并创建待复核记录",
+      "path": "/internal/results",
+      "function": "C04-3 C05-1",
+      "method": "POST",
+      "id": "C05-1-01"
+    },
+    {
+      "name": "分页筛选本人复核结果",
+      "path": "/api/results",
+      "function": "C05-1",
+      "method": "GET",
+      "id": "C05-1-02"
+    },
+    {
+      "name": "读取单份答卷证据化复核详情",
+      "path": "/api/results/{answerId}",
+      "function": "C05-2",
+      "method": "GET",
+      "id": "C05-2-01"
+    },
+    {
+      "name": "生成两条可编辑评语草稿",
+      "path": "/api/results/{answerId}/comment-suggestion",
+      "function": "C05-4",
+      "method": "POST",
+      "id": "C05-4-01"
+    },
+    {
+      "name": "确认最终分 最终评语并写入快照和审计",
+      "path": "/api/results/{answerId}/final-score",
+      "function": "C05-3",
+      "method": "PUT",
+      "id": "C05-3-01"
+    },
+    {
+      "name": "标记待人工 存疑或已复核状态",
+      "path": "/api/results/{answerId}/review-status",
+      "function": "C05-2",
+      "method": "PUT",
+      "id": "C05-2-02"
+    },
+    {
+      "name": "供 C06 读取已定分结果汇总",
+      "path": "/internal/results/batches/{batchId}/summary",
+      "function": "C06-1 C06-4",
+      "method": "GET",
+      "id": "C05-3-02"
+    },
+    {
+      "name": "读取平均分和要点漏点统计",
+      "path": "/api/reports/batches/{batchId}/insights",
+      "function": "C06-1 C06-4",
+      "method": "GET",
+      "id": "C06-1-01"
+    },
+    {
+      "name": "创建 CSV 或 XLSX 成绩导出任务",
+      "path": "/api/reports/exports",
+      "function": "C06-2 C06-3 C06-4",
+      "method": "POST",
+      "id": "C06-2-01"
+    },
+    {
+      "name": "查询导出状态和下载地址",
+      "path": "/api/reports/exports/{exportId}",
+      "function": "C06-2",
+      "method": "GET",
+      "id": "C06-2-02"
+    },
+    {
+      "name": "分页读取本人站内通知",
+      "path": "/api/notifications",
+      "function": "C07-1 C07-3",
+      "method": "GET",
+      "id": "C07-3-01"
+    },
+    {
+      "name": "将本人通知标记为已读",
+      "path": "/api/notifications/{notificationId}/read",
+      "function": "C07-4",
+      "method": "PUT",
+      "id": "C07-4-01"
+    },
+    {
+      "name": "建立 SSE 实时通知流",
+      "path": "/api/notifications/stream",
+      "function": "C07-2 C07-3",
+      "method": "GET",
+      "id": "C07-2-01"
+    },
+    {
+      "name": "供业务服务写入站内通知",
+      "path": "/internal/notifications",
+      "function": "C07-1",
+      "method": "POST",
+      "id": "C07-1-01"
+    }
+  ],
+  "functions": [
+    {
+      "id": "C01-1",
+      "name": "3 秒内完成教师登录"
+    },
+    {
+      "id": "C01-2",
+      "name": "1 次令牌识别当前身份"
+    },
+    {
+      "id": "C01-3",
+      "name": "100% 隔离教师批次权限"
+    },
+    {
+      "id": "C01-4",
+      "name": "5 类教师评语偏好可维护"
+    },
+    {
+      "id": "C02-1",
+      "name": "1 次录入创建评分规则"
+    },
+    {
+      "id": "C02-2",
+      "name": "6 类内容拆分评分要点"
+    },
+    {
+      "id": "C02-3",
+      "name": "100% 权重合计自动校验"
+    },
+    {
+      "id": "C02-4",
+      "name": "1 次冻结形成不可变版本"
+    },
+    {
+      "id": "C03-1",
+      "name": "3 步内创建阅卷批次"
+    },
+    {
+      "id": "C03-2",
+      "name": "单次导入 20 份答卷"
+    },
+    {
+      "id": "C03-3",
+      "name": "100% 标出重复空白损坏文件"
+    },
+    {
+      "id": "C03-4",
+      "name": "1 个 jobId 跟踪全批次进度"
+    },
+    {
+      "id": "C04-1",
+      "name": "单份 30 秒内完成初筛"
+    },
+    {
+      "id": "C04-2",
+      "name": "不低于 90% 的要点匹配一致率"
+    },
+    {
+      "id": "C04-3",
+      "name": "100% 命中项生成原文证据"
+    },
+    {
+      "id": "C04-4",
+      "name": "最多 3 次失败重试后转人工"
+    },
+    {
+      "id": "C05-1",
+      "name": "3 种状态筛选待复核答卷"
+    },
+    {
+      "id": "C05-2",
+      "name": "单份 60 秒内完成证据复核"
+    },
+    {
+      "id": "C05-3",
+      "name": "1 次确认保存最终分与审计"
+    },
+    {
+      "id": "C05-4",
+      "name": "每份生成 2 条可编辑评语草稿"
+    },
+    {
+      "id": "C06-1",
+      "name": "1 屏查看平均分与漏点统计"
+    },
+    {
+      "id": "C06-2",
+      "name": "127 行成绩 30 秒内导出"
+    },
+    {
+      "id": "C06-3",
+      "name": "2 种格式导出成绩文件"
+    },
+    {
+      "id": "C06-4",
+      "name": "100% 导出结果与定分一致"
+    },
+    {
+      "id": "C07-1",
+      "name": "3 类任务事件形成站内通知"
+    },
+    {
+      "id": "C07-2",
+      "name": "5 秒内送达任务完成或失败提醒"
+    },
+    {
+      "id": "C07-3",
+      "name": "2 种方式获取任务通知"
+    },
+    {
+      "id": "C07-4",
+      "name": "1 次操作标记通知已读"
+    }
+  ]
+}

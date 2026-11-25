@@ -1,0 +1,32 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        enabled: true
+        server-addr: ${NACOS_ADDR:127.0.0.1:8848}
+    gateway:
+      routes:
+        - id: user-service
+          uri: lb://smartgrade-user-service
+          predicates:
+            - Path=/api/auth/**,/api/teachers/**
+        - id: rubric-service
+          uri: lb://smartgrade-rubric-service
+          predicates:
+            - Path=/api/rubrics/**
+        - id: answer-service
+          uri: lb://smartgrade-answer-service
+          predicates:
+            - Path=/api/batches/**,/api/import-jobs/**
+        - id: review-service
+          uri: lb://smartgrade-review-service
+          predicates:
+            - Path=/api/results/**
+        - id: report-service
+          uri: lb://smartgrade-report-service
+          predicates:
+            - Path=/api/reports/**
+        - id: notification-service
+          uri: lb://smartgrade-notification-service
+          predicates:
+            - Path=/api/notifications/**

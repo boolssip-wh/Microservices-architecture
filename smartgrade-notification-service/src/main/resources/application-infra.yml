@@ -1,0 +1,23 @@
+spring:
+  data:
+    redis:
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 2s
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:127.0.0.1:9092}
+  datasource:
+    url: ${NOTIFICATION_DB_URL:jdbc:mysql://127.0.0.1:3306/smartgrade_notification?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai}
+    username: ${MYSQL_USER:smartgrade}
+    password: ${MYSQL_PASSWORD:smartgrade123}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  cloud:
+    nacos:
+      discovery:
+        enabled: true
+        server-addr: ${NACOS_ADDR:127.0.0.1:8848}
+management:
+  health:
+    redis:
+      enabled: true

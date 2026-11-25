@@ -1,0 +1,89 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: smartgrade-gateway
+  config:
+    import: "optional:nacos:smartgrade-common.yaml?group=DEFAULT_GROUP&refreshEnabled=true"
+  main:
+    web-application-type: reactive
+  cloud:
+    nacos:
+      config:
+        server-addr: ${NACOS_ADDR:127.0.0.1:8848}
+        username: ${NACOS_USERNAME:nacos}
+        password: ${NACOS_PASSWORD:1111}
+        namespace: ${NACOS_NAMESPACE:public}
+        group: ${NACOS_GROUP:DEFAULT_GROUP}
+      discovery:
+        enabled: true
+        server-addr: ${NACOS_ADDR:127.0.0.1:8848}
+        username: ${NACOS_USERNAME:nacos}
+        password: ${NACOS_PASSWORD:1111}
+        namespace: ${NACOS_NAMESPACE:public}
+        group: ${NACOS_GROUP:DEFAULT_GROUP}
+        register-enabled: true
+    gateway:
+      routes:
+        - id: user-service
+          uri: ${USER_SERVICE_URI:lb://smartgrade-user-service}
+          predicates:
+            - Path=/api/auth/**,/api/teachers/**
+        - id: rubric-service
+          uri: ${RUBRIC_SERVICE_URI:lb://smartgrade-rubric-service}
+          predicates:
+            - Path=/api/rubrics/**
+        - id: answer-service
+          uri: ${ANSWER_SERVICE_URI:lb://smartgrade-answer-service}
+          predicates:
+            - Path=/api/batches/**,/api/import-jobs/**,/api/grading-tasks/**
+        - id: review-service
+          uri: ${REVIEW_SERVICE_URI:lb://smartgrade-review-service}
+          predicates:
+            - Path=/api/results/**
+        - id: report-service
+          uri: ${REPORT_SERVICE_URI:lb://smartgrade-report-service}
+          predicates:
+            - Path=/api/reports/**
+        - id: notification-service
+          uri: ${NOTIFICATION_SERVICE_URI:lb://smartgrade-notification-service}
+          predicates:
+            - Path=/api/notifications/**
+    sentinel:
+      eager: true
+      transport:
+        dashboard: ${SENTINEL_DASHBOARD:127.0.0.1:8858}
+      datasource:
+        gateway-flow:
+          nacos:
+            server-addr: ${NACOS_ADDR:127.0.0.1:8848}
+            username: ${NACOS_USERNAME:nacos}
+            password: ${NACOS_PASSWORD:1111}
+            namespace: ${NACOS_NAMESPACE:public}
+            group-id: ${NACOS_GROUP:DEFAULT_GROUP}
+            data-id: smartgrade-sentinel-gateway-flow-rules
+            data-type: json
+            rule-type: gw-flow
+      scg:
+        fallback:
+          mode: response
+          response-status: 429
+          response-body: '{"code":42900,"message":"请求过于集中，请稍后重试"}'
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:smartgrade-platform-demo-secret-key-2026-change-me}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
+  endpoint:
+    gateway:
+      enabled: true
+
+logging:
+  level:
+    org.springframework.cloud.gateway: INFO

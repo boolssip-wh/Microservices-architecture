@@ -1,0 +1,62 @@
+[
+  {
+    "resource": "user-service",
+    "resourceMode": 0,
+    "grade": 1,
+    "count": 20,
+    "intervalSec": 1,
+    "controlBehavior": 0,
+    "burst": 0,
+    "maxQueueingTimeoutMs": 0
+  },
+  {
+    "resource": "rubric-service",
+    "resourceMode": 0,
+    "grade": 1,
+    "count": 20,
+    "intervalSec": 1,
+    "controlBehavior": 0,
+    "burst": 0,
+    "maxQueueingTimeoutMs": 0
+  },
+  {
+    "resource": "answer-service",
+    "resourceMode": 0,
+    "grade": 1,
+    "count": 8,
+    "intervalSec": 1,
+    "controlBehavior": 0,
+    "burst": 0,
+    "maxQueueingTimeoutMs": 0
+  },
+  {
+    "resource": "review-service",
+    "resourceMode": 0,
+    "grade": 1,
+    "count": 20,
+    "intervalSec": 1,
+    "controlBehavior": 0,
+    "burst": 0,
+    "maxQueueingTimeoutMs": 0
+  },
+  {
+    "resource": "report-service",
+    "resourceMode": 0,
+    "grade": 1,
+    "count": 20,
+    "intervalSec": 1,
+    "controlBehavior": 0,
+    "burst": 0,
+    "maxQueueingTimeoutMs": 0
+  },
+  {
+    "resource": "notification-service",
+    "resourceMode": 0,
+    "grade": 1,
+    "count": 20,
+    "intervalSec": 1,
+    "controlBehavior": 0,
+    "burst": 0,
+    "maxQueueingTimeoutMs": 0
+  }
+]

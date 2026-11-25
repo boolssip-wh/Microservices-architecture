@@ -1,0 +1,41 @@
+spring:
+  cloud:
+    sentinel:
+      eager: true
+      transport:
+        dashboard: ${SENTINEL_DASHBOARD:127.0.0.1:8858}
+      datasource:
+        flow:
+          nacos:
+            server-addr: ${NACOS_ADDR:127.0.0.1:8848}
+            username: ${NACOS_USERNAME:nacos}
+            password: ${NACOS_PASSWORD:1111}
+            namespace: ${NACOS_NAMESPACE:public}
+            group-id: ${NACOS_GROUP:DEFAULT_GROUP}
+            data-id: smartgrade-sentinel-flow-rules
+            data-type: json
+            rule-type: flow
+        degrade:
+          nacos:
+            server-addr: ${NACOS_ADDR:127.0.0.1:8848}
+            username: ${NACOS_USERNAME:nacos}
+            password: ${NACOS_PASSWORD:1111}
+            namespace: ${NACOS_NAMESPACE:public}
+            group-id: ${NACOS_GROUP:DEFAULT_GROUP}
+            data-id: smartgrade-sentinel-degrade-rules
+            data-type: json
+            rule-type: degrade
+
+smartgrade:
+  grading:
+    base-score: 10
+    min-answer-area-ratio: 0.50
+    minimum-text-characters: 240
+    round-to-integer: true
+    ocr:
+      provider: ${VISION_OCR_PROVIDER:vision-llm}
+      base-url: ${VISION_API_BASE_URL:}
+      model: ${VISION_MODEL:}
+      api-key: ${VISION_API_KEY:}
+      timeout-seconds: 90
+      max-image-bytes: 15728640
