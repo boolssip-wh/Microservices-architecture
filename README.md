@@ -258,6 +258,15 @@ $env:AI_COMMENT_API_KEY = "你的 API Key"
 
 Seata 控制台为 `http://127.0.0.1:7091`，SkyWalking UI 为 `http://127.0.0.1:12801`。
 
+本机同时安装 MySQL 时，可用一条命令启动完整治理演示：
+
+```powershell
+.\scripts\start-final-demo.ps1 -NoBrowser
+```
+
+脚本使用独立端口 3307 和独立数据目录启动 MySQL，再启动 Seata、SkyWalking 和全部应用；
+不会读取或修改系统中已有的 3306 MySQL。
+
 ### Docker 基础设施模式
 
 `deploy/docker-compose-infra.yml` 提供：

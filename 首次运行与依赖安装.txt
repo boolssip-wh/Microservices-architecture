@@ -119,6 +119,10 @@ samples 中提供十张统一规格的 A4 竖向 JPG 答卷：
   Seata 控制台：http://127.0.0.1:7091
   SkyWalking UI：http://127.0.0.1:12801
 
+如果本机已安装 D:\mysql-8.0.41，并且 Nacos 正在运行，可以运行完整治理演示：
+  .\scripts\start-final-demo.ps1 -NoBrowser
+该脚本使用独立端口 3307 和独立数据目录，不会读取或修改已有 3306 MySQL。
+
 六、停止与自行验证
 
 普通停止：在项目根目录执行 .\stop.cmd（保留 Nacos）。
