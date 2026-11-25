@@ -1,0 +1,76 @@
+{
+  "verifiedAt": "2026-11-25T17:08:01.7051171+08:00",
+  "batchId": "BD25F60198F454D02",
+  "results": [
+    {
+      "studentNo": "2026100",
+      "contentHits": 4,
+      "suggestedScore": 20.0,
+      "ocrConfidence": 0.89,
+      "coverageHit": true
+    },
+    {
+      "studentNo": "2026104",
+      "contentHits": 3,
+      "suggestedScore": 17.0,
+      "ocrConfidence": 0.59,
+      "coverageHit": false
+    },
+    {
+      "studentNo": "2026105",
+      "contentHits": 3,
+      "suggestedScore": 17.0,
+      "ocrConfidence": 0.59,
+      "coverageHit": false
+    },
+    {
+      "studentNo": "2026106",
+      "contentHits": 3,
+      "suggestedScore": 18.0,
+      "ocrConfidence": 0.69,
+      "coverageHit": true
+    },
+    {
+      "studentNo": "2026107",
+      "contentHits": 3,
+      "suggestedScore": 18.0,
+      "ocrConfidence": 0.69,
+      "coverageHit": true
+    },
+    {
+      "studentNo": "2026108",
+      "contentHits": 3,
+      "suggestedScore": 17.0,
+      "ocrConfidence": 0.59,
+      "coverageHit": false
+    },
+    {
+      "studentNo": "2026109",
+      "contentHits": 4,
+      "suggestedScore": 20.0,
+      "ocrConfidence": 0.89,
+      "coverageHit": true
+    },
+    {
+      "studentNo": "2026110",
+      "contentHits": 0,
+      "suggestedScore": 10.0,
+      "ocrConfidence": 0.0,
+      "coverageHit": false
+    },
+    {
+      "studentNo": "2026111",
+      "contentHits": 3,
+      "suggestedScore": 17.0,
+      "ocrConfidence": 0.59,
+      "coverageHit": false
+    },
+    {
+      "studentNo": "2026999",
+      "contentHits": 3,
+      "suggestedScore": 17.0,
+      "ocrConfidence": 0.59,
+      "coverageHit": false
+    }
+  ]
+}

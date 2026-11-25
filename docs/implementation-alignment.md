@@ -9,9 +9,10 @@
 | 表现层 | Vue 3.5、Vue Router、Vite 6、Fetch、File API；沿用现有 CSS 与动画 |
 | 业务框架 | Java 17、Spring Boot 3.2.9、Spring Cloud 2023.0.3、Alibaba 2023.0.3.2、Validation、JPA、Flyway |
 | 安全与调用 | BCrypt、JWT 0.12.6、Gateway、OpenFeign、LoadBalancer、内部服务令牌 |
-| 服务治理 | Nacos 2.3.2 注册/配置、Sentinel 限流/降级、Actuator、OpenAPI |
+| 服务治理 | Nacos 2.3.2 注册/配置、Sentinel 限流/降级、Seata 2.1.0 AT 短事务、SkyWalking 9.7 追踪、Actuator、OpenAPI |
 | 数据与基础设施 | infra 启用 MySQL 8.4 独立 schema、Redis 7.4、Kafka 3.7、MinIO，Nginx 转发 Gateway |
 | 导出与识别 | Apache POI 导出 XLSX、CSV；PDFBox 提取 PDF 文字或渲染扫描页；视觉模型只作转录 |
+| 语音与评语 | Web Speech API 完成中文语音转写；OpenAI 兼容文本模型根据口述要求和证据生成两条评语草稿，不可用时回退本地模板 |
 
 Spring Kafka 使用 Spring Boot 管理的配套客户端版本；Kafka 3.7 指服务端版本。参考 [Spring 官方兼容说明](https://spring.io/projects/spring-kafka/) 与 [PDFBox 3 加载接口说明](https://pdfbox.apache.org/3.0/migration.html)。
 
@@ -37,11 +38,16 @@ C04 保存 `grading_task`、`grading_result` 和 `hit_evidence`。C05 保存复�
 
 2026-11-12 界面与基础分修订后实测：Maven `verify` 的 30 项后端测试全部通过；前端生产构建通过，上传分组幂等回归测试 1 项通过。隔离端口联调的 13 项断言全部通过，覆盖八应用健康及 Flyway 迁移、草稿批次、自定义基础分持久化及初筛/复核传递、版本 1/2 冻结、重复导入、异步初筛、复核完成同步、小数分保留、XLSX 生成/下载及事件通知。服务日志位于 `.runtime/contract-7165320f8bf243d5aa26dcdb4af85c0a`，Maven 日志位于 `.runtime/verify-ui-update.log`。
 
+2026-11-25 最终迭代新增 7 项后端测试，覆盖 Gateway 信任边界、Seata 投递协调器两次成功场景和两类失败场景。语音识别只在浏览器完成转写，不保存原始录音；AI 评语失败时明确回退模板，不阻断教师定分。
+
 浏览器在隔离端口 4173 → 18100 实测默认题号 `Q1`、基础分 8 的创建案例、解析要点和保存冻结流程，页面显示 `8 + 10.8 + 1.2 = 20`，浏览器无警告或错误。另核验 1440×960 登录页两栏等高、图标无旋转、金色按钮，以及 390×844 窄屏无横向溢出；截图保留于 `.runtime/ui-previews`。
 
 随后修复 Windows 启动时残留进程占用 JAR、导致 `repackage` 无法重命名文件的问题。停止脚本按应用路径补查遗漏的进程并校验启动时间；启动前自动清理旧实例、执行 `clean package`，保留 `logs/build.log`，逐个记录新进程并在启动失败时清理。完整 Windows PowerShell 启动流程实测通过：11 个 Maven 模块构建成功，8 个后端健康检查及前端访问正常，经 8080 网关登录并创建 `Q1`、基础分 8 的案例成功，同时启动拦截也通过。验证后已关闭应用、Sentinel 和 Nacos，并确认 5173、8080–8088、8848、8858、9848、9849 全部释放。启动、并发保护、退出检查记录分别保留于 `.runtime/startup-repair-validation.log`、`.runtime/startup-lock-validation.log`、`.runtime/startup-cleanup-validation.log`。
 
-本次完整业务验证使用本地模式；本机没有 Docker 命令，未启动 MySQL/Redis/Kafka/MinIO 容器做基础设施模式联调。容器部署说明与当前事件投递的限制见 `deploy/INFRA.md`。38 项登记接口之外，保留当前规则查询、导出下载、内部任务重试/派发、复核状态同步和本地事件接收等辅助接口。
+本次完整业务验证使用独立 MySQL 8.0（端口 3307）、Seata Server 2.1.0 和 SkyWalking
+9.7.0；Redis、Kafka、MinIO 容器模式未在本机复测。容器部署说明与当前事件投递的限制见
+`deploy/INFRA.md`。38 项登记接口之外，保留当前规则查询、导出下载、内部任务重试/派发、
+复核状态同步和本地事件接收等辅助接口。
 
 ## 原始试卷与识别轨迹修订
 
@@ -52,3 +58,16 @@ C04 保存 `grading_task`、`grading_result` 和 `hit_evidence`。C05 保存复�
 浏览器另核验 TXT 原文显示、文件下载、切换答卷后旧原件清空，以及人工复核中的 JPEG 原图加载和 125% 缩放。JPEG 下载文件的 SHA-256 与上传样例一致，浏览器未出现警告或错误。测试后已停止本次专属的 18100–18107 服务及 4173 前端。配套的《项目结构说明与自定义项目的编码规范》（11 页）与《同标阅卷初代产品使用说明书》（10 页）保存在课程目录的 `更新1101作业文档` 中，原参考文件保留。
 
 文档中的 3 秒登录、单份 30 秒初筛、90% 匹配一致率、127 行 30 秒导出等属于验收目标，需要固定设备、规则与标注样本实测；单元测试和一次功能闭环不构成这些性能或准确率指标的证明。外部视觉模型受网络与提供方延迟影响，未配置时进入明确失败及人工处理路径。
+
+## 最终迭代：多模态与治理补齐
+
+示例答卷目录现有 10 张同规格 JPG，统一为 `1721 × 2435`、A4 竖向、白底黑字。不同答卷使用
+不同字体、字号、涂改和纸张纹理，命中分布为 20% 四点、70% 三点、10% 零内容点，详细答案
+和预期分数见 `samples/答卷清单.json`。
+
+Gateway 会删除外部请求伪造的 `X-User-Id`、`X-Role`、`X-Gateway-Token` 和
+`X-Service-Token`，验证 JWT 后重新写入身份字段和内部网关令牌。业务服务拒绝未携带正确
+网关令牌的 `/api/**` 请求，`/internal/**` 继续要求服务令牌。
+
+Seata 只覆盖短事务投递，不覆盖长耗时 OCR 和模型调用。SkyWalking 由启动脚本动态附加 Java
+Agent，缺少 Agent 时不影响普通业务启动，但治理验收会明确报告 Trace 缺失。

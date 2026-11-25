@@ -1,0 +1,45 @@
+{
+  "sourceText": "有理想：有理想|理想信念|树立理想|听党话|跟党走|坚定信念\n敢担当：敢担当|敢于担当|勇于担当|责任担当|挺膺担当\n能吃苦：能吃苦|吃苦耐劳|艰苦奋斗|不怕困难|迎难而上\n肯奋斗：肯奋斗|不懈奋斗|拼搏奋斗|接续奋斗|努力奋斗\n作答篇幅：LENGTH_COVERAGE",
+  "points": [
+    {
+      "pointName": "有理想",
+      "pointType": "CONCEPT",
+      "keywords": ["有理想", "理想信念", "树立理想", "听党话", "跟党走", "坚定信念"],
+      "variants": [],
+      "weight": 22.5,
+      "maxScore": 2.25
+    },
+    {
+      "pointName": "敢担当",
+      "pointType": "SIGNIFICANCE",
+      "keywords": ["敢担当", "敢于担当", "勇于担当", "责任担当", "挺膺担当"],
+      "variants": [],
+      "weight": 22.5,
+      "maxScore": 2.25
+    },
+    {
+      "pointName": "能吃苦",
+      "pointType": "PRINCIPLE",
+      "keywords": ["能吃苦", "吃苦耐劳", "艰苦奋斗", "不怕困难", "迎难而上"],
+      "variants": [],
+      "weight": 22.5,
+      "maxScore": 2.25
+    },
+    {
+      "pointName": "肯奋斗",
+      "pointType": "COUNTERMEASURE",
+      "keywords": ["肯奋斗", "不懈奋斗", "拼搏奋斗", "接续奋斗", "努力奋斗"],
+      "variants": [],
+      "weight": 22.5,
+      "maxScore": 2.25
+    },
+    {
+      "pointName": "作答篇幅",
+      "pointType": "LENGTH_COVERAGE",
+      "keywords": [],
+      "variants": [],
+      "weight": 10,
+      "maxScore": 1
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+name: backend-and-web
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: smartgrade-web/package-lock.json
+      - name: Backend tests
+        run: mvn -B verify
+      - name: Frontend tests
+        working-directory: smartgrade-web
+        run: node --test test/importAttempts.test.js
+      - name: Frontend build
+        working-directory: smartgrade-web
+        run: npm ci && npm run build

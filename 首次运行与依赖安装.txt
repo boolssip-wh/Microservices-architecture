@@ -1,5 +1,5 @@
 同标阅卷｜源码交付包首次运行说明
-版本：2026-11-12
+版本：2026-11-25
 
 一、这个压缩包包含什么
 
@@ -30,6 +30,13 @@
    下载 sentinel-dashboard-1.8.8.jar，自行放到工具目录，例如：
    C:\SmartGradeTools\sentinel\sentinel-dashboard.jar
    该第三方 JAR 不包含在源码包内。
+
+6. Seata Server 2.1.0 与 SkyWalking 9.7.0（仅治理组件演示需要）
+   可直接使用独立发行包，放在工具目录：
+   C:\SmartGradeTools\seata-2.1.0
+   C:\SmartGradeTools\skywalking-9.7.0
+   也可以安装 Docker Desktop，由 governance profile 启动。
+   普通本地业务演示可以先不安装；D1 事务和 D2 追踪现场演示时需要准备其中一种方式。
 
 上述工具路径可以自行改变。启动脚本要求 SMARTGRADE_TOOLS 指向的目录下包含 jdk17 和 maven；Sentinel 可用 SENTINEL_DASHBOARD_JAR 指定任意绝对路径。Node/npm 从 PATH 查找。
 默认本地演示采用 H2 内存数据库，不需要先安装 MySQL、Redis、Kafka、MinIO 或 Docker。需要基础设施部署时再阅读 deploy/INFRA.md，并自行安装相应组件。
@@ -74,6 +81,8 @@ Nacos 3.3.0 默认控制台端口为 8080，需要改成 8088，避免与本项�
   $env:NACOS_ADDR = '127.0.0.1:8848'
   $env:NACOS_USERNAME = 'nacos'
   $env:NACOS_PASSWORD = '替换为刚才初始化的管理员密码'
+  $env:GATEWAY_TOKEN = '本项目内部网关令牌'
+  $env:SERVICE_TOKEN = '本项目内部服务令牌'
   cd 'C:\SmartGradeWork\smartgrade-platform'
   .\start.cmd
 
@@ -91,12 +100,24 @@ Sentinel 控制台：http://127.0.0.1:8858，账号/密码均为 sentinel。
 
 五、第一次操作与可选图片识别
 
-先使用 samples 中的 2026101.txt、2026102.txt、2026103.txt 演示，不需要外部图片识别服务：
-新建案例（题号 Q1、满分 20、基础分 10）→创建并解析评分要点→保存并冻结→导入答卷→复核定分中查看原试卷、核对证据、确认最终分→统计报告中导出。
-完整图文步骤见 docs/交付文档/同标阅卷初代产品使用说明书.docx；其中原开发电脑的工具路径和 Nacos 密码示例，以本文件中的新电脑配置方法替换。
+samples 中提供十张统一规格的 A4 竖向 JPG 答卷：
+2 张四点命中、7 张三点命中、1 张零内容点命中。详细预期见 samples/答卷清单.json。
+新建案例（题号 Q1、满分 20、基础分 10）→创建并解析评分要点→保存并冻结→上传 JPG→
+复核定分中查看原图、识别文本和证据→语音口述评语→AI 生成两条草稿→教师确认→统计导出。
+完整图文步骤见 docs/交付文档 中的最终产品说明书。
 
 图片和扫描 PDF 需要接收者自行开通视觉识别接口，再在启动终端配置 VISION_API_BASE_URL、VISION_MODEL、VISION_API_KEY；本包不提供 API Key。不要将真实密钥写入源码或上传。系统支持 TXT、JPG/JPEG、PNG、PDF、ZIP，不支持 WEBP 导入。
+评语模型默认复用上述 OpenAI 兼容地址和密钥，也可用 AI_COMMENT_BASE_URL、AI_COMMENT_MODEL、AI_COMMENT_API_KEY 单独配置；不可用时自动回退本地模板。
+语音输入使用最新版 Edge/Chrome 的 Web Speech API，只提交识别后的文字，不保存录音。
 默认 H2 为内存演示模式，后端重启后批次等业务数据会重置；需要保留的成绩请先下载，长期保存需配置持久化部署。
+
+治理组件演示：
+  1. 准备独立发行包或安装并启动 Docker Desktop。
+  2. 执行 .\scripts\start-governance.ps1，它会启动 Seata、SkyWalking 并下载 Java Agent。
+  3. 重新执行 .\start.cmd。
+  4. 完成一次业务闭环后执行 .\scripts\verify-observability.ps1。
+  Seata 控制台：http://127.0.0.1:7091
+  SkyWalking UI：http://127.0.0.1:12801
 
 六、停止与自行验证
 

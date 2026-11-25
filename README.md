@@ -1,6 +1,6 @@
 # 同标阅卷微服务平台
 
-同标阅卷面向主观题批量阅卷。平台把评分规则、答卷导入、手写识别、可解释初筛、教师复核、统计导出和通知拆分为独立服务，教师保留最终定分权。前端采用银灰与浅金配色，使用玻璃拟态卡片、金色操作按钮和真实数据仪表盘；强调标签可使用 `#b0c1d3`。
+同标阅卷面向主观题批量阅卷。平台把评分规则、答卷导入、手写识别、可解释初筛、教师复核、统计导出和通知拆分为独立服务，教师保留最终定分权。最终版新增浏览器中文语音输入、基于教师口述和评分证据的 AI 评语草稿、Seata 跨服务短事务与 SkyWalking 全链路追踪。前端采用银灰与浅金配色，使用玻璃拟态卡片、金色操作按钮和真实数据仪表盘；强调标签可使用 `#b0c1d3`。
 
 本版本按 2026 年 11 月 12 日作业文档对齐服务名称、接口编号、文件导入、重试与技术组件，并更新金灰配色与原试卷预览。7 个业务服务、28 项功能和 38 项登记接口（原文档 37 项加原件查看）的对应关系见 [contracts.json](docs/contracts.json)，实现边界和验收入口见 [实现与文档对应说明](docs/implementation-alignment.md)。覆盖以下闭环：
 
@@ -96,24 +96,28 @@ npm run build
 - 登录约束、教师偏好、规则版本和冻结不可变校验。
 - 文件类型、ZIP 路径、导入幂等、失败重试与复核投递恢复。
 - 关键词、同义表达匹配与证据偏移，以及人工定分和事件通知。
+- Gateway 统一入口边界、内部服务凭据和教师身份头透传。
+- Seata 投递协调器的两次成功与两类失败场景。
 - 每个服务启动时由 Flyway 执行建表及增量迁移。
 
 完整本地业务流程可运行 `scripts/verify-document-contract.ps1` 验证。
+静态答卷尺寸与命中分布可运行 `scripts/verify-samples.ps1` 验证；运行中的真实视觉识别可运行
+`scripts/verify-visual-samples.ps1`。
 
 ## 三、演示步骤
 
 1. 使用 `teacher1 / Teach2026` 登录。
 2. 在“阅卷空间”中创建阅卷批次，题号填写 `Q1`，基础分默认 `10`。
-3. 修改评分细则，点击“创建并解析”。
+3. 可点击“语音录入要点”口述评分细则，核对转换后的文字，再点击“创建并解析”。
 4. 核对每个要点的权重与分值，点击“保存并冻结”。
-5. 点击上传区域或拖入 `samples/2026101.txt`、`2026102.txt`、`2026103.txt`。
+5. 上传 `samples/` 中十张 JPG 答卷：2 张四点命中、7 张三点命中、1 张零内容点命中。
 6. 等待进度从“处理中”变为“待复核”。
 7. 进入“复核定分”，查看原文证据、卷面覆盖率、字符区间和置信度。
-8. 生成两条评语草稿，教师修改后确认最终分。
+8. 点击“语音口述评语”，口述语气和重点，再点击“AI 生成两条评语”，选择或修改后确认最终分。
 9. 进入“统计报告”，查看平均分和漏点率，生成 XLSX。
 10. 在“教师偏好与任务通知”中维护评语偏好并查看站内通知。
 
-示例答卷位于 `samples/`，文件名会作为学生编号。
+示例答卷位于 `samples/`，文件名会作为学生编号。预期命中结果、字数、字体和答案原文见 `samples/答卷清单.json`。
 
 ## 四、运行模式
 
@@ -182,14 +186,34 @@ $env:VISION_API_KEY = "你的 API Key"
 占可用作答区域的比例”，默认要求至少 50%；文本示例没有纸张图像，因此以 240 个有效
 字符作为可复现的篇幅回退口径。关键词和篇幅得分相加后按四舍五入保留整数。
 
-## 六、Nacos、Sentinel 与 Gateway
+### 语音输入与 AI 评语
+
+评分规则和最终评语均提供语音输入。浏览器调用 Windows 系统麦克风和 Web Speech API 完成
+`zh-CN` 转写，只把识别后的文字发送到业务服务，不保存原始录音。建议使用最新版 Edge 或
+Chrome；首次点击需要允许麦克风权限。
+
+AI 评语会同时接收教师口述内容、最终分、命中要点和原文证据，并要求返回两条可编辑草稿。
+模型配置默认复用视觉模型的 OpenAI 兼容地址与密钥，也可以单独覆盖：
+
+```powershell
+$env:AI_COMMENT_ENABLED = "true"
+$env:AI_COMMENT_BASE_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1"
+$env:AI_COMMENT_MODEL = "qwen3-vl-plus"
+$env:AI_COMMENT_API_KEY = "你的 API Key"
+```
+
+未配置或调用失败时，页面明确显示“当前使用本地模板”，原有教师偏好模板继续可用，不会阻断最终定分。
+
+## 六、Nacos、Sentinel、Seata、SkyWalking 与 Gateway
 
 - 服务注册：8 个 Spring Boot 应用注册到 `public / DEFAULT_GROUP`。
 - Feign 调用：客户端只声明 `@FeignClient(name = "smartgrade-xxx-service")`，由 Spring Cloud LoadBalancer 完成发现与选址。
 - 动态配置：`smartgrade-common.yaml` 集中提供评分阈值和 Sentinel 数据源配置，修改后通过 `@RefreshScope` 刷新。
 - 流量控制：`answer-import` 资源默认限制为 5 QPS；超限返回 HTTP 429，不会继续写数据库。
 - 熔断降级：评分与规则 Feign 客户端提供 `FallbackFactory`，下游不可用时返回明确的服务降级原因。
-- 网关：Spring Cloud Gateway 是唯一外部入口，负责 `lb://` 路由、JWT 鉴权和请求身份头透传；Sentinel Gateway 适配器负责统一限流与 JSON 降级响应。
+- 网关：Spring Cloud Gateway 是唯一外部入口，负责 `lb://` 路由、JWT 鉴权和请求身份头透传。网关删除客户端伪造的身份头，并写入内部 `X-Gateway-Token`；业务服务拒绝绕过网关的 `/api/**` 请求。
+- Seata：初筛结果投递使用 AT 全局事务，协调 `answer-service` 的答卷状态和 `review-service` 的复核记录。OCR 与模型调用不进入全局事务。
+- SkyWalking：启动脚本在检测到 Java Agent 后自动为网关和七个业务服务添加 `-javaagent`，同一请求可串联服务、Feign、JDBC 和消息调用。
 
 一键启动会自动运行 Sentinel 控制台；也可以单独启动：
 
@@ -216,6 +240,24 @@ $env:VISION_API_KEY = "你的 API Key"
 来自 Gateway 的 Sentinel 阻断处理器，并非前端模拟数据。Gateway 的所有响应还会携带
 `X-SmartGrade-Gateway: smartgrade-gateway`，可在浏览器网络面板中直接核验。
 
+治理基础设施优先使用 `D:\SmartGradeTools\seata-2.1.0` 和
+`D:\SmartGradeTools\skywalking-9.7.0` 独立发行包；未安装时使用 Docker Compose 的
+`governance` profile：
+
+```powershell
+.\scripts\start-governance.ps1
+```
+
+脚本会启动 Seata Server、SkyWalking OAP/UI，并下载 Java Agent。独立发行包和 Docker
+两种方式都支持。随后重新运行
+`start.cmd`，再执行完整业务流程和：
+
+```powershell
+.\scripts\verify-observability.ps1
+```
+
+Seata 控制台为 `http://127.0.0.1:7091`，SkyWalking UI 为 `http://127.0.0.1:12801`。
+
 ### Docker 基础设施模式
 
 `deploy/docker-compose-infra.yml` 提供：
@@ -225,6 +267,8 @@ $env:VISION_API_KEY = "你的 API Key"
 - Redis 7.4
 - Kafka 3.7
 - MinIO
+- Seata Server 2.1.0（`governance` profile）
+- SkyWalking OAP/UI 9.7.0（`governance` profile）
 
 启动实例：
 
@@ -250,7 +294,7 @@ docker compose -f .\deploy\docker-compose-infra.yml up -d
 - 图片及扫描 PDF 识别需要配置视觉模型 API Key；未配置或识别失败时按重试上限进入人工复核。文字 PDF 通过 PDFBox 提取。ZIP 展开为 TXT、PNG、JPG、JPEG 或 PDF 答卷，展开后仍最多 20 份；禁止嵌套 ZIP。
 - 默认演示模式使用内存数据库，适合闭环验证；生产或正式验收应启用 MySQL 基础设施模式。
 - `infra` 模式实际使用 Kafka 消息、Redis 幂等/执行互斥和 MinIO 原文件/导出文件；默认本地模式通过 Spring 事件、本地文件及内存适配器运行同一业务链路。
-- 初版个性化评语使用教师偏好加证据的模板生成，后续可替换为大模型适配器。
+- AI 评语优先使用外部大模型；未配置或失败时回退到教师偏好模板，并明确标识生成方式。
 
 ## 九、项目目录
 
