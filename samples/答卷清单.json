@@ -1,0 +1,163 @@
+{
+  "size": [
+    1721,
+    2435
+  ],
+  "orientation": "portrait",
+  "paper": "A4-style white scanned paper",
+  "distribution": {
+    "fourPoint": 0.2,
+    "threePoint": 0.7,
+    "zeroPoint": 0.1
+  },
+  "answers": [
+    {
+      "studentNo": "2026100",
+      "file": "2026100.jpg",
+      "font": "STKAITI.TTF",
+      "characters": 251,
+      "contentHits": [
+        "有理想",
+        "敢担当",
+        "能吃苦",
+        "肯奋斗"
+      ],
+      "contentHitCount": 4,
+      "lengthCoveragePassed": true,
+      "expectedSuggestedScore": 20.0,
+      "answerText": "新时代好青年首先要树立远大理想。我要把个人成长融入强国建设与民族复兴，坚定听党话、跟党走的信念，在专业学习中树立清晰目标。作为入党积极分子，我应当敢担当，主动承担班级服务和志愿工作任务，遇到问题不推诿，在集体需要时站出来。学习和实践不会总是一帆风顺，我要保持艰苦奋斗的作风，面对困难不退缩，在持续训练中提升本领。肯奋斗不是一句口号，而是每天完成学习计划、参与社会实践，再复盘改进。我会把个人理想落实到具体行动中，以新时代好青年的标准严格要求自己，在服务同学和社会中接受锻炼，争取早日成为合格的共产党员。"
+    },
+    {
+      "studentNo": "2026111",
+      "file": "2026111.jpg",
+      "font": "STXINGKA.TTF",
+      "characters": 162,
+      "contentHits": [
+        "有理想",
+        "敢担当",
+        "能吃苦"
+      ],
+      "contentHitCount": 3,
+      "lengthCoveragePassed": false,
+      "expectedSuggestedScore": 16.75,
+      "answerText": "新时代青年首先要有理想。我要把个人成长融入强国建设与民族复兴，在专业学习中树立清晰目标，坚定听党话、跟党走的信念。青年也应当敢担当。作为入党积极分子，我应主动承担班级服务和志愿工作，遇到问题不推诿，在集体需要时站出来。学习和实践不会总是一帆风顺，我要保持艰苦奋斗的作风，面对困难不退缩，坚持每天复盘，用实际行动争取早日入党。"
+    },
+    {
+      "studentNo": "2026999",
+      "file": "2026999.jpg",
+      "font": "STFANGSO.TTF",
+      "characters": 179,
+      "contentHits": [
+        "有理想",
+        "能吃苦",
+        "肯奋斗"
+      ],
+      "contentHitCount": 3,
+      "lengthCoveragePassed": false,
+      "expectedSuggestedScore": 16.75,
+      "answerText": "争做新时代好青年，心中必须要有理想。我会把个人选择同国家发展联系起来，珍惜学习机会，树立能够长期坚持的目标。成长过程中难免会遇到困难，我要能吃苦，不因一次挫折就放弃，在课程学习、实验训练和集体活动中磨炼意志。青春最可贵的是肯奋斗，我会认真完成每天的学习计划，主动参加社会实践，不断查找自己的不足并及时改正，以更严格的标准要求自己，争取用实际行动向党组织靠拢。"
+    },
+    {
+      "studentNo": "2026104",
+      "file": "2026104.jpg",
+      "font": "AdobeKaitiStd-Regular.otf",
+      "characters": 152,
+      "contentHits": [
+        "敢担当",
+        "能吃苦",
+        "肯奋斗"
+      ],
+      "contentHitCount": 3,
+      "lengthCoveragePassed": false,
+      "expectedSuggestedScore": 16.75,
+      "answerText": "青年要敢担当，把责任放在心上。作为班级干部，我应当主动承担集体任务，遇到同学有困难时及时帮助，不回避矛盾。成长的过程不会轻松，我要能吃苦，坚持锻炼身体和意志，在实验失败、课程压力较大时也不退缩。要肯奋斗，就要把目标落实到每天的行动中。我会认真完成课程任务，参加志愿服务，定期复盘不足，用持续努力提升自己。"
+    },
+    {
+      "studentNo": "2026105",
+      "file": "2026105.jpg",
+      "font": "STLITI.TTF",
+      "characters": 129,
+      "contentHits": [
+        "有理想",
+        "敢担当",
+        "能吃苦"
+      ],
+      "contentHitCount": 3,
+      "lengthCoveragePassed": false,
+      "expectedSuggestedScore": 16.75,
+      "answerText": "我希望成为一名有理想的新时代青年。理想不能只停留在口头上，而要落实在专业学习和服务集体中。青年还应敢担当，面对急难任务主动站出来，不把责任推给别人。吃苦耐劳同样重要，学习和实践不会总是一帆风顺，我要在困难面前保持韧性，积极向优秀同学学习，不断纠正自己的不足。"
+    },
+    {
+      "studentNo": "2026106",
+      "file": "2026106.jpg",
+      "font": "FZSTK.TTF",
+      "characters": 206,
+      "contentHits": [
+        "有理想",
+        "敢担当",
+        "肯奋斗"
+      ],
+      "contentHitCount": 3,
+      "lengthCoveragePassed": false,
+      "expectedSuggestedScore": 16.75,
+      "answerText": "新时代好青年要有坚定的理想信念，把个人成长放在国家发展的大背景中去思考。我会认真学习专业知识，树立清晰而长远的目标，不盲目跟风。在班级和学院需要时，我要敢担当，主动承担任务，做到遇事不推诿、关键时刻站得出来。同时，我深知肯奋斗需要长期坚持。我会把大目标拆成每天可以完成的小任务，按计划学习、参加实践、复盘改进，面对困难不轻易放弃，以踏实行动提升能力，在服务同学的过程中锻炼责任意识，努力以合格党员的标准要求自己。"
+    },
+    {
+      "studentNo": "2026107",
+      "file": "2026107.jpg",
+      "font": "simkai.ttf",
+      "characters": 164,
+      "contentHits": [
+        "敢担当",
+        "能吃苦",
+        "肯奋斗"
+      ],
+      "contentHitCount": 3,
+      "lengthCoveragePassed": false,
+      "expectedSuggestedScore": 16.75,
+      "answerText": "敢担当不是抽象的口号，而要体现在具体行动中。作为入党积极分子，我应当主动承担班级工作，积极参加志愿服务，遇到老师和同学需要帮助时不袖手旁观。面对学习中的困难和生活中的压力，我要能吃苦、能坚持，不因为一时失败就降低标准。我也会保持肯奋斗的姿态，把每天的时间安排好，定期检查计划完成情况，从实践中发现不足，用一点一滴的进步证明自己。"
+    },
+    {
+      "studentNo": "2026108",
+      "file": "2026108.jpg",
+      "font": "NotoSerifSC-VF.ttf",
+      "characters": 166,
+      "contentHits": [
+        "有理想",
+        "能吃苦",
+        "肯奋斗"
+      ],
+      "contentHitCount": 3,
+      "lengthCoveragePassed": false,
+      "expectedSuggestedScore": 16.75,
+      "answerText": "我要成为有理想、能够服务社会的青年。为此，我会坚定学习方向，把个人发展与国家需要结合起来。学习中难免会遇到难题，我要能吃苦，主动向老师请教，坚持完成每一项训练，而不是绕开困难。实现目标离不开肯奋斗，我准备参加社会实践和志愿服务，主动承担集体交给我的工作，在实践中学习沟通与协作。我会经常总结自己的不足，及时改正，保持长期努力的习惯。"
+    },
+    {
+      "studentNo": "2026109",
+      "file": "2026109.jpg",
+      "font": "AdobeFangsongStd-Regular.otf",
+      "characters": 271,
+      "contentHits": [
+        "有理想",
+        "敢担当",
+        "能吃苦",
+        "肯奋斗"
+      ],
+      "contentHitCount": 4,
+      "lengthCoveragePassed": true,
+      "expectedSuggestedScore": 20.0,
+      "answerText": "新时代好青年要有理想，也要把理想落实到具体行动中。我将把专业学习同国家发展需要结合起来，树立清晰目标，坚定听党话、跟党走的信念，努力提升解决实际问题的能力。青年必须敢担当。面对班级和学院交办的任务，我会主动承担、认真完成，遇到矛盾不逃避，在集体需要时站得出来。成长不会一路顺利，我要能吃苦，主动面对实验失败、课程压力和训练难题，在挫折中总结经验，而不是抱怨环境。肯奋斗需要长期坚持，我会把目标拆分成具体计划，每天检查完成情况，参加志愿服务和社会实践，在服务他人中认识责任。我也会虚心接受老师同学的批评，及时改正不足，用行动争取早日加入党组织。"
+    },
+    {
+      "studentNo": "2026110",
+      "file": "2026110.jpg",
+      "font": "STXINWEI.TTF",
+      "characters": 110,
+      "contentHits": [],
+      "contentHitCount": 0,
+      "lengthCoveragePassed": false,
+      "expectedSuggestedScore": 10.0,
+      "answerText": "作为新时代大学生，我会按时完成课程学习，积极参加校园活动，认真听取老师和同学的意见，合理安排自己的时间。在集体生活中遵守纪律、团结同学，遇到问题主动沟通。今后我会继续提升专业能力，做好每一件小事，以积极态度面对学习生活。"
+    }
+  ]
+}
