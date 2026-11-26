@@ -44,7 +44,7 @@ if ($ServiceName -eq "review") {
 }
 
 $args = @(
-    "-Dfile.encoding=UTF-8",
+    "-Dfile.encoding=UTF-8"
 )
 if (Test-Path -LiteralPath $agent) {
     $args += @(
