@@ -19,6 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * AI 评语客户端：只根据评分证据生成两条可编辑草稿；未配置或超时则回退本地模板，
+ * 不会阻断教师定分。所有结果都保留教师确认权。
+ */
 @Component
 public class CommentAiClient {
     private static final Logger log = LoggerFactory.getLogger(CommentAiClient.class);

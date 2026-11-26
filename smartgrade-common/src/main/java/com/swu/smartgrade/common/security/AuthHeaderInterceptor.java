@@ -7,6 +7,10 @@ import org.springframework.beans.factory.annotation.Value;
 import com.swu.smartgrade.common.api.BusinessException;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+/**
+ * 业务服务侧安全拦截：/api/** 必须带网关令牌，/internal/** 必须带服务令牌；
+ * 身份头由网关统一写入，这里只做格式校验并构造 AuthPrincipal。
+ */
 @Component
 public class AuthHeaderInterceptor implements HandlerInterceptor {
     private final String serviceToken;

@@ -10,6 +10,9 @@ import java.math.BigDecimal;
 
 @Getter
 @Setter
+/**
+ * 从 Nacos 的 smartgrade-common.yaml 绑定评分阈值；@RefreshScope 使配置修改后无需重启。
+ */
 @Component
 @RefreshScope
 @ConfigurationProperties(prefix = "smartgrade.grading")

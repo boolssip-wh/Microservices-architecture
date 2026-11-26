@@ -22,6 +22,10 @@ import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * 统一入口鉴权：先删除外部伪造身份头，再校验 JWT，成功后把 userId/role 透传下游。
+ * 无效令牌返回 401 并带统一错误码，不进入业务服务。
+ */
 @Component
 public class GatewayJwtAuthenticationFilter implements GlobalFilter, Ordered {
     private final SecretKey key;

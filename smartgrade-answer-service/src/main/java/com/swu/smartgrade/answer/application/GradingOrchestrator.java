@@ -21,6 +21,10 @@ import java.time.LocalDateTime;
 import java.math.BigDecimal;
 import java.util.List;
 
+/**
+ * 初筛编排器：逐个答卷调用 OCR 与匹配，再通过 Seata 短事务投递到复核定分服务；
+ * 每份答卷最多重试三次，失败后明确进入 FAILED 或人工复核，不产生不可达答卷。
+ */
 @Component
 public class GradingOrchestrator {
     private static final Logger log = LoggerFactory.getLogger(GradingOrchestrator.class);

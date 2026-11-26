@@ -28,6 +28,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * 通知发送网关：mock 只生成记录，webhook 走通用短信接口，smtp 走真实邮件；
+ * 发送结果独立记录，不因通知失败回滚业务。页面和日志只显示脱敏接收方式。
+ */
 @Service
 public class SmsDispatchService {
     private static final Logger log = LoggerFactory.getLogger(SmsDispatchService.class);

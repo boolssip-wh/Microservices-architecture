@@ -13,6 +13,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * Seata AT 短事务边界：远程写入 review-service 与本地写入 answer-service 在同一全局事务，
+ * 任一失败都触发整体回滚。OCR 和模型调用不进入这里，避免长事务。
+ */
 @Service
 public class ReviewDeliveryCoordinator {
     private static final Logger log = LoggerFactory.getLogger(ReviewDeliveryCoordinator.class);
