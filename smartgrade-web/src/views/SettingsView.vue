@@ -127,6 +127,15 @@ async function loadSmsDeliveries() {
   smsDeliveries.value = await api('/api/notifications/sms-deliveries')
 }
 
+function emailEventLabel(type) {
+  return {
+    'grading.started': '识别开始',
+    'grading.completed': '识别结束',
+    'review.completed': '复核完成',
+    'sms.test': '通道测试',
+  }[type] || '任务提醒'
+}
+
 async function testSms() {
   if (sms.testing) return
   sms.testing = true
@@ -186,17 +195,17 @@ onBeforeUnmount(() => {
     <div class="column">
       <section class="panel sms-channel-card">
         <div class="panel-head">
-          <div><p class="eyebrow">MOBILE REMINDER</p><h2>手机任务提醒</h2></div>
+          <div><p class="eyebrow">邮箱提醒</p><h2>邮箱任务提醒</h2></div>
           <span class="state-tag" :class="sms.bound && sms.enabled ? 'success' : 'warning'">
             {{ sms.bound && sms.enabled ? '已开启' : '未开启' }}
           </span>
         </div>
         <p class="muted">
-          初筛完成和整批复核完成时发送关键节点提醒。电脑端仍通过页面实时查看处理进度；
-          短信不承担实时百分比推送。
+          识别开始和识别结束会各发一封简短邮件。电脑端仍通过页面实时查看处理进度，
+          邮件不承担实时百分比推送。
         </p>
         <div class="sms-binding-summary">
-          <span>绑定号码</span>
+          <span>绑定邮箱</span>
           <b>{{ sms.bound ? sms.maskedPhone : '尚未绑定' }}</b>
         </div>
         <div class="form-grid sms-form-grid">
@@ -205,7 +214,7 @@ onBeforeUnmount(() => {
             <input v-model="sms.contactInput" type="email" maxlength="128" placeholder="请输入QQ邮箱地址" />
           </label>
           <label class="toggle-label">
-            任务短信提醒
+            任务邮件提醒
             <span class="toggle-row">
               <input v-model="sms.enabled" type="checkbox" />
               <span>{{ sms.enabled ? '开启' : '关闭' }}</span>
@@ -214,7 +223,7 @@ onBeforeUnmount(() => {
         </div>
         <div class="action-row">
           <button class="primary" :disabled="sms.saving" @click="saveNotificationChannel">
-            {{ sms.saving ? '正在保存…' : (sms.bound ? '更新绑定' : '绑定手机') }}
+            {{ sms.saving ? '正在保存…' : (sms.bound ? '更新绑定' : '绑定邮箱') }}
           </button>
           <button class="secondary" :disabled="sms.testing || !sms.bound || !sms.enabled" @click="testSms">
             {{ sms.testing ? '正在发送…' : '发送测试提醒' }}
@@ -225,19 +234,20 @@ onBeforeUnmount(() => {
           页面只显示脱敏邮箱，不会显示完整地址。
         </p>
         <div v-if="smsDeliveries.length" class="sms-delivery-list">
-          <article v-for="item in smsDeliveries.slice(0, 5)" :key="item.deliveryId">
+          <article v-for="item in smsDeliveries.slice(0, 1)" :key="item.deliveryId">
             <span>
-              <b>{{ item.eventType === 'sms.test' ? '通道测试' : item.eventType }}</b>
-              <small>{{ item.targetMasked }} · {{ item.provider }} · {{ item.status }}</small>
+              <b>{{ emailEventLabel(item.eventType) }}</b>
+              <small>{{ item.targetMasked }} · {{ item.status === 'SENT' ? '已发送' : '待处理' }}</small>
             </span>
             <time>{{ new Date(item.createdAt).toLocaleString('zh-CN') }}</time>
           </article>
+          <p class="email-reminder">最新邮件提醒已发送，请到邮箱查看进度；详细通知请查看下方“站内任务通知”。</p>
         </div>
       </section>
 
       <section class="panel">
         <div class="panel-head">
-          <div><p class="eyebrow">INBOX</p><h2>站内任务通知</h2></div>
+          <div><p class="eyebrow">站内通知</p><h2>站内任务通知</h2></div>
           <span class="count-pill">{{ unreadCount }} 条未读</span>
         </div>
         <div class="notification-list">

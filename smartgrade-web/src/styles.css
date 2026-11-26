@@ -865,6 +865,12 @@ input:focus, textarea:focus, select:focus {
 .sms-delivery-list small,
 .sms-delivery-list time { color: var(--muted); font-size: 10px; }
 .sms-delivery-list time { white-space: nowrap; }
+.email-reminder {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.7;
+}
 
 .login-page {
   min-height: 100svh;
