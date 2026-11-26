@@ -87,7 +87,7 @@ async function openResult(item) {
     if (disposed || request !== selectionRequest || session.selectedBatchId !== batchId) return
     selected.value = result
     review.finalScore = result.finalScore ?? result.suggestedScore ?? 0
-    review.finalComment = result.comment?.finalText || result.comment?.suggestedText || ''
+    review.finalComment = ''
     review.reviewNote = '教师已核对证据并确认给分。'
   } catch (error) {
     if (!disposed && request === selectionRequest && session.selectedBatchId === batchId) notify(error.message, true)
@@ -115,9 +115,6 @@ async function suggest() {
     suggestions.value = data.suggestedComments || []
     generationMode.value = data.generationMode || ''
     selected.value.comment = { ...selected.value.comment, profileVersion: data.profileVersion }
-    if (!review.finalComment && suggestions.value[0]) {
-      review.finalComment = suggestions.value[0]
-    }
     const prefix = generationMode.value === 'AI' ? 'AI ' : '本地模板'
     notify(`${prefix}已根据评分证据生成两条评语`)
   } catch (error) {
@@ -239,7 +236,7 @@ onBeforeUnmount(() => { disposed = true })
             <textarea
               v-model="review.finalComment"
               rows="5"
-              placeholder="AI 草稿会显示在下方；可选择、修改或直接手工填写"
+              placeholder="先点击 AI 直接生成，或使用语音口述评语，再从这里选择或修改"
             ></textarea>
             <small v-if="commentSpeech.interimText.value" class="voice-interim">
               正在识别：{{ commentSpeech.interimText.value }}
