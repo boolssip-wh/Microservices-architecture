@@ -7,6 +7,7 @@ param(
 $ErrorActionPreference = "Stop"
 $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $java = "D:\SmartGradeTools\jdk17\bin\java.exe"
+$agent = "D:\SmartGradeTools\skywalking-agent\skywalking-agent.jar"
 $services = @{
     gateway      = @{ Name = "smartgrade-gateway"; Port = 8080 }
     user         = @{ Name = "smartgrade-user-service"; Port = 8081 }
@@ -25,8 +26,34 @@ if (-not (Test-Path -LiteralPath $jar)) {
 $occupied = Get-NetTCPConnection -State Listen -LocalPort $service.Port -ErrorAction SilentlyContinue
 if ($occupied) { throw "Port $($service.Port) is already in use." }
 
+if ($ServiceName -eq "answer") {
+    $env:SEATA_ENABLED = "true"
+    $env:SEATA_SERVER_ADDR = "127.0.0.1:8091"
+    $env:ANSWER_DB_URL = "jdbc:mysql://127.0.0.1:3307/smartgrade_answer?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai"
+    $env:ANSWER_DB_DRIVER = "com.mysql.cj.jdbc.Driver"
+    $env:DB_USERNAME = "smartgrade"
+    $env:DB_PASSWORD = "smartgrade123"
+}
+if ($ServiceName -eq "review") {
+    $env:SEATA_ENABLED = "true"
+    $env:SEATA_SERVER_ADDR = "127.0.0.1:8091"
+    $env:REVIEW_DB_URL = "jdbc:mysql://127.0.0.1:3307/smartgrade_review?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai"
+    $env:REVIEW_DB_DRIVER = "com.mysql.cj.jdbc.Driver"
+    $env:DB_USERNAME = "smartgrade"
+    $env:DB_PASSWORD = "smartgrade123"
+}
+
 $args = @(
     "-Dfile.encoding=UTF-8",
+)
+if (Test-Path -LiteralPath $agent) {
+    $args += @(
+        "-javaagent:`"$agent`"",
+        "-Dskywalking.agent.service_name=$($service.Name)",
+        "-Dskywalking.collector.backend_service=127.0.0.1:11800"
+    )
+}
+$args += @(
     "-jar", "`"$jar`"",
     "--logging.file.name=`"$projectRoot\logs\$ServiceName.log`""
 )
