@@ -1,4 +1,4 @@
-param(
+﻿param(
     [string]$BaseUrl = "http://127.0.0.1:8080",
     [string]$MysqlExe = "D:\mysql-8.0.41\bin\mysql.exe",
     [int]$MysqlPort = 3307,

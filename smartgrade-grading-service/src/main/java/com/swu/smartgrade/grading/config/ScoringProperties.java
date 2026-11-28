@@ -8,15 +8,16 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
-@Getter
-@Setter
 /**
  * 从 Nacos 的 smartgrade-common.yaml 绑定评分阈值；@RefreshScope 使配置修改后无需重启。
  */
+@Getter
+@Setter
 @Component
 @RefreshScope
 @ConfigurationProperties(prefix = "smartgrade.grading")
 public class ScoringProperties {
+    // B3 证据：基础分、最低卷面覆盖率、最少字数均来自外置配置，不在 Java 业务代码中硬编码。
     private BigDecimal baseScore = new BigDecimal("10");
     private BigDecimal minAnswerAreaRatio = new BigDecimal("0.50");
     private int minimumTextCharacters = 240;
@@ -26,6 +27,7 @@ public class ScoringProperties {
     @Getter
     @Setter
     public static class Ocr {
+        // B3 证据：图片识别提供器、地址、模型和密钥通过 Nacos/环境变量注入。
         private String provider = "vision-llm";
         private String baseUrl = "";
         private String model = "";

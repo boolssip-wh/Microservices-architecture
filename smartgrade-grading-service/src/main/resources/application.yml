@@ -1,9 +1,12 @@
+# A1 单服务启动证据：grading-service 对架构图 C04 可解释初筛服务，健康检查端口 8084。
 server:
   port: 8084
 spring:
   application:
+    # B2 注册名：answer-service 通过该服务名调用 OCR 和匹配接口。
     name: smartgrade-grading-service
   config:
+    # B3 外置配置：本服务从 Nacos 读取评分阈值和 OCR 模型参数。
     import: "optional:nacos:smartgrade-common.yaml?group=DEFAULT_GROUP&refreshEnabled=true"
   datasource:
     url: ${DB_URL:jdbc:h2:mem:smartgrade_grading;MODE=MySQL;DB_CLOSE_DELAY=-1}
@@ -25,6 +28,7 @@ spring:
         namespace: ${NACOS_NAMESPACE:public}
         group: ${NACOS_GROUP:DEFAULT_GROUP}
       discovery:
+        # B2 注册中心地址；Nacos 控制台应显示健康实例 1/1。
         enabled: true
         server-addr: ${NACOS_ADDR:127.0.0.1:8848}
         username: ${NACOS_USERNAME:nacos}

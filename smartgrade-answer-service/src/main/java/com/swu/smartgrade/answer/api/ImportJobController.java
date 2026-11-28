@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * A4/C03 接口入口：按 jobId 返回导入校验结果。
+ */
 @RestController
 @io.swagger.v3.oas.annotations.tags.Tag(name="C03 答卷批次服务")
 @RequestMapping("/api/import-jobs")

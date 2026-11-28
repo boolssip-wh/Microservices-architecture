@@ -1,4 +1,4 @@
-param(
+﻿param(
     [Parameter(Mandatory = $true)]
     [ValidateSet("gateway","user","rubric","answer","grading","review","report","notification")]
     [string]$ServiceName
@@ -8,6 +8,8 @@ $ErrorActionPreference = "Stop"
 $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $java = "D:\SmartGradeTools\jdk17\bin\java.exe"
 $agent = "D:\SmartGradeTools\skywalking-agent\skywalking-agent.jar"
+# A1 单服务演示映射：ServiceName 对应项目模块、Nacos 服务名和固定端口。
+# Gateway 是统一入口；其余 7 项才是架构图中的业务服务。
 $services = @{
     gateway      = @{ Name = "smartgrade-gateway"; Port = 8080 }
     user         = @{ Name = "smartgrade-user-service"; Port = 8081 }
@@ -27,6 +29,7 @@ $occupied = Get-NetTCPConnection -State Listen -LocalPort $service.Port -ErrorAc
 if ($occupied) { throw "Port $($service.Port) is already in use." }
 
 if ($ServiceName -eq "answer") {
+    # D1 演示：answer-service 单独启动时连接 3307 隔离 MySQL，并开启 Seata 参与全局事务。
     $env:SEATA_ENABLED = "true"
     $env:SEATA_SERVER_ADDR = "127.0.0.1:8091"
     $env:ANSWER_DB_URL = "jdbc:mysql://127.0.0.1:3307/smartgrade_answer?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai"
@@ -35,6 +38,7 @@ if ($ServiceName -eq "answer") {
     $env:DB_PASSWORD = "smartgrade123"
 }
 if ($ServiceName -eq "review") {
+    # D1 演示：review-service 作为另一个事务参与方，同样连接 3307 的隔离数据库。
     $env:SEATA_ENABLED = "true"
     $env:SEATA_SERVER_ADDR = "127.0.0.1:8091"
     $env:REVIEW_DB_URL = "jdbc:mysql://127.0.0.1:3307/smartgrade_review?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai"
@@ -46,6 +50,7 @@ if ($ServiceName -eq "review") {
 $args = @(
     "-Dfile.encoding=UTF-8"
 )
+# 单服务调试也接入 SkyWalking，保证老师单独启动服务后仍能看到 Trace。
 if (Test-Path -LiteralPath $agent) {
     $args += @(
         "-javaagent:`"$agent`"",
@@ -63,6 +68,7 @@ $p = Start-Process -FilePath $java -ArgumentList $args -WorkingDirectory $projec
     -WindowStyle Hidden -PassThru
 
 $deadline = (Get-Date).AddSeconds(180)
+# A1 验收：轮询 /actuator/health，health.status=UP 才表示端口和 Spring 上下文均已就绪。
 do {
     try {
         $health = Invoke-RestMethod -Uri "http://127.0.0.1:$($service.Port)/actuator/health" -TimeoutSec 2

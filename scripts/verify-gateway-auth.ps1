@@ -1,4 +1,4 @@
-param(
+﻿param(
     [string]$GatewayUrl = "http://127.0.0.1:8080"
 )
 
@@ -8,10 +8,12 @@ $login = Invoke-RestMethod -Method Post -Uri "$GatewayUrl/api/auth/login" `
     -TimeoutSec 10
 $valid = Invoke-WebRequest -Uri "$GatewayUrl/api/batches?page=1&size=5" `
     -Headers @{ Authorization = "Bearer $($login.data.accessToken)" } -UseBasicParsing -TimeoutSec 10
+# 合法 JWT 应返回 200，并带网关标记头。
 $marker = $valid.Headers["X-SmartGrade-Gateway"]
 
 $invalidStatus = $null
 try {
+    # 故意发送无效 JWT，预期 Gateway 在进入业务服务前返回 401。
     $null = Invoke-WebRequest -Uri "$GatewayUrl/api/batches?page=1&size=5" `
         -Headers @{ Authorization = "Bearer not-a-valid-token" } -UseBasicParsing -TimeoutSec 10
 } catch {

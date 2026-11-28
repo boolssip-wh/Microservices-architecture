@@ -17,6 +17,10 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+/**
+ * D1 成功/失败测试证据：独立验证远程复核写入和本地答卷状态更新的协作边界。
+ * 运行后 IDEA 的 Tests 标签应显示 5 个方法全部通过。
+ */
 class ReviewDeliveryCoordinatorTest {
     private final ReviewClient reviews = mock(ReviewClient.class);
     private final AnswerRepository answers = mock(AnswerRepository.class);
@@ -24,6 +28,7 @@ class ReviewDeliveryCoordinatorTest {
 
     @Test
     void successCommitsReviewAndAnswerStatusTogether() {
+        // 成功场景：review 远程写入成功后，answer 本地状态同步变为 WAITING_REVIEW。
         Answer answer = answer("A-SEATA-1");
         when(reviews.create(any())).thenReturn(
                 ApiResponse.ok(new ReviewClient.CreatedResult("R-1", "WAITING_REVIEW"), "trace-1"));
@@ -36,6 +41,7 @@ class ReviewDeliveryCoordinatorTest {
 
     @Test
     void secondSuccessIsIdempotentAtRemoteBoundary() {
+        // 重复投递场景：验证协调器可重复接收同一业务请求，远程边界需保持幂等。
         Answer answer = answer("A-SEATA-2");
         when(reviews.create(any())).thenReturn(
                 ApiResponse.ok(new ReviewClient.CreatedResult("R-2", "WAITING_REVIEW"), "trace-2"));
@@ -49,6 +55,7 @@ class ReviewDeliveryCoordinatorTest {
 
     @Test
     void remoteReviewFailureDoesNotChangeAnswerStatus() {
+        // 远程失败场景：review 写入抛错时，answer 不应保存为待复核状态。
         Answer answer = answer("A-SEATA-3");
         when(reviews.create(any())).thenThrow(new IllegalStateException("review unavailable"));
 
@@ -61,6 +68,7 @@ class ReviewDeliveryCoordinatorTest {
 
     @Test
     void localAnswerWriteFailureEscapesAsGlobalRollbackTrigger() {
+        // 本地失败场景：远程写成功后本地保存失败，异常必须向外抛出以触发 Seata 全局回滚。
         Answer answer = answer("A-SEATA-4");
         when(reviews.create(any())).thenReturn(
                 ApiResponse.ok(new ReviewClient.CreatedResult("R-4", "WAITING_REVIEW"), "trace-4"));
@@ -76,6 +84,7 @@ class ReviewDeliveryCoordinatorTest {
 
     @Test
     void demoFaultSwitchCanBeEnabledAndDisabledWithoutRestart() {
+        // 现场故障开关：不用重启服务即可切换失败注入，便于演示 Seata 活跃事务和回滚。
         Answer answer = answer("A-SEATA-5");
         when(reviews.create(any())).thenReturn(
                 ApiResponse.ok(new ReviewClient.CreatedResult("R-5", "WAITING_REVIEW"), "trace-5"));

@@ -9,6 +9,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * A4/B2 内部接口：供 review-service 读取教师评语偏好和通知接收方式。
+ */
 @RestController
 @RequestMapping("/internal/teachers")
 @Tag(name = "C01 身份与教师偏好服务")

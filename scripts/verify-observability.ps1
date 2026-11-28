@@ -1,4 +1,4 @@
-param(
+﻿param(
     [string]$GatewayUrl = "http://127.0.0.1:8080",
     [string]$SkyWalkingUrl = "http://127.0.0.1:12800",
     [string[]]$ExpectedServices = @(
@@ -48,6 +48,7 @@ $response = Invoke-RestMethod -Method Post -Uri "$SkyWalkingUrl/graphql" `
     -TimeoutSec 15
 
 $services = @($response.data.getAllServices | ForEach-Object name)
+# 这里逐行输出 SkyWalking 已观测到的服务名；正常应显示 Gateway + 7 个业务服务。
 $services | Sort-Object | ForEach-Object { Write-Host "SkyWalking service: $_" }
 $missing = @($ExpectedServices | Where-Object { $_ -notin $services })
 if ($missing.Count) {
@@ -83,7 +84,9 @@ $traces = @($traceResponse.data.queryBasicTraces.traces)
 if (-not $traces.Count) {
     throw "SkyWalking has no Trace in the last 30 minutes."
 }
+# 输出最近 Trace 的样例表格；脚本查询上限为 20 条，表格展示前 5 条便于课堂阅读。
 $traces | Select-Object -First 5 @{Name="traceId";Expression={$_.traceIds[0]}}, `
     @{Name="endpoint";Expression={$_.endpointNames[0]}}, duration, isError | Format-Table -AutoSize
+# 最后两行是验收结论：服务覆盖完整，并返回最近的跨服务 Trace。
 Write-Host "PASS: all expected services are visible in SkyWalking."
 Write-Host "PASS: SkyWalking returned $($traces.Count) recent cross-service trace records."

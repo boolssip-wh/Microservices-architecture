@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * A4/B2 内部接口：供其他服务按 batchId 读取批次满分和基础分。
+ * /internal/** 必须携带服务令牌，不直接暴露给浏览器。
+ */
 @RestController
 @RequestMapping("/internal/batches")
 public class InternalBatchController {

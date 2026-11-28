@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * A4/B2 内部接口：接收业务事件并写入站内通知。
+ */
 @RestController
 @Tag(name = "C07 任务通知服务")
 @RequestMapping("/internal/notifications")

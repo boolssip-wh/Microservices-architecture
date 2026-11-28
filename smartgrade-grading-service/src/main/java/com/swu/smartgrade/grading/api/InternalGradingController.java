@@ -17,6 +17,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * A4/C3/C04 内部接口：能力查询、OCR/图片识别、要点匹配、任务查询和失败重试。
+ * answer-service 通过 Feign 按服务名调用这些接口。
+ */
 @RestController
 @io.swagger.v3.oas.annotations.tags.Tag(name = "C04 可解释初筛服务")
 @RequestMapping("/internal/grading")

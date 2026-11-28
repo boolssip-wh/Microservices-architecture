@@ -18,6 +18,10 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+/**
+ * C07 站内通知核心逻辑：消费领域事件、写入站内通知并通过 SSE 推送。
+ * 邮件发送交给 SmsDispatchService；通知失败不回滚阅卷业务。
+ */
 @Service
 public class NotificationApplicationService {
     private final NotificationRepository repository;
@@ -91,6 +95,7 @@ public class NotificationApplicationService {
     @Transactional
     public ReadResponse markRead(Long teacherId, String notificationId) {
         Notification notification = repository.findById(notificationId)
+                // B1 统一异常示例：通知不存在时返回 40400“通知不存在”。
                 .orElseThrow(() -> BusinessException.notFound("通知不存在"));
         if (!teacherId.equals(notification.getTeacherId())) {
             throw BusinessException.forbidden("不能修改其他教师的通知");

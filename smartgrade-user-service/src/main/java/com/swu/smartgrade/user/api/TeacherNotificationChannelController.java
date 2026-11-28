@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * A4/C01 接口入口：绑定教师邮箱/手机号并维护通知开关。
+ */
 @RestController
 @RequestMapping("/api/teachers/me/notification-channel")
 @Tag(name = "C01 身份与教师偏好服务")

@@ -1,9 +1,12 @@
+# A1 单服务启动证据：answer-service 对架构图 C03 答卷批次服务，健康检查端口 8083。
 server:
   port: 8083
 spring:
   application:
+    # B2 注册名：Gateway 和内部服务按此名称发现 answer-service。
     name: smartgrade-answer-service
   config:
+    # B3 外置配置：评分参数、Sentinel 规则来源统一从 Nacos 读取。
     import: "optional:nacos:smartgrade-common.yaml?group=DEFAULT_GROUP&refreshEnabled=true"
   datasource:
     url: ${ANSWER_DB_URL:${DB_URL:jdbc:h2:mem:smartgrade_answer;MODE=MySQL;DB_CLOSE_DELAY=-1}}
@@ -29,6 +32,7 @@ spring:
         namespace: ${NACOS_NAMESPACE:public}
         group: ${NACOS_GROUP:DEFAULT_GROUP}
       discovery:
+        # B2 注册中心地址；register-enabled=true 是“启动即注册”的现场证据。
         enabled: true
         server-addr: ${NACOS_ADDR:127.0.0.1:8848}
         username: ${NACOS_USERNAME:nacos}
@@ -38,13 +42,16 @@ spring:
         register-enabled: true
     openfeign:
       circuitbreaker:
+        # C3/C2：开启 Feign 熔断/降级后，FallbackFactory 才能接管下游超时和不可用。
         enabled: true
       client:
         config:
           default:
+            # C3 通用超时：连接最多 4 秒，普通调用最多等待 15 秒，避免线程无限阻塞。
             connect-timeout: 4000
             read-timeout: 15000
           smartgrade-grading-service:
+            # C3 特殊超时：视觉识别模型耗时较长，读取超时单独放宽到 120 秒。
             connect-timeout: 4000
             read-timeout: 120000
   jackson:
@@ -59,12 +66,14 @@ springdoc:
   swagger-ui:
     path: /swagger-ui.html
 seata:
+  # D1 事务入口：final-demo 会注入 SEATA_ENABLED=true；单元测试和普通启动默认关闭。
   enabled: ${SEATA_ENABLED:false}
   application-id: ${spring.application.name}
   tx-service-group: smartgrade_tx_group
   enable-auto-data-source-proxy: true
   service:
     vgroup-mapping:
+      # D1 事务分组映射与 Seata Server 的 smartgrade_tx_group 保持一致。
       smartgrade_tx_group: default
     grouplist:
       default: ${SEATA_SERVER_ADDR:127.0.0.1:8091}

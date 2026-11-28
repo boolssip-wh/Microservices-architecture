@@ -68,17 +68,20 @@ public class GradingOrchestrator {
         job.setStatus("RUNNING");
         jobRepository.save(job);
         try {
+            // B2 服务发现调用：按 batchId 从 rubric-service 获取冻结规则；远程失败由 fallback 转成明确原因。
             RubricClient.RemoteRubric rubric = boundRubric(job);
             if (rubric == null) {
                 throw BusinessException.unavailable("评分规则服务暂时不可用，已触发服务降级");
             }
             List<Answer> answers = answerRepository.findByImportJobIdOrderByStudentNo(job.getJobId());
+            // 任务通知：开始识别时发送 grading.started，不等待所有答卷处理完。
             safeNotify(batch, "grading.started", "开始识别",
                     "正在识别 " + answers.size() + " 份答卷，请稍候。");
             for (Answer answer : answers) {
                 if (List.of("PENDING", "RUNNING", "FAILED").contains(answer.getStatus())) processOne(job, batch, rubric, answer);
             }
             boolean failures = answers.stream().anyMatch(a -> List.of("FAILED", "MANUAL_REVIEW").contains(a.getStatus()));
+            // 全部处理完后给出批次级结论；通知失败由 safeNotify 隔离，不影响阅卷主流程。
             job.setStatus(failures ? "PARTIAL_FAILED" : "COMPLETED");
             batch.setStatus("REVIEWING");
             safeNotify(batch, failures ? "grading.failed" : "grading.completed", "识别结束",
@@ -104,6 +107,7 @@ public class GradingOrchestrator {
     }
 
     private void processOne(ImportJob job, Batch batch, RubricClient.RemoteRubric rubric, Answer answer) {
+        // C3 失败传播：每份答卷最多尝试 4 次；重试期间根据远程任务状态决定继续或转入人工复核。
         for (int attempt = 0; attempt <= 3; attempt++) {
             if (attempt > 0) {
                 try {
@@ -146,10 +150,12 @@ public class GradingOrchestrator {
         try {
             answer.setStatus("RUNNING");
             answerRepository.save(answer);
+            // C3 真实远程调用：先请求 OCR/图片识别，再请求评分匹配；两次调用共享同一 traceId。
             GradingClient.OcrResult ocr = gradingClient.ocr("TASK-" + answer.getAnswerId(),
                     new GradingClient.OcrRequest(answer.getAnswerId(), answer.getObjectKey(),
                             "TEXT".equals(answer.getSourceType()) ? answer.getOcrText() : null)).data();
             if (ocr == null) throw BusinessException.unavailable("识别服务暂时不可用");
+            // 明确错误传播：fallback 返回的 failureReason 会被识别为失败，而不是当作空文本成功。
             if (ocr.failureReason() != null && !ocr.failureReason().isBlank()) {
                 throw new IllegalStateException(ocr.failureReason());
             }
@@ -164,6 +170,7 @@ public class GradingOrchestrator {
             if (match == null) {
                 throw BusinessException.unavailable("评分服务暂时不可用，已触发服务降级");
             }
+            // D1 跨服务写：复核结果写入 review-service，答卷状态写入 answer-service，由全局事务保证一致。
             reviewDelivery.deliver(new ReviewClient.CreateResultRequest(
                     answer.getAnswerId(), batch.getBatchId(), answer.getStudentNo(), ocr.text(),
                     batch.getTeacherId(), rubric.rubricVersion(), match.suggestedScore(), batch.getMaxScore(),
@@ -172,6 +179,7 @@ public class GradingOrchestrator {
                     answer, "WAITING_REVIEW");
             return true;
         } catch (Exception ex) {
+            // 调用端保留可重试状态，教师可在失败任务列表中手动重试。
             log.warn("答卷 {} 初筛失败", answer.getAnswerId(), ex);
             answer.setStatus("FAILED");
         }

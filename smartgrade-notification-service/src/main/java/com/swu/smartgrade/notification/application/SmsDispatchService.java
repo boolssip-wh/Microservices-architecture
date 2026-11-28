@@ -73,7 +73,9 @@ public class SmsDispatchService {
 
     public void dispatch(DomainEvent event) {
         try {
+            // 只发送开始识别、识别结束、复核完成三类业务事件，避免无关事件打扰教师。
             if (!SMS_EVENTS.contains(event.type())) return;
+            // 同一 eventId 只发送一次，防止消息重投造成重复邮件。
             if (event.eventId() != null && deliveries.existsByTeacherIdAndEventId(
                     event.teacherId(), event.eventId())) return;
             NotificationChannelClient.Channel channel = channel(event.teacherId());
@@ -108,6 +110,7 @@ public class SmsDispatchService {
 
     private SmsDelivery sendAndRecord(Long teacherId, String eventId, String eventType,
                                       String contact, String message) {
+        // 每次发送都独立记录 SENT/FAILED/MOCKED；邮件失败不反向影响阅卷事务。
         SmsDelivery delivery = new SmsDelivery();
         delivery.setDeliveryId("SMS" + UUID.randomUUID().toString()
                 .replace("-", "").substring(0, 16).toUpperCase());
@@ -156,6 +159,7 @@ public class SmsDispatchService {
     }
 
     private void postEmail(String contact, String message) throws Exception {
+        // SMTP 邮件实现：465 端口使用 SSL，587 端口使用 STARTTLS。
         if (smtpUsername.isBlank() || smtpPassword.isBlank() || smtpFrom.isBlank()) {
             throw new IllegalStateException("邮箱通知未配置，请设置 SMTP 用户名、授权码和发件地址");
         }
@@ -192,6 +196,7 @@ public class SmsDispatchService {
     }
 
     private String mask(String contact) {
+        // 页面和日志只展示脱敏邮箱/手机号，不暴露完整联系方式。
         if (contact == null || contact.isBlank()) return "***********";
         if (contact.contains("@")) {
             int at = contact.indexOf('@');

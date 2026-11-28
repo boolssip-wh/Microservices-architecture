@@ -21,6 +21,7 @@ import java.util.Locale;
 
 @Component
 public class VisionLlmOcrClient {
+    // 图片识别提示词：只转录手写答案并估计卷面覆盖率，禁止凭空补写，便于评分结果可追溯。
     private static final String PROMPT = """
             你是严谨的中文手写答卷转录器。请只识别图片中的手写作答，不转录印刷题干、姓名栏或页眉。
             必须返回一个 JSON 对象，不要输出 Markdown 或解释，字段如下：
@@ -51,10 +52,12 @@ public class VisionLlmOcrClient {
     }
 
     public RecognizedDocument recognize(byte[] imageBytes, String filename) {
+        // B3 参数读取点：模型地址、模型名、密钥、超时和图片大小上限均由 ScoringProperties 绑定。
         ScoringProperties.Ocr config = properties.getOcr();
         validateConfig(config, imageBytes.length);
         try {
             String mimeType = detectMimeType(Path.of(filename));
+            // 将答卷图片编码成视觉模型可接收的 data URL；识别请求不依赖人工先转录。
             String dataUrl = "data:" + mimeType + ";base64,"
                     + Base64.getEncoder().encodeToString(imageBytes);
 
@@ -89,6 +92,7 @@ public class VisionLlmOcrClient {
                     .build()
                     .send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
             if (response.statusCode() < 200 || response.statusCode() >= 300) {
+                // C3 失败原因向上返回，最终由 answer-service 明确置为 FAILED。
                 throw new IllegalStateException("手写识别 API 返回 HTTP " + response.statusCode()
                         + "：" + truncate(response.body()));
             }
@@ -105,6 +109,7 @@ public class VisionLlmOcrClient {
     }
 
     private RecognizedDocument parseResponse(String body, ScoringProperties.Ocr config) throws Exception {
+        // 解析视觉模型约定 JSON：正文、识别置信度、卷面覆盖率和字符数都会落库作为证据。
         JsonNode root = objectMapper.readTree(body);
         JsonNode contentNode = root.path("choices").path(0).path("message").path("content");
         String content = contentNode.isTextual() ? contentNode.asText() : joinContentParts(contentNode);

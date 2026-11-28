@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * A4/B2 内部接口：供 answer-service 按 batchId 读取当前冻结规则。
+ */
 @RestController
 @RequestMapping("/internal/rubrics")
 @Tag(name = "C02 评分规则服务")

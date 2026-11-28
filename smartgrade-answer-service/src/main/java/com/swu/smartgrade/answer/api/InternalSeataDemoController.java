@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
+/**
+ * D1 演示控制接口：动态开启“远程写成功后本地失败”和事务停留时间。
+ * 只在演示环境开放，用于在 Seata 控制台观察 Begin 与 Rollback。
+ */
 @RestController
 @RequestMapping("/internal/demo/seata")
 public class InternalSeataDemoController {

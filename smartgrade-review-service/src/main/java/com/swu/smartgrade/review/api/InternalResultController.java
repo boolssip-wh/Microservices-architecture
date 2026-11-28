@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * A4/D1 内部接口：接收 answer-service 投递的复核投影和汇总数据。
+ * 这是 Seata 全局事务涉及的远程写入入口。
+ */
 @RestController
 @io.swagger.v3.oas.annotations.tags.Tag(name = "C05 复核定分服务")
 @RequestMapping("/internal/results")

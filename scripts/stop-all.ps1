@@ -1,4 +1,4 @@
-param(
+﻿param(
     [switch]$IncludeNacos,
     [string]$NacosHome = (Join-Path $env:USERPROFILE "ai-infra\nacos\standalone\nacos-3.3.0")
 )
@@ -9,6 +9,7 @@ $pidFiles = @(
     (Join-Path $projectRoot ".runtime\service-pids.json"),
     (Join-Path $projectRoot ".runtime\sentinel-dashboard-pid.json")
 )
+# A1 停止演示：只读取本项目 PID 文件，不会误杀电脑上其他 Java/Node 程序。
 $existingPidFiles = @($pidFiles | Where-Object { Test-Path -LiteralPath $_ })
 
 $items = @()
@@ -77,6 +78,7 @@ foreach ($candidate in $candidates) {
 
 # Some restricted terminals deny CIM access. The fixed project ports let the
 # same checkout stop safely without terminating unrelated Java or Node apps.
+# A1 端口兜底：PID 文件丢失时按项目固定端口识别本项目进程。
 $portMap = @{
     8080 = @{ name = "gateway"; processName = "java" }
     8081 = @{ name = "user"; processName = "java" }

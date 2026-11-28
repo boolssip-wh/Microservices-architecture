@@ -23,6 +23,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * A4/C06 接口入口：批次统计洞察、异步导出和导出结果查询。
+ */
 @RestController
 @Tag(name = "C06 统计报告服务")
 @RequestMapping("/api/reports")

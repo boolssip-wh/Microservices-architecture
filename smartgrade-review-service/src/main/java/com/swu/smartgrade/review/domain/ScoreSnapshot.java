@@ -11,6 +11,9 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * A5 成绩快照：教师确认后保存不可变的最终结果和评语 JSON，供报告与追溯使用。
+ */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,7 +22,7 @@ import java.time.LocalDateTime;
 public class ScoreSnapshot {
     @Id
     private String snapshotId;
-    private String reviewId;
+    private String reviewId; // 逻辑外键 -> review_record.review_id
     private BigDecimal finalScore;
     @Column(columnDefinition = "TEXT")
     private String snapshotJson;

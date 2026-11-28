@@ -1,4 +1,4 @@
-param(
+﻿param(
     [int]$Port = 8858,
     [string]$Username = "sentinel",
     [string]$Password = "sentinel",
@@ -22,6 +22,7 @@ $pidFile = Join-Path $projectRoot ".runtime\sentinel-dashboard-pid.json"
 $jdkTmp = Join-Path $logRoot "jdk-tmp"
 $sentinelLogs = Join-Path $logRoot "sentinel-logs"
 
+# C2 保护控制台：Sentinel Dashboard 监听 8858，登录后查看机器列表、簇点链路和规则。
 if (-not (Test-Path -LiteralPath $java)) {
     throw "JDK 17 not found at $java"
 }
@@ -86,6 +87,7 @@ $record = [PSCustomObject]@{
 $record | ConvertTo-Json | Set-Content -LiteralPath $pidFile -Encoding UTF8
 
 $deadline = (Get-Date).AddSeconds(45)
+# C2 现场验收：45 秒内 HTTP 控制台可访问，才能证明 Sentinel Dashboard 已就绪。
 $ready = $false
 do {
     try {

@@ -10,6 +10,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * A4/C3 接口入口：教师对 FAILED/MANUAL_REVIEW 任务发起幂等重试。
+ * Idempotency-Key 和重试原因由 DTO 校验，实际重试编排在 GradingOrchestrator。
+ */
 @RestController
 @io.swagger.v3.oas.annotations.tags.Tag(name="C04 可解释初筛服务")
 @RequestMapping("/api/grading-tasks")

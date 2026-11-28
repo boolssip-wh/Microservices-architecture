@@ -1,4 +1,4 @@
-param(
+﻿param(
     [switch]$NoBrowser
 )
 
@@ -103,6 +103,8 @@ try {
         $stderr = Join-Path $logs ($service.Name + ".err.log")
         $applicationLog = Join-Path $logs ($service.Name + ".log")
         $javaArguments = @()
+        # 检测到 SkyWalking Agent 时，为每个 Java 服务自动附加探针；
+        # service_name 让控制台按服务名展示，backend_service 指定 OAP 上报地址。
         if (Test-Path -LiteralPath $skyWalkingAgent) {
             $javaArguments += @(
                 "-javaagent:`"$skyWalkingAgent`"",

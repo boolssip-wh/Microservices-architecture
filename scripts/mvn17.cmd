@@ -2,6 +2,7 @@
 setlocal
 chcp 65001 >nul
 
+rem A1 build entry: pin JDK 17 and the project-local Maven repository.
 if not defined SMARTGRADE_TOOLS set "SMARTGRADE_TOOLS=D:\SmartGradeTools"
 set "JAVA_HOME=%SMARTGRADE_TOOLS%\jdk17"
 set "PROJECT_DIR=%~dp0.."

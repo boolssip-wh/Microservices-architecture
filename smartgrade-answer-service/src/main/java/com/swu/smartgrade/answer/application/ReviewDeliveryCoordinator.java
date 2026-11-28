@@ -40,11 +40,14 @@ public class ReviewDeliveryCoordinator {
     @GlobalTransactional(name = "deliver-grading-result", rollbackFor = Exception.class)
     @Transactional
     public void deliver(ReviewClient.CreateResultRequest request, Answer answer, String nextStatus) {
+        // D1 第一段远程写：answer-service 调用 review-service 写入复核投影。
         reviewClient.create(request);
         if (failAfterRemote.get()) {
+            // 故障注入点：远程写已经成功，再模拟本地提交失败，专门证明 Seata 能回滚远程分支。
             holdTransactionOpen();
             throw new IllegalStateException("SEATA_DEMO_FAIL_AFTER_REMOTE：远程写成功后模拟本地提交失败");
         }
+        // D1 第二段本地写：更新答卷状态；任一步异常由 @GlobalTransactional 回滚整个事务。
         answer.setStatus(nextStatus);
         answerRepository.save(answer);
         log.info("跨服务复核投递完成 xid={} answerId={} status={}",

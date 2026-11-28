@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * A4/B2 内部接口：接收导入完成事件并幂等推进初筛编排。
+ */
 @RestController
 @RequestMapping("/internal/import-jobs")
 @Tag(name = "C03 答卷批次服务")

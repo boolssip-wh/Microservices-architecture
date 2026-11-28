@@ -26,6 +26,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.validation.annotation.Validated;
 import jakarta.validation.constraints.Min;
 
+/**
+ * A4/C02 接口入口：创建、解析、维护、冻结和读取评分规则版本。
+ */
 @RestController
 @Validated
 @RequestMapping("/api/rubrics")

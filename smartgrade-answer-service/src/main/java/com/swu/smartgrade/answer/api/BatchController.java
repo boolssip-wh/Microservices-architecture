@@ -25,6 +25,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+/**
+ * A4/C03 接口入口：创建批次、查进度、导入答卷和分页查看答卷。
+ * Controller 只做参数接收和 ApiResponse 包装，业务规则在 application 层。
+ */
 @RestController
 @io.swagger.v3.oas.annotations.tags.Tag(name="C03 答卷批次服务")
 @RequestMapping("/api/batches")

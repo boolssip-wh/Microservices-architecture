@@ -1,9 +1,12 @@
+# A1 单服务启动证据：review-service 对架构图 C05 复核定分服务，健康检查端口 8085。
 server:
   port: 8085
 spring:
   application:
+    # B2 注册名：answer-service 通过 ReviewClient 按该名称写入复核结果。
     name: smartgrade-review-service
   config:
+    # B3 外置配置：公共评分和 Sentinel 规则从 Nacos 加载。
     import: "optional:nacos:smartgrade-common.yaml?group=DEFAULT_GROUP&refreshEnabled=true"
   datasource:
     url: ${REVIEW_DB_URL:${DB_URL:jdbc:h2:mem:smartgrade_review;MODE=MySQL;DB_CLOSE_DELAY=-1}}
@@ -25,6 +28,7 @@ spring:
         namespace: ${NACOS_NAMESPACE:public}
         group: ${NACOS_GROUP:DEFAULT_GROUP}
       discovery:
+        # B2 注册中心地址；register-enabled=true 表示服务上线即注册。
         enabled: true
         server-addr: ${NACOS_ADDR:127.0.0.1:8848}
         username: ${NACOS_USERNAME:nacos}
@@ -53,12 +57,14 @@ app:
     api-key: ${AI_COMMENT_API_KEY:${VISION_API_KEY:}}
     timeout-seconds: ${AI_COMMENT_TIMEOUT_SECONDS:30}
 seata:
+  # D1 参与方配置：review-service 作为远程分支加入同一个全局事务。
   enabled: ${SEATA_ENABLED:false}
   application-id: ${spring.application.name}
   tx-service-group: smartgrade_tx_group
   enable-auto-data-source-proxy: true
   service:
     vgroup-mapping:
+      # D1 与 answer-service 使用同一事务分组，保证分支注册到同一 Seata Server。
       smartgrade_tx_group: default
     grouplist:
       default: ${SEATA_SERVER_ADDR:127.0.0.1:8091}

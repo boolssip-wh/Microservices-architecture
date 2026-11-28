@@ -17,6 +17,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * A4/C01 接口入口：教师登录和当前身份读取。
+ * LoginRequest 负责输入约束，AuthApplicationService 负责密码校验与 JWT 签发。
+ */
 @RestController
 @RequestMapping("/api/auth")
 @Tag(name = "C01 身份与教师偏好服务")

@@ -1,4 +1,4 @@
-param(
+﻿param(
     [string]$NacosUrl = "http://127.0.0.1:8848",
     [string]$SentinelUrl = "http://127.0.0.1:8858",
     [string]$GatewayUrl = "http://127.0.0.1:8080",
@@ -21,6 +21,7 @@ $expectedServices = @(
 )
 
 Write-Host "`n[1/4] Spring Boot health"
+# 逐个检查 8080-8087 的 Actuator health；所有服务返回 UP 才能继续。
 $healthRows = foreach ($port in 8080..8087) {
     $health = Invoke-RestMethod -Uri "http://127.0.0.1:$port/actuator/health" -TimeoutSec 5
     [PSCustomObject]@{ Port = $port; Status = $health.status }
@@ -31,6 +32,7 @@ if (@($healthRows | Where-Object Status -ne "UP").Count) {
 }
 
 Write-Host "`n[2/4] Nacos live registry"
+# 读取 Nacos 服务列表，确认 8 个服务都存在且健康实例数至少为 1。
 $login = Invoke-RestMethod -Method Post -Uri "$NacosUrl/nacos/v1/auth/login" `
     -Body @{ username = $NacosUsername; password = $NacosPassword } `
     -ContentType "application/x-www-form-urlencoded"
@@ -46,6 +48,7 @@ if ($missingServices.Count -or $unhealthyServices.Count) {
 }
 
 Write-Host "`n[3/4] Sentinel live applications and gateway rules"
+# 读取 Sentinel 应用心跳、Gateway 流控规则和 answer-service 的流控/降级规则。
 $null = Invoke-WebRequest -Method Post -Uri "$SentinelUrl/auth/login" `
     -Body @{ username = $SentinelUsername; password = $SentinelPassword } `
     -ContentType "application/x-www-form-urlencoded" -SessionVariable sentinelSession -UseBasicParsing
@@ -104,6 +107,7 @@ try {
 }
 
 Write-Host "`n[4/4] Gateway route and response marker"
+# 读取 Gateway 路由表，并用响应头确认请求确实经过统一网关。
 $routes = Invoke-RestMethod -Uri "$GatewayUrl/actuator/gateway/routes" -TimeoutSec 8
 $routes | Select-Object route_id, uri | Sort-Object route_id | Format-Table -AutoSize
 $loginResponse = Invoke-WebRequest -Method Post -Uri "$GatewayUrl/api/auth/login" `

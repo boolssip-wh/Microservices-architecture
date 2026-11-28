@@ -57,10 +57,12 @@ public class CommentAiClient {
     }
 
     public Optional<List<String>> generate(String evidenceContext, String teacherInstruction) {
+        // 未配置模型时不伪造 AI 结果，返回空给应用服务回退模板。
         if (!configured()) {
             return Optional.empty();
         }
         try {
+            // 证据和教师口述要求一起作为用户消息；系统提示约束不得改写分数或编造证据。
             ObjectNode payload = objectMapper.createObjectNode();
             payload.put("model", model.trim());
             payload.put("temperature", 0.35);
@@ -91,6 +93,7 @@ public class CommentAiClient {
             log.warn("AI 评语请求被中断");
             return Optional.empty();
         } catch (Exception ex) {
+            // D3/C3 容错：AI 超时或接口异常只降级模板，不影响教师继续复核。
             log.warn("AI 评语不可用，回退本地模板: {}", ex.getMessage());
             return Optional.empty();
         }
@@ -112,6 +115,7 @@ public class CommentAiClient {
     }
 
     private List<String> parse(String body) throws Exception {
+        // 只接受约定 JSON 且至少两条有效草稿，避免把模型解释文字直接展示给学生/教师。
         JsonNode root = objectMapper.readTree(body);
         JsonNode contentNode = root.path("choices").path(0).path("message").path("content");
         String content = contentNode.isTextual() ? contentNode.asText() : joinParts(contentNode);

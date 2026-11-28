@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.nio.charset.StandardCharsets;
 
+/**
+ * A4/C03 接口入口：按权限读取原始答卷文件，响应内容是二进制图片而不是 JSON。
+ */
 @RestController
 @io.swagger.v3.oas.annotations.tags.Tag(name = "C03 答卷批次服务")
 public class OriginalAnswerController {

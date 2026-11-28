@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * A4/C01 接口入口：读取和修改当前教师的评语语气、篇幅、开头方式及常用/禁用表达。
+ */
 @RestController
 @RequestMapping("/api/teachers/me/comment-profile")
 @Tag(name = "C01 身份与教师偏好服务")

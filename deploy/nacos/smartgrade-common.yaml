@@ -1,12 +1,16 @@
+# B3 外置配置证据：本文件发布到 Nacos，DataId=smartgrade-common.yaml，Group=DEFAULT_GROUP。
+# 业务服务通过 spring.config.import 读取，再绑定到 ScoringProperties 等配置类。
 spring:
   cloud:
     sentinel:
+      # C2 公共 Sentinel 数据源：应用启动后从 Nacos 拉取流控和熔断规则。
       eager: true
       transport:
         dashboard: ${SENTINEL_DASHBOARD:127.0.0.1:8858}
       datasource:
         flow:
           nacos:
+            # DataId 映射：流控规则 JSON 发布到这里，rule-type=flow 表示普通业务资源流控。
             server-addr: ${NACOS_ADDR:127.0.0.1:8848}
             username: ${NACOS_USERNAME:nacos}
             password: ${NACOS_PASSWORD:1111}
@@ -17,6 +21,7 @@ spring:
             rule-type: flow
         degrade:
           nacos:
+            # DataId 映射：熔断/降级规则 JSON；timeWindow 等字段在 JSON 中维护，YAML 不能写注释。
             server-addr: ${NACOS_ADDR:127.0.0.1:8848}
             username: ${NACOS_USERNAME:nacos}
             password: ${NACOS_PASSWORD:1111}
@@ -28,11 +33,13 @@ spring:
 
 smartgrade:
   grading:
+    # B3 现场可修改参数：基础分、最低卷面覆盖率、最少字符数均不硬编码在 Java 业务代码中。
     base-score: 10
     min-answer-area-ratio: 0.50
     minimum-text-characters: 240
     round-to-integer: true
     ocr:
+      # B3 图片识别参数：通过 Nacos 或环境变量配置模型提供器、地址、模型名和密钥。
       provider: ${VISION_OCR_PROVIDER:vision-llm}
       base-url: ${VISION_API_BASE_URL:}
       model: ${VISION_MODEL:}

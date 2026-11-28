@@ -1,10 +1,13 @@
+# A1 统一入口：Gateway 是外部请求唯一入口，不计入 7 个业务服务，监听 8080。
 server:
   port: 8080
 
 spring:
   application:
+    # B2 注册名：Gateway 自身也注册到 Nacos，便于 SkyWalking/Nacos 证据保持一致。
     name: smartgrade-gateway
   config:
+    # B3 外置配置：Gateway 从 Nacos 读取公共配置和动态规则。
     import: "optional:nacos:smartgrade-common.yaml?group=DEFAULT_GROUP&refreshEnabled=true"
   main:
     web-application-type: reactive
@@ -25,6 +28,7 @@ spring:
         group: ${NACOS_GROUP:DEFAULT_GROUP}
         register-enabled: true
     gateway:
+      # C1 路由表：外部路径前缀决定转发到哪个 Nacos 服务；lb:// 表示按服务名负载均衡。
       routes:
         - id: user-service
           uri: ${USER_SERVICE_URI:lb://smartgrade-user-service}
@@ -51,6 +55,7 @@ spring:
           predicates:
             - Path=/api/notifications/**
     sentinel:
+      # C2 启动时主动连接 Sentinel Dashboard，并从 Nacos 拉取 Gateway 流控规则。
       eager: true
       transport:
         dashboard: ${SENTINEL_DASHBOARD:127.0.0.1:8858}
@@ -67,6 +72,7 @@ spring:
             rule-type: gw-flow
       scg:
         fallback:
+          # C2 触发流控后的真实响应：HTTP 429 + 统一中文错误体。
           mode: response
           response-status: 429
           response-body: '{"code":42900,"message":"请求过于集中，请稍后重试"}'

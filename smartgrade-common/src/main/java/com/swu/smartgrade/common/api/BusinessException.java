@@ -1,7 +1,10 @@
 package com.swu.smartgrade.common.api;
 
-public class
-BusinessException extends RuntimeException {
+/**
+ * B1 统一业务异常：业务层只表达错误类型，HTTP 状态和统一响应由 GlobalExceptionHandler 生成。
+ * 例如 40000 表示参数错误、40100 表示未认证、40400 表示资源不存在。
+ */
+public class BusinessException extends RuntimeException {
     private final int code;
     private final int httpStatus;
 
@@ -24,10 +27,12 @@ BusinessException extends RuntimeException {
     }
 
     public static BusinessException badRequest(String message) {
+        // 参数格式、必填项或业务输入不合法时使用。
         return new BusinessException(40000, 400, message);
     }
 
     public static BusinessException unauthorized(String message) {
+        // B1/C1 证据：未登录、令牌无效或绕过网关时统一返回 40100。
         return new BusinessException(40100, 401, message);
     }
 

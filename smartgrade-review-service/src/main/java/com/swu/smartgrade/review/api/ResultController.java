@@ -9,6 +9,9 @@ import com.swu.smartgrade.review.application.ReviewApplicationService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * A4/C05 接口入口：复核列表、证据详情、AI/口述评语草稿、最终定分和状态调整。
+ */
 @RestController
 @io.swagger.v3.oas.annotations.tags.Tag(name = "C05 复核定分服务")
 @RequestMapping("/api/results")

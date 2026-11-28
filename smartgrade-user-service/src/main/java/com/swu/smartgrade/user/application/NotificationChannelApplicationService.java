@@ -34,6 +34,7 @@ public class NotificationChannelApplicationService {
     public NotificationChannelView saveFor(AuthPrincipal principal, NotificationChannelRequest request) {
         requireTeacher(principal);
         if (!teachers.existsById(principal.userId())) {
+            // B1 统一异常示例：找不到教师时抛 BusinessException，由公共异常处理器返回 40400。
             throw BusinessException.notFound("教师账号不存在");
         }
         TeacherNotificationChannel channel = channels.findById(principal.userId())
@@ -86,6 +87,7 @@ public class NotificationChannelApplicationService {
             contact = contact.substring(2);
         }
         if (!contact.matches("1[3-9]\\d{9}")) {
+            // B1 统一异常示例：输入格式错误时返回 40000，而不是由 Controller 手写错误 JSON。
             throw BusinessException.badRequest("请输入有效的手机号或邮箱");
         }
         return contact;

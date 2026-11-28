@@ -23,6 +23,7 @@ public class AuthHeaderInterceptor implements HandlerInterceptor {
     }
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        // C1 业务服务二次校验：公开 /api/** 请求必须携带网关写入的令牌，避免绕过 Gateway 直连服务。
         if (request.getRequestURI().startsWith("/api/")) {
             String suppliedGateway = request.getHeader("X-Gateway-Token");
             if (gatewayToken.isBlank() || suppliedGateway == null || !java.security.MessageDigest.isEqual(
@@ -31,6 +32,7 @@ public class AuthHeaderInterceptor implements HandlerInterceptor {
                 throw BusinessException.unauthorized("请求必须通过统一网关");
             }
         }
+        // 内部接口只允许携带服务令牌的服务间调用，前端 JWT 不能直接访问 /internal/**。
         if (request.getRequestURI().startsWith("/internal/")) {
             String supplied = request.getHeader("X-Service-Token");
             if (serviceToken.isBlank() || supplied == null || !java.security.MessageDigest.isEqual(
@@ -39,6 +41,7 @@ public class AuthHeaderInterceptor implements HandlerInterceptor {
                 throw BusinessException.unauthorized("内部服务凭据无效");
             }
         }
+        // 解析网关透传的身份头，并校验 userId 是合法正整数，供 Controller/Service 构造 AuthPrincipal。
         String id = request.getHeader("X-User-Id");
         if (id != null && !id.isBlank()) {
             if (!id.matches("[1-9][0-9]{0,17}")) throw BusinessException.unauthorized("身份编号无效");

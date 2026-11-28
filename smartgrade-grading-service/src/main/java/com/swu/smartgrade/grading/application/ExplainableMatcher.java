@@ -28,6 +28,7 @@ public class ExplainableMatcher {
 
     public MatchResult match(String text, List<RubricPoint> points,
                              BigDecimal answerCoverageRatio, BigDecimal maxScore, BigDecimal baseScore) {
+        // B3 参数读取点：初始分来自 batch 快照或 Nacos 默认值，教师现场可指出该值不是硬编码。
         BigDecimal initialScore = maxScore == null ? (baseScore == null ? properties.getBaseScore() : baseScore)
                 : com.swu.smartgrade.common.util.ScorePolicy.baseScore(maxScore, baseScore);
         String safeText = text == null ? "" : text;
@@ -38,6 +39,7 @@ public class ExplainableMatcher {
         BigDecimal score = initialScore;
         BigDecimal confidenceTotal = BigDecimal.ZERO;
         for (RubricPoint point : points) {
+            // 卷面覆盖率要点读取 Nacos 的 min-answer-area-ratio；普通要点读取关键词/同义表达。
             HitView hit = "LENGTH_COVERAGE".equalsIgnoreCase(point.pointType())
                     ? checkCoverage(safeText, point, answerCoverageRatio)
                     : findHit(safeText, point);
@@ -101,6 +103,7 @@ public class ExplainableMatcher {
 
     private HitView checkCoverage(String text, RubricPoint point, BigDecimal answerCoverageRatio) {
         BigDecimal ratio = answerCoverageRatio == null ? BigDecimal.ZERO : answerCoverageRatio;
+        // B3 现场证据：低于 Nacos 配置的阈值时不命中，达到阈值才生成可解释证据。
         if (ratio.compareTo(properties.getMinAnswerAreaRatio()) < 0) {
             return null;
         }

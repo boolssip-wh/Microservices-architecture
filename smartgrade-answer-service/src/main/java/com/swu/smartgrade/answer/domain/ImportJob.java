@@ -10,6 +10,9 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+/**
+ * A5 导入任务实体：idempotencyKey 保证重复上传不重复生成任务，rubricSnapshotJson 固定本次规则版本。
+ */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,15 +21,15 @@ import java.time.LocalDateTime;
 public class ImportJob {
     @Id
     private String jobId;
-    private String batchId;
-    private String idempotencyKey;
+    private String batchId; // 逻辑外键 -> batch.batch_id
+    private String idempotencyKey; // 与 batchId 组合形成唯一约束，防止重复导入
     @Column(columnDefinition = "TEXT")
     private String rubricSnapshotJson;
     private String sourceType;
     private String numberingRule;
-    private String status;
-    private Integer acceptedCount;
-    private Integer rejectedCount;
+    private String status; // PENDING/RUNNING/COMPLETED/PARTIAL_FAILED/FAILED
+    private Integer acceptedCount; // 验收后的有效答卷数
+    private Integer rejectedCount; // 格式或重复等问题被拒绝的数量
     @Column(columnDefinition = "TEXT")
     private String validationJson;
     private LocalDateTime createdAt;

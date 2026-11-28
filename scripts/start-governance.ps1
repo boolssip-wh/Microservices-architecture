@@ -1,4 +1,4 @@
-param(
+﻿param(
     [string]$AgentVersion = "9.4.0"
 )
 
@@ -10,6 +10,7 @@ $standaloneSkyWalking = Join-Path $toolsRoot "skywalking-9.7.0"
 
 Push-Location $projectRoot
 try {
+    # 优先使用老师提供的本地 Seata/SkyWalking 发行包；不存在时回退 Docker。
     if ((Test-Path -LiteralPath $standaloneSeata) -and
         (Test-Path -LiteralPath $standaloneSkyWalking)) {
         & (Join-Path $PSScriptRoot "start-seata-standalone.ps1") -SeataHome $standaloneSeata
@@ -26,6 +27,7 @@ try {
     }
 
     $deadline = (Get-Date).AddMinutes(3)
+    # 分别检查 Seata 控制台 7091 和 SkyWalking OAP 12800。
     do {
         $seataReady = $false
         $skyWalkingReady = $false
@@ -56,6 +58,7 @@ try {
     }
 
     & (Join-Path $PSScriptRoot "download-skywalking-agent.ps1") -Version $AgentVersion
+    # 这三行输出现场应看到的事务端口、Seata 控制台和 SkyWalking UI。
     Write-Host "Seata transaction port: 127.0.0.1:8091"
     Write-Host "Seata console:          http://127.0.0.1:7091"
     Write-Host "SkyWalking UI:          http://127.0.0.1:12801"

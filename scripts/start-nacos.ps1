@@ -1,10 +1,11 @@
-param(
+﻿param(
     [string]$NacosHome = (Join-Path $env:USERPROFILE "ai-infra\nacos\standalone\nacos-3.3.0"),
     [string]$JavaHome = "D:\SmartGradeTools\jdk17",
     [int]$ServerPort = 8848
 )
 
 $ErrorActionPreference = "Stop"
+# 定位老师提供的 Nacos Server 与 JDK；默认使用 standalone 单机模式。
 $startup = Join-Path $NacosHome "bin\startup.cmd"
 $java = Join-Path $JavaHome "bin\java.exe"
 if (-not (Test-Path -LiteralPath $startup)) { throw "Nacos startup.cmd not found: $startup" }
@@ -19,6 +20,7 @@ if ($listening.TcpTestSucceeded) {
 
 $env:JAVA_HOME = $JavaHome
 $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
+# 后台启动 Nacos，日志写入项目 .runtime，避免污染源码目录。
 Start-Process -FilePath "cmd.exe" `
     -ArgumentList @("/c", "`"$startup`" -m standalone") `
     -WorkingDirectory $NacosHome -WindowStyle Hidden `
@@ -26,6 +28,7 @@ Start-Process -FilePath "cmd.exe" `
     -RedirectStandardError (Join-Path $projectRoot ".runtime\nacos-start.err.log")
 
 $deadline = (Get-Date).AddSeconds(120)
+# 轮询 8848，直到 Nacos Server 可连接。
 do {
     $ready = Test-NetConnection -ComputerName 127.0.0.1 -Port $ServerPort `
         -WarningAction SilentlyContinue

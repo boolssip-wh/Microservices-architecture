@@ -1,4 +1,4 @@
-param(
+﻿param(
     [int]$Requests = 40,
     [string]$GatewayUrl = "http://127.0.0.1:8080",
     [string]$SentinelUrl = "http://127.0.0.1:8858",
@@ -27,12 +27,14 @@ $client.Timeout = [TimeSpan]::FromSeconds(15)
 
 try {
     Write-Host "Sending $Requests concurrent GET requests through Gateway route answer-service..."
+    # 并发请求用于触发 Gateway 的 answer-service 8 QPS 流控规则。
     $tasks = @()
     for ($index = 0; $index -lt $Requests; $index++) {
         $tasks += $client.GetAsync("$GatewayUrl/api/batches?page=1&size=1&burst=$index")
     }
     [System.Threading.Tasks.Task]::WaitAll([System.Threading.Tasks.Task[]]$tasks)
     $responses = @($tasks | ForEach-Object { $_.Result })
+    # 按 HTTP 状态码汇总；预期前 8 个请求为 200，其余为 429。
     $responses | Group-Object { [int]$_.StatusCode } | Sort-Object Name | ForEach-Object {
         [PSCustomObject]@{ HttpStatus = $_.Name; Count = $_.Count }
     } | Format-Table -AutoSize
@@ -42,6 +44,7 @@ try {
         throw "No request was blocked. The Sentinel Gateway rule is not demonstrably active."
     }
     $sample = $blocked[0].Content.ReadAsStringAsync().Result
+    # 输出被 Sentinel 阻断的真实响应体，证明 429 来自网关保护。
     Write-Host "Sample blocked response: $sample"
     try {
         $null = Invoke-WebRequest -Method Post -Uri "$SentinelUrl/auth/login" `

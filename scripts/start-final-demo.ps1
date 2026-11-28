@@ -1,4 +1,4 @@
-param(
+﻿param(
     [switch]$NoBrowser,
     [string]$MySqlHome = "D:\mysql-8.0.41",
     [string]$MySqlDataDir = "D:\SmartGradeTools\mysql-it",
@@ -22,6 +22,7 @@ try {
     throw "Nacos is not available at 127.0.0.1:8848. Start Nacos first."
 }
 
+# 备选的一键演示：初始化 3307 隔离 MySQL，让 D1 回滚测试不污染默认 H2/开发库。
 if (-not (Test-Path -LiteralPath (Join-Path $MySqlDataDir "mysql"))) {
     New-Item -ItemType Directory -Force -Path $MySqlDataDir | Out-Null
     & $mysqld --no-defaults --initialize-insecure --basedir=$MySqlHome --datadir=$MySqlDataDir
@@ -66,10 +67,12 @@ if ([int]($schemaReady | Select-Object -First 1) -eq 0) {
 & (Join-Path $PSScriptRoot "start-governance.ps1")
 $toolsRoot = if ($env:SMARTGRADE_TOOLS) { $env:SMARTGRADE_TOOLS } else { "D:\SmartGradeTools" }
 $env:SMARTGRADE_TOOLS = $toolsRoot
+# D1/D2 环境：answer/review 开启 Seata；所有 Java 服务由 start-all 自动附加 SkyWalking Agent。
 $env:SEATA_ENABLED = "true"
 $env:SEATA_SERVER_ADDR = "127.0.0.1:8091"
 $env:SKYWALKING_AGENT_JAR = Join-Path $toolsRoot "skywalking-agent\skywalking-agent.jar"
 $env:SKYWALKING_BACKEND_SERVICE = "127.0.0.1:11800"
+# A5/D1 数据隔离：answer 和 review 各自连接独立数据库，Seata 通过 undo_log 保证跨库回滚。
 $env:ANSWER_DB_URL = "jdbc:mysql://127.0.0.1:$MySqlPort/smartgrade_answer?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai"
 $env:REVIEW_DB_URL = "jdbc:mysql://127.0.0.1:$MySqlPort/smartgrade_review?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai"
 $env:ANSWER_DB_DRIVER = "com.mysql.cj.jdbc.Driver"

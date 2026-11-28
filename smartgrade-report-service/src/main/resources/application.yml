@@ -1,9 +1,12 @@
+# A1 单服务启动证据：report-service 对架构图 C06 统计报告服务，健康检查端口 8086。
 server:
   port: 8086
 spring:
   application:
+    # B2 注册名：Gateway 路由 /api/reports/** 时按服务名发现本服务。
     name: smartgrade-report-service
   config:
+    # B3 外置配置：从 Nacos 读取统一公共配置。
     import: "optional:nacos:smartgrade-common.yaml?group=DEFAULT_GROUP&refreshEnabled=true"
   datasource:
     url: ${DB_URL:jdbc:h2:mem:smartgrade_report;MODE=MySQL;DB_CLOSE_DELAY=-1}
@@ -25,6 +28,7 @@ spring:
         namespace: ${NACOS_NAMESPACE:public}
         group: ${NACOS_GROUP:DEFAULT_GROUP}
       discovery:
+        # B2 注册中心地址；服务列表中的健康状态由 Nacos 心跳维护。
         enabled: true
         server-addr: ${NACOS_ADDR:127.0.0.1:8848}
         username: ${NACOS_USERNAME:nacos}

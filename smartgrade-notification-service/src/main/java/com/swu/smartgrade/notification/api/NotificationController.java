@@ -20,6 +20,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+/**
+ * A4/C07 接口入口：站内通知分页、SSE 实时推送、已读和邮件发送记录。
+ */
 @RestController
 @Tag(name = "C07 任务通知服务")
 @RequestMapping("/api/notifications")

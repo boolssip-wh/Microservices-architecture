@@ -22,6 +22,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * C05 复核定分核心业务：消费初筛结果、生成可编辑评语、教师确认最终分并保存快照与审计记录。
+ * Controller 只负责协议转换；分数、评语和状态一致性规则集中在应用服务中。
+ */
 @Service
 public class ReviewApplicationService {
     private final GradingResultRepository resultRepository;
@@ -59,6 +63,7 @@ public class ReviewApplicationService {
 
     @Transactional
     public CreatedResult create(CreateResultRequest request) {
+        // D1 证据：review-service 的跨服务写入口。已复核结果直接返回，避免重复投递覆盖教师最终判断。
         GradingResult result = resultRepository.findByAnswerId(request.answerId()).orElseGet(GradingResult::new);
         if (result.getFinalScore() != null || "REVIEWED".equals(result.getStatus())) {
             return new CreatedResult(result.getResultId(), result.getStatus());
@@ -86,6 +91,7 @@ public class ReviewApplicationService {
         result.setConfidence(request.confidence());
         result.setStatus("MANUAL_REVIEW".equals(request.status()) ? "MANUAL_REVIEW" : "WAITING_REVIEW");
         resultRepository.save(result);
+        // 保存本次初筛命中证据；证据与结果分离，便于前端展示“为什么得分”。
         evidenceRepository.deleteAll(evidenceRepository.findByResultId(result.getResultId()));
         for (HitInput hit : request.hits()) {
             HitEvidence evidence = new HitEvidence();
@@ -143,6 +149,7 @@ public class ReviewApplicationService {
     @Transactional
     public CommentSuggestionResponse suggestComment(Long teacherId, String answerId,
                                                     CommentSuggestionRequest request) {
+        // D3 关键逻辑：有教师口述要求时作为 instruction 传给 AI；无要求时走普通 AI 生成。
         GradingResult result = requireResult(teacherId, answerId);
         UserClient.CommentProfile profile = loadProfile(teacherId);
         List<HitEvidence> evidence = evidenceRepository.findByResultId(result.getResultId());
@@ -165,6 +172,7 @@ public class ReviewApplicationService {
             styleSecond = generated.get(1);
             generationMode = "AI";
         } else {
+            // AI 未配置或超时不影响定分，回退到教师偏好模板并明确标记 TEMPLATE。
             String opening = switch (profile.openingStyle()) {
                 case "DIRECT" -> "根据本次作答";
                 case "QUESTION" -> "你是否还能补充遗漏的关键要点";
@@ -226,6 +234,7 @@ public class ReviewApplicationService {
 
     @Transactional
     public FinalScoreResponse finalizeScore(Long teacherId, String answerId, FinalScoreRequest request) {
+        // 人工最终分覆盖 AI 建议分；同步保存评语、成绩快照和审计日志，保证可追溯。
         GradingResult result = requireResult(teacherId, answerId);
         boolean firstReview = result.getFinalScore() == null && !"REVIEWED".equals(result.getStatus());
         if (request.finalScore().compareTo(BigDecimal.ZERO) < 0
@@ -263,6 +272,7 @@ public class ReviewApplicationService {
         commentRepository.save(draft);
 
         ScoreSnapshot snapshot = new ScoreSnapshot();
+        // 成绩快照固定本次最终结果，后续规则或评语变化不会改写历史。
         snapshot.setSnapshotId(id("SS"));
         snapshot.setReviewId(review.getReviewId());
         snapshot.setFinalScore(finalScore);
