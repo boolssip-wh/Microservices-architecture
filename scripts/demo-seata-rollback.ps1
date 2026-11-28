@@ -77,7 +77,7 @@ Set-FailMode $true
 $holdMillis = [Math]::Max(0, $HoldSeconds) * 1000L
 Set-HoldMillis $holdMillis
 if ($holdMillis -gt 0) {
-    Write-Host "Seata 演示事务将在远端写入后保持 $HoldSeconds 秒，请在此期间查看 Seata 控制台。"
+    Write-Host "Seata transaction will stay open for $HoldSeconds seconds. Refresh the Seata console now."
 }
 $before = Review-Count
 $nonce = [guid]::NewGuid().ToString("N").Substring(0, 8)
