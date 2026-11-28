@@ -47,6 +47,14 @@ if ($missingServices.Count -or $unhealthyServices.Count) {
     throw "Nacos registry verification failed. Missing=$($missingServices -join ',') Unhealthy=$($unhealthyServices.name -join ',')"
 }
 
+function Select-LiveMachine($machines) {
+    # Sentinel can retain stale command ports after repeated local restarts. Prefer the healthy
+    # heartbeat, then the newest heartbeat, instead of always reading machines[0].
+    $healthy = @($machines | Where-Object { $_.healthy -eq $true } | Sort-Object lastHeartbeat -Descending)
+    if ($healthy.Count) { return $healthy[0] }
+    return @($machines | Sort-Object lastHeartbeat -Descending)[0]
+}
+
 Write-Host "`n[3/4] Sentinel live applications and gateway rules"
 # 读取 Sentinel 应用心跳、Gateway 流控规则和 answer-service 的流控/降级规则。
 $null = Invoke-WebRequest -Method Post -Uri "$SentinelUrl/auth/login" `
@@ -55,10 +63,11 @@ $null = Invoke-WebRequest -Method Post -Uri "$SentinelUrl/auth/login" `
 $appsResponse = Invoke-RestMethod -Uri "$SentinelUrl/app/briefinfos.json" -WebSession $sentinelSession -TimeoutSec 8
 $sentinelApps = @($appsResponse.data | Where-Object { $_.app -in $expectedServices })
 $sentinelApps | ForEach-Object {
+    $machine = Select-LiveMachine $_.machines
     [PSCustomObject]@{
         App = $_.app
-        Healthy = $_.machines[0].healthy
-        CommandPort = $_.machines[0].port
+        Healthy = $machine.healthy
+        CommandPort = $machine.port
     }
 } | Sort-Object App | Format-Table -AutoSize
 $missingApps = @($expectedServices | Where-Object { $_ -notin $sentinelApps.app })
@@ -66,7 +75,7 @@ if ($missingApps.Count) {
     throw "Sentinel has not received heartbeats from: $($missingApps -join ', ')"
 }
 $gateway = $sentinelApps | Where-Object app -eq "smartgrade-gateway" | Select-Object -First 1
-$gatewayMachine = $gateway.machines[0]
+$gatewayMachine = Select-LiveMachine $gateway.machines
 try {
     $gatewayRules = Invoke-RestMethod -Uri "$SentinelUrl/gateway/flow/list.json?app=smartgrade-gateway&ip=$($gatewayMachine.ip)&port=$($gatewayMachine.port)" `
         -WebSession $sentinelSession -TimeoutSec 30
@@ -83,7 +92,7 @@ try {
     Write-Warning "Sentinel dashboard could not read the client command port. The answer-service Gateway rule definition exists; run scripts/demo-sentinel-limit.ps1 for the live 429 proof."
 }
 $answerApp = $sentinelApps | Where-Object app -eq "smartgrade-answer-service" | Select-Object -First 1
-$answerMachine = $answerApp.machines[0]
+$answerMachine = Select-LiveMachine $answerApp.machines
 try {
     $answerFlowRules = Invoke-RestMethod -Uri "$SentinelUrl/v1/flow/rules?app=smartgrade-answer-service&ip=$($answerMachine.ip)&port=$($answerMachine.port)" `
         -WebSession $sentinelSession -TimeoutSec 30

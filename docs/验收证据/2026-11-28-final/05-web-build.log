@@ -1,0 +1,13 @@
+
+> smartgrade-web@1.0.0 build
+> vite build
+
+vite v6.4.5 building for production...
+transforming...
+✓ 38 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.90 kB │ gzip:  0.60 kB
+dist/assets/index-CHdJtryp.css   56.49 kB │ gzip: 13.07 kB
+dist/assets/index-2cDOiRZy.js   168.27 kB │ gzip: 63.64 kB
+✓ built in 1.43s

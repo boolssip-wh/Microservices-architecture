@@ -1,0 +1,27 @@
+SkyWalking service: 127.0.0.1:3307
+SkyWalking service: localhost:-1
+SkyWalking service: smartgrade-answer-service
+SkyWalking service: smartgrade-gateway
+SkyWalking service: smartgrade-grading-service
+SkyWalking service: smartgrade-notification-service
+SkyWalking service: smartgrade-report-service
+SkyWalking service: smartgrade-review-service
+SkyWalking service: smartgrade-rubric-service
+SkyWalking service: smartgrade-user-service
+
+traceId                                                endpoint                                               duration i
+                                                                                                                       s
+                                                                                                                       E
+                                                                                                                       r
+                                                                                                                       r
+                                                                                                                       o
+                                                                                                                       r
+-------                                                --------                                               -------- -
+8d9bd2144c2d4983884738105b50ddee.232.17958605389220001 GET:/api/notifications                                      568 e
+90a7872d06a5418f8a2d6ff0a5e2a36a.223.17958605381820001 GET:/internal/results/batches/UNKNOWN/summary                21 e
+90a7872d06a5418f8a2d6ff0a5e2a36a.223.17958605381820001 GET:/api/reports/batches/UNKNOWN/insights                   675 e
+f3f8079d3b4b402b994fb9c36b960b15.251.17958605380870001 GET:/internal/results/batches/B6EEB410EDA5B49FD/states       12 e
+f3f8079d3b4b402b994fb9c36b960b15.251.17958605380870001 GET:/api/batches                                             33 e
+
+PASS: all expected services are visible in SkyWalking.
+PASS: SkyWalking returned 20 recent cross-service trace records.

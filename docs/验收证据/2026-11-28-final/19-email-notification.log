@@ -1,0 +1,27 @@
+{
+  "channel": {
+    "teacherId": 1,
+    "bound": true,
+    "maskedPhone": "38***@qq.com",
+    "enabled": true,
+    "updatedAt": "2026-11-28T18:15:21.2630419+08:00"
+  },
+  "test": {
+    "deliveryId": "SMSFC871B07B3434FD8",
+    "eventType": "sms.test",
+    "targetMasked": "38***@qq.com",
+    "message": "同标阅卷测试提醒：通知通道已连接，可在本页面查看发送记录。",
+    "provider": "mock",
+    "status": "MOCKED",
+    "createdAt": "2026-11-28T18:15:21.7382929+08:00"
+  }
+}
+{
+  "deliveryId": "SMS7D07DEF692E34E49",
+  "eventType": "sms.test",
+  "targetMasked": "38***@qq.com",
+  "message": "同标阅卷测试提醒：通知通道已连接，可在本页面查看发送记录。",
+  "provider": "smtp",
+  "status": "SENT",
+  "createdAt": "2026-11-28T18:16:21.5634672+08:00"
+}

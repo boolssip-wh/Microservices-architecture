@@ -1,0 +1,679 @@
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] smartgrade-platform                                                [pom]
+[INFO] smartgrade-common                                                  [jar]
+[INFO] smartgrade-gateway                                                 [jar]
+[INFO] smartgrade-user-service                                            [jar]
+[INFO] smartgrade-rubric-service                                          [jar]
+[INFO] smartgrade-answer-service                                          [jar]
+[INFO] smartgrade-grading-service                                         [jar]
+[INFO] smartgrade-review-service                                          [jar]
+[INFO] smartgrade-report-service                                          [jar]
+[INFO] smartgrade-notification-service                                    [jar]
+[INFO] smartgrade-web                                                     [pom]
+[INFO] 
+[INFO] --------------------< com.swu:smartgrade-platform >---------------------
+[INFO] Building smartgrade-platform 1.0.0                                [1/11]
+[INFO]   from pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.2:clean (default-clean) @ smartgrade-platform ---
+[INFO] 
+[INFO] ---------------------< com.swu:smartgrade-common >----------------------
+[INFO] Building smartgrade-common 1.0.0                                  [2/11]
+[INFO]   from smartgrade-common\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.2:clean (default-clean) @ smartgrade-common ---
+[INFO] Deleting E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-common\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ smartgrade-common ---
+[INFO] skip non existing resourceDirectory E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-common\src\main\resources
+[INFO] skip non existing resourceDirectory E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-common\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ smartgrade-common ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 24 source files with javac [debug release 17] to target\classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ smartgrade-common ---
+[INFO] skip non existing resourceDirectory E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-common\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ smartgrade-common ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- surefire:3.1.2:test (default-test) @ smartgrade-common ---
+[INFO] No tests to run.
+[INFO] 
+[INFO] --- jar:3.3.0:jar (default-jar) @ smartgrade-common ---
+[INFO] Building jar: E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-common\target\smartgrade-common-1.0.0.jar
+[INFO] 
+[INFO] ---------------------< com.swu:smartgrade-gateway >---------------------
+[INFO] Building smartgrade-gateway 1.0.0                                 [3/11]
+[INFO]   from smartgrade-gateway\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.2:clean (default-clean) @ smartgrade-gateway ---
+[INFO] Deleting E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-gateway\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ smartgrade-gateway ---
+[INFO] Copying 2 resources from src\main\resources to target\classes
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ smartgrade-gateway ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 3 source files with javac [debug release 17] to target\classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ smartgrade-gateway ---
+[INFO] skip non existing resourceDirectory E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-gateway\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ smartgrade-gateway ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- surefire:3.1.2:test (default-test) @ smartgrade-gateway ---
+[INFO] No tests to run.
+[INFO] 
+[INFO] --- jar:3.3.0:jar (default-jar) @ smartgrade-gateway ---
+[INFO] Building jar: E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-gateway\target\smartgrade-gateway-1.0.0.jar
+[INFO] 
+[INFO] --- spring-boot:3.2.9:repackage (repackage) @ smartgrade-gateway ---
+[INFO] Replacing main artifact E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-gateway\target\smartgrade-gateway-1.0.0.jar with repackaged archive, adding nested dependencies in BOOT-INF/.
+[INFO] The original artifact has been renamed to E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-gateway\target\smartgrade-gateway-1.0.0.jar.original
+[INFO] 
+[INFO] ------------------< com.swu:smartgrade-user-service >-------------------
+[INFO] Building smartgrade-user-service 1.0.0                            [4/11]
+[INFO]   from smartgrade-user-service\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.2:clean (default-clean) @ smartgrade-user-service ---
+[INFO] Deleting E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-user-service\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ smartgrade-user-service ---
+[INFO] Copying 2 resources from src\main\resources to target\classes
+[INFO] Copying 4 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ smartgrade-user-service ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] Compiling 23 source files with javac [debug release 17] to target\classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ smartgrade-user-service ---
+[INFO] skip non existing resourceDirectory E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-user-service\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ smartgrade-user-service ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] Compiling 5 source files with javac [debug release 17] to target\test-classes
+[INFO] 
+[INFO] --- surefire:3.1.2:test (default-test) @ smartgrade-user-service ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.swu.smartgrade.user.GatewayBoundaryTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.257 s -- in com.swu.smartgrade.user.GatewayBoundaryTest
+[INFO] Running com.swu.smartgrade.user.LoginRequestValidationTest
+17:48:16.843 [main] INFO org.hibernate.validator.internal.util.Version -- HV000001: Hibernate Validator 8.0.1.Final
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.561 s -- in com.swu.smartgrade.user.LoginRequestValidationTest
+[INFO] Running com.swu.smartgrade.user.NotificationChannelServiceTest
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.560 s -- in com.swu.smartgrade.user.NotificationChannelServiceTest
+[INFO] Running com.swu.smartgrade.user.PasswordHasherTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.381 s -- in com.swu.smartgrade.user.PasswordHasherTest
+[INFO] Running com.swu.smartgrade.user.ProfileValidationTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.071 s -- in com.swu.smartgrade.user.ProfileValidationTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 9, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] 
+[INFO] --- jar:3.3.0:jar (default-jar) @ smartgrade-user-service ---
+[INFO] Building jar: E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-user-service\target\smartgrade-user-service-1.0.0.jar
+[INFO] 
+[INFO] --- spring-boot:3.2.9:repackage (repackage) @ smartgrade-user-service ---
+[INFO] Replacing main artifact E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-user-service\target\smartgrade-user-service-1.0.0.jar with repackaged archive, adding nested dependencies in BOOT-INF/.
+[INFO] The original artifact has been renamed to E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-user-service\target\smartgrade-user-service-1.0.0.jar.original
+[INFO] 
+[INFO] -----------------< com.swu:smartgrade-rubric-service >------------------
+[INFO] Building smartgrade-rubric-service 1.0.0                          [5/11]
+[INFO]   from smartgrade-rubric-service\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.2:clean (default-clean) @ smartgrade-rubric-service ---
+[INFO] Deleting E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-rubric-service\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ smartgrade-rubric-service ---
+[INFO] Copying 2 resources from src\main\resources to target\classes
+[INFO] Copying 2 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ smartgrade-rubric-service ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] Compiling 25 source files with javac [debug release 17] to target\classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ smartgrade-rubric-service ---
+[INFO] Copying 1 resource from src\test\resources to target\test-classes
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ smartgrade-rubric-service ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] Compiling 3 source files with javac [debug release 17] to target\test-classes
+[INFO] 
+[INFO] --- surefire:3.1.2:test (default-test) @ smartgrade-rubric-service ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.swu.smartgrade.rubric.RubricBaseScoreAccessTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.818 s -- in com.swu.smartgrade.rubric.RubricBaseScoreAccessTest
+[INFO] Running com.swu.smartgrade.rubric.RubricContractTest
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.865 s -- in com.swu.smartgrade.rubric.RubricContractTest
+[INFO] Running com.swu.smartgrade.rubric.RubricParseDistributionTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.013 s -- in com.swu.smartgrade.rubric.RubricParseDistributionTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 10, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] 
+[INFO] --- jar:3.3.0:jar (default-jar) @ smartgrade-rubric-service ---
+[INFO] Building jar: E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-rubric-service\target\smartgrade-rubric-service-1.0.0.jar
+[INFO] 
+[INFO] --- spring-boot:3.2.9:repackage (repackage) @ smartgrade-rubric-service ---
+[INFO] Replacing main artifact E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-rubric-service\target\smartgrade-rubric-service-1.0.0.jar with repackaged archive, adding nested dependencies in BOOT-INF/.
+[INFO] The original artifact has been renamed to E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-rubric-service\target\smartgrade-rubric-service-1.0.0.jar.original
+[INFO] 
+[INFO] -----------------< com.swu:smartgrade-answer-service >------------------
+[INFO] Building smartgrade-answer-service 1.0.0                          [6/11]
+[INFO]   from smartgrade-answer-service\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.2:clean (default-clean) @ smartgrade-answer-service ---
+[INFO] Deleting E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-answer-service\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ smartgrade-answer-service ---
+[INFO] Copying 2 resources from src\main\resources to target\classes
+[INFO] Copying 5 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ smartgrade-answer-service ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] Compiling 37 source files with javac [debug release 17] to target\classes
+[INFO] /E:/西南大学/班级/课：微服务与分布式架构/1101作业/smartgrade-platform/smartgrade-answer-service/src/main/java/com/swu/smartgrade/answer/application/ReviewDeliveryCoordinator.java: E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-answer-service\src\main\java\com\swu\smartgrade\answer\application\ReviewDeliveryCoordinator.java使用或覆盖了已过时的 API。
+[INFO] /E:/西南大学/班级/课：微服务与分布式架构/1101作业/smartgrade-platform/smartgrade-answer-service/src/main/java/com/swu/smartgrade/answer/application/ReviewDeliveryCoordinator.java: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ smartgrade-answer-service ---
+[INFO] Copying 1 resource from src\test\resources to target\test-classes
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ smartgrade-answer-service ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] Compiling 5 source files with javac [debug release 17] to target\test-classes
+[INFO] 
+[INFO] --- surefire:3.1.2:test (default-test) @ smartgrade-answer-service ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.swu.smartgrade.answer.application.BatchBaseScoreTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.154 s -- in com.swu.smartgrade.answer.application.BatchBaseScoreTest
+[INFO] Running com.swu.smartgrade.answer.application.GradingRecoveryTest
+17:48:56.293 [main] INFO org.apache.seata.common.loader.EnhancedServiceLoader$InnerEnhancedServiceLoader -- Load compatible class io.seata.core.context.ContextCore
+17:48:56.310 [main] INFO com.swu.smartgrade.answer.application.ReviewDeliveryCoordinator -- 跨服务复核投递完成 xid=null answerId=A1 status=MANUAL_REVIEW
+17:48:56.671 [main] ERROR com.swu.smartgrade.answer.application.GradingOrchestrator -- 批次 B1 初筛编排失败
+java.lang.IllegalStateException: rules unavailable
+	at com.swu.smartgrade.answer.application.GradingOrchestrator.boundRubric(GradingOrchestrator.java:236)
+	at com.swu.smartgrade.answer.application.GradingOrchestrator.processJob(GradingOrchestrator.java:72)
+	at com.swu.smartgrade.answer.application.GradingOrchestrator.process(GradingOrchestrator.java:60)
+	at com.swu.smartgrade.answer.application.GradingRecoveryTest.failedBatchLeavesNoUnreachablePendingAnswers(GradingRecoveryTest.java:45)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:728)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:156)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:147)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:86)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:103)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:93)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:92)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:86)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$7(TestMethodTestDescriptor.java:218)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:214)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:139)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:69)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:151)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:198)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:169)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:93)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:58)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:141)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:57)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:103)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:85)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
+	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:56)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:184)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:148)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:122)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+17:48:56.685 [main] WARN com.swu.smartgrade.answer.application.GradingOrchestrator -- 答卷 A1 初筛失败
+java.lang.IllegalStateException: temporary C05 failure
+	at com.swu.smartgrade.answer.application.ReviewDeliveryCoordinator.deliver(ReviewDeliveryCoordinator.java:44)
+	at com.swu.smartgrade.answer.application.GradingOrchestrator.tryProcess(GradingOrchestrator.java:174)
+	at com.swu.smartgrade.answer.application.GradingOrchestrator.processOne(GradingOrchestrator.java:124)
+	at com.swu.smartgrade.answer.application.GradingOrchestrator.processJob(GradingOrchestrator.java:81)
+	at com.swu.smartgrade.answer.application.GradingOrchestrator.process(GradingOrchestrator.java:60)
+	at com.swu.smartgrade.answer.application.GradingRecoveryTest.imageDeliveryRetryUsesOriginalFileAndDoesNotConsumeOcrRetries(GradingRecoveryTest.java:59)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:728)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:156)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:147)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:86)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:103)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:93)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:92)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:86)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$7(TestMethodTestDescriptor.java:218)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:214)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:139)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:69)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:151)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1511)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:198)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:169)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:93)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:58)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:141)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:57)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:103)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:85)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
+	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:56)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:184)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:148)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:122)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+17:48:56.686 [main] INFO com.swu.smartgrade.answer.application.ReviewDeliveryCoordinator -- 跨服务复核投递完成 xid=null answerId=A1 status=WAITING_REVIEW
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.615 s -- in com.swu.smartgrade.answer.application.GradingRecoveryTest
+[INFO] Running com.swu.smartgrade.answer.application.ImportContractTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.052 s -- in com.swu.smartgrade.answer.application.ImportContractTest
+[INFO] Running com.swu.smartgrade.answer.application.OriginalAnswerTest
+17:48:57.141 [main] INFO org.hibernate.validator.internal.util.Version -- HV000001: Hibernate Validator 8.0.1.Final
+17:48:57.934 [main] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+17:48:57.934 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+17:48:57.939 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 2 ms
+17:48:58.091 [main] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+17:48:58.093 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+17:48:58.093 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+17:48:58.172 [main] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+17:48:58.172 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+17:48:58.172 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+17:48:58.243 [main] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+17:48:58.243 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+17:48:58.243 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+17:48:58.309 [main] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+17:48:58.310 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+17:48:58.310 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+17:48:58.328 [main] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+17:48:58.328 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+17:48:58.329 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 1 ms
+17:48:58.345 [main] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+17:48:58.345 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+17:48:58.345 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+17:48:58.364 [main] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+17:48:58.364 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+17:48:58.364 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.613 s -- in com.swu.smartgrade.answer.application.OriginalAnswerTest
+[INFO] Running com.swu.smartgrade.answer.application.ReviewDeliveryCoordinatorTest
+17:48:58.375 [main] INFO com.swu.smartgrade.answer.application.ReviewDeliveryCoordinator -- 跨服务复核投递完成 xid=null answerId=A-SEATA-5 status=WAITING_REVIEW
+17:48:58.384 [main] INFO com.swu.smartgrade.answer.application.ReviewDeliveryCoordinator -- 跨服务复核投递完成 xid=null answerId=A-SEATA-2 status=WAITING_REVIEW
+17:48:58.384 [main] INFO com.swu.smartgrade.answer.application.ReviewDeliveryCoordinator -- 跨服务复核投递完成 xid=null answerId=A-SEATA-2 status=WAITING_REVIEW
+17:48:58.388 [main] INFO com.swu.smartgrade.answer.application.ReviewDeliveryCoordinator -- 跨服务复核投递完成 xid=null answerId=A-SEATA-1 status=WAITING_REVIEW
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.017 s -- in com.swu.smartgrade.answer.application.ReviewDeliveryCoordinatorTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 22, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] 
+[INFO] --- jar:3.3.0:jar (default-jar) @ smartgrade-answer-service ---
+[INFO] Building jar: E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-answer-service\target\smartgrade-answer-service-1.0.0.jar
+[INFO] 
+[INFO] --- spring-boot:3.2.9:repackage (repackage) @ smartgrade-answer-service ---
+[INFO] Replacing main artifact E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-answer-service\target\smartgrade-answer-service-1.0.0.jar with repackaged archive, adding nested dependencies in BOOT-INF/.
+[INFO] The original artifact has been renamed to E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-answer-service\target\smartgrade-answer-service-1.0.0.jar.original
+[INFO] 
+[INFO] -----------------< com.swu:smartgrade-grading-service >-----------------
+[INFO] Building smartgrade-grading-service 1.0.0                         [7/11]
+[INFO]   from smartgrade-grading-service\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.2:clean (default-clean) @ smartgrade-grading-service ---
+[INFO] Deleting E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-grading-service\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ smartgrade-grading-service ---
+[INFO] Copying 2 resources from src\main\resources to target\classes
+[INFO] Copying 3 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ smartgrade-grading-service ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] Compiling 24 source files with javac [debug release 17] to target\classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ smartgrade-grading-service ---
+[INFO] Copying 1 resource from src\test\resources to target\test-classes
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ smartgrade-grading-service ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] Compiling 2 source files with javac [debug release 17] to target\test-classes
+[INFO] 
+[INFO] --- surefire:3.1.2:test (default-test) @ smartgrade-grading-service ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.swu.smartgrade.grading.ExplainableMatcherTest
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.171 s -- in com.swu.smartgrade.grading.ExplainableMatcherTest
+[INFO] Running com.swu.smartgrade.grading.GradingRetryTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.900 s -- in com.swu.smartgrade.grading.GradingRetryTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] 
+[INFO] --- jar:3.3.0:jar (default-jar) @ smartgrade-grading-service ---
+[INFO] Building jar: E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-grading-service\target\smartgrade-grading-service-1.0.0.jar
+[INFO] 
+[INFO] --- spring-boot:3.2.9:repackage (repackage) @ smartgrade-grading-service ---
+[INFO] Replacing main artifact E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-grading-service\target\smartgrade-grading-service-1.0.0.jar with repackaged archive, adding nested dependencies in BOOT-INF/.
+[INFO] The original artifact has been renamed to E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-grading-service\target\smartgrade-grading-service-1.0.0.jar.original
+[INFO] 
+[INFO] -----------------< com.swu:smartgrade-review-service >------------------
+[INFO] Building smartgrade-review-service 1.0.0                          [8/11]
+[INFO]   from smartgrade-review-service\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.2:clean (default-clean) @ smartgrade-review-service ---
+[INFO] Deleting E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-review-service\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ smartgrade-review-service ---
+[INFO] Copying 2 resources from src\main\resources to target\classes
+[INFO] Copying 5 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ smartgrade-review-service ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] Compiling 34 source files with javac [debug release 17] to target\classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ smartgrade-review-service ---
+[INFO] Copying 1 resource from src\test\resources to target\test-classes
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ smartgrade-review-service ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] Compiling 1 source file with javac [debug release 17] to target\test-classes
+[INFO] 
+[INFO] --- surefire:3.1.2:test (default-test) @ smartgrade-review-service ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.swu.smartgrade.review.ReviewOrchestrationIntegrationTest
+17:49:42.504 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.swu.smartgrade.review.ReviewOrchestrationIntegrationTest]: ReviewOrchestrationIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+17:49:42.842 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.swu.smartgrade.review.ReviewServiceApplication for test class com.swu.smartgrade.review.ReviewOrchestrationIntegrationTest
+2026-11-28T17:49:44.907+08:00  INFO 16584 --- [smartgrade-review-service] [           main] c.a.nacos.client.logging.NacosLogging    : Nacos Logging Adapter Builder: com.alibaba.nacos.logger.adapter.logback12.LogbackNacosLoggingAdapterBuilder
+2026-11-28T17:49:44.926+08:00  INFO 16584 --- [smartgrade-review-service] [           main] c.a.nacos.client.logging.NacosLogging    : Nacos Logging Adapter Builder: com.alibaba.nacos.logger.adapter.logback14.LogbackNacosLoggingAdapterBuilder
+2026-11-28T17:49:44.927+08:00  INFO 16584 --- [smartgrade-review-service] [           main] c.a.nacos.client.logging.NacosLogging    : Nacos Logging Adapter: com.alibaba.nacos.logger.adapter.logback14.LogbackNacosLoggingAdapter match ch.qos.logback.classic.Logger success.
+2026-11-28T17:49:44.948+08:00  INFO 16584 --- [smartgrade-review-service] [           main] c.a.nacos.client.logging.NacosLogging    : Nacos Logging Adapter Builder: com.alibaba.nacos.logger.adapter.log4j2.Log4j2NacosLoggingAdapterBuilder
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.9)
+
+2026-11-28T17:49:45.463+08:00  INFO 16584 --- [smartgrade-review-service] [           main] s.s.r.ReviewOrchestrationIntegrationTest : Starting ReviewOrchestrationIntegrationTest using Java 17.0.21.0.2 with PID 16584 (started by ThinkBook in E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-review-service)
+2026-11-28T17:49:45.467+08:00  INFO 16584 --- [smartgrade-review-service] [           main] s.s.r.ReviewOrchestrationIntegrationTest : No active profile set, falling back to 1 default profile: "default"
+2026-11-28T17:49:51.105+08:00  INFO 16584 --- [smartgrade-review-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2026-11-28T17:49:51.117+08:00  INFO 16584 --- [smartgrade-review-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-28T17:49:51.780+08:00  INFO 16584 --- [smartgrade-review-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 626 ms. Found 6 JPA repository interfaces.
+2026-11-28T17:49:51.828+08:00  INFO 16584 --- [smartgrade-review-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2026-11-28T17:49:51.831+08:00  INFO 16584 --- [smartgrade-review-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-11-28T17:49:51.884+08:00  INFO 16584 --- [smartgrade-review-service] [           main] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.swu.smartgrade.review.domain.AuditLogRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2026-11-28T17:49:51.885+08:00  INFO 16584 --- [smartgrade-review-service] [           main] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.swu.smartgrade.review.domain.CommentDraftRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2026-11-28T17:49:51.885+08:00  INFO 16584 --- [smartgrade-review-service] [           main] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.swu.smartgrade.review.domain.GradingResultRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2026-11-28T17:49:51.886+08:00  INFO 16584 --- [smartgrade-review-service] [           main] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.swu.smartgrade.review.domain.HitEvidenceRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2026-11-28T17:49:51.886+08:00  INFO 16584 --- [smartgrade-review-service] [           main] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.swu.smartgrade.review.domain.ReviewRecordRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2026-11-28T17:49:51.888+08:00  INFO 16584 --- [smartgrade-review-service] [           main] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.swu.smartgrade.review.domain.ScoreSnapshotRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2026-11-28T17:49:51.888+08:00  INFO 16584 --- [smartgrade-review-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 27 ms. Found 0 Redis repository interfaces.
+2026-11-28T17:49:52.874+08:00  INFO 16584 --- [smartgrade-review-service] [           main] o.s.cloud.context.scope.GenericScope     : BeanFactory id=e92e388c-0d9e-36a8-824c-0d45b79a0a30
+2026-11-28T17:49:58.662+08:00  WARN 16584 --- [smartgrade-review-service] [           main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration$DeferringLoadBalancerInterceptorConfig' of type [org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration$DeferringLoadBalancerInterceptorConfig] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). The currently created BeanPostProcessor [lbRestClientPostProcessor] is declared through a non-static factory method on that class; consider declaring it as static instead.
+2026-11-28T17:49:58.672+08:00  WARN 16584 --- [smartgrade-review-service] [           main] trationDelegate$BeanPostProcessorChecker : Bean 'deferringLoadBalancerInterceptor' of type [org.springframework.cloud.client.loadbalancer.DeferringLoadBalancerInterceptor] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-11-28T17:49:58.984+08:00  INFO 16584 --- [smartgrade-review-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-11-28T17:50:00.060+08:00  INFO 16584 --- [smartgrade-review-service] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:smartgrade_review user=SA
+2026-11-28T17:50:00.064+08:00  INFO 16584 --- [smartgrade-review-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-11-28T17:50:00.266+08:00  INFO 16584 --- [smartgrade-review-service] [           main] o.f.c.internal.license.VersionPrinter    : Flyway Community Edition 9.22.3 by Redgate
+2026-11-28T17:50:00.266+08:00  INFO 16584 --- [smartgrade-review-service] [           main] o.f.c.internal.license.VersionPrinter    : See release notes here: https://rd.gt/416ObMi
+2026-11-28T17:50:00.267+08:00  INFO 16584 --- [smartgrade-review-service] [           main] o.f.c.internal.license.VersionPrinter    : 
+2026-11-28T17:50:00.446+08:00  INFO 16584 --- [smartgrade-review-service] [           main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:h2:mem:smartgrade_review (H2 2.2)
+2026-11-28T17:50:00.467+08:00  WARN 16584 --- [smartgrade-review-service] [           main] o.f.c.internal.database.base.Database    : Flyway upgrade recommended: H2 2.2.224 is newer than this version of Flyway and support has not been tested. The latest supported version of H2 is 2.2.220.
+2026-11-28T17:50:00.592+08:00  INFO 16584 --- [smartgrade-review-service] [           main] o.f.c.i.s.JdbcTableSchemaHistory         : Schema history table "PUBLIC"."flyway_schema_history" does not exist yet
+2026-11-28T17:50:00.609+08:00  INFO 16584 --- [smartgrade-review-service] [           main] o.f.core.internal.command.DbValidate     : Successfully validated 5 migrations (execution time 00:00.080s)
+2026-11-28T17:50:00.625+08:00  INFO 16584 --- [smartgrade-review-service] [           main] o.f.c.i.s.JdbcTableSchemaHistory         : Creating Schema History table "PUBLIC"."flyway_schema_history" ...
+2026-11-28T17:50:00.689+08:00  INFO 16584 --- [smartgrade-review-service] [           main] o.f.core.internal.command.DbMigrate      : Current version of schema "PUBLIC": << Empty Schema >>
+2026-11-28T17:50:00.705+08:00  INFO 16584 --- [smartgrade-review-service] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "1 - init"
+2026-11-28T17:50:00.747+08:00  INFO 16584 --- [smartgrade-review-service] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "2 - answer coverage"
+2026-11-28T17:50:00.776+08:00  INFO 16584 --- [smartgrade-review-service] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "3 - review projections and drafts"
+2026-11-28T17:50:00.814+08:00  INFO 16584 --- [smartgrade-review-service] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "4 - review base score"
+2026-11-28T17:50:00.864+08:00  INFO 16584 --- [smartgrade-review-service] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "PUBLIC" to version "5 - seata undo log"
+2026-11-28T17:50:00.890+08:00  INFO 16584 --- [smartgrade-review-service] [           main] o.f.core.internal.command.DbMigrate      : Successfully applied 5 migrations to schema "PUBLIC", now at version v5 (execution time 00:00.103s)
+2026-11-28T17:50:01.269+08:00  INFO 16584 --- [smartgrade-review-service] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-11-28T17:50:01.648+08:00  INFO 16584 --- [smartgrade-review-service] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.10.Final
+2026-11-28T17:50:01.854+08:00  INFO 16584 --- [smartgrade-review-service] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-11-28T17:50:02.623+08:00  INFO 16584 --- [smartgrade-review-service] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-28T17:50:04.867+08:00  INFO 16584 --- [smartgrade-review-service] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-28T17:50:04.925+08:00  INFO 16584 --- [smartgrade-review-service] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-28T17:50:12.169+08:00  INFO 16584 --- [smartgrade-review-service] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 2 endpoint(s) beneath base path '/actuator'
+2026-11-28T17:50:12.370+08:00  INFO 16584 --- [smartgrade-review-service] [           main] s.s.r.ReviewOrchestrationIntegrationTest : Started ReviewOrchestrationIntegrationTest in 29.083 seconds (process running for 32.189)
+2026-11-28T17:50:12.552+08:00  INFO 16584 --- [smartgrade-review-service] [           main] o.s.c.openfeign.FeignClientFactoryBean   : For 'smartgrade-notification-service' URL not provided. Will try picking an instance via load-balancing.
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 31.32 s -- in com.swu.smartgrade.review.ReviewOrchestrationIntegrationTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] 
+[INFO] --- jar:3.3.0:jar (default-jar) @ smartgrade-review-service ---
+[INFO] Building jar: E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-review-service\target\smartgrade-review-service-1.0.0.jar
+[INFO] 
+[INFO] --- spring-boot:3.2.9:repackage (repackage) @ smartgrade-review-service ---
+[INFO] Replacing main artifact E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-review-service\target\smartgrade-review-service-1.0.0.jar with repackaged archive, adding nested dependencies in BOOT-INF/.
+[INFO] The original artifact has been renamed to E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-review-service\target\smartgrade-review-service-1.0.0.jar.original
+[INFO] 
+[INFO] -----------------< com.swu:smartgrade-report-service >------------------
+[INFO] Building smartgrade-report-service 1.0.0                          [9/11]
+[INFO]   from smartgrade-report-service\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.2:clean (default-clean) @ smartgrade-report-service ---
+[INFO] Deleting E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-report-service\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ smartgrade-report-service ---
+[INFO] Copying 2 resources from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ smartgrade-report-service ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] Compiling 13 source files with javac [debug release 17] to target\classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ smartgrade-report-service ---
+[INFO] skip non existing resourceDirectory E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-report-service\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ smartgrade-report-service ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- surefire:3.1.2:test (default-test) @ smartgrade-report-service ---
+[INFO] No tests to run.
+[INFO] 
+[INFO] --- jar:3.3.0:jar (default-jar) @ smartgrade-report-service ---
+[INFO] Building jar: E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-report-service\target\smartgrade-report-service-1.0.0.jar
+[INFO] 
+[INFO] --- spring-boot:3.2.9:repackage (repackage) @ smartgrade-report-service ---
+[INFO] Replacing main artifact E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-report-service\target\smartgrade-report-service-1.0.0.jar with repackaged archive, adding nested dependencies in BOOT-INF/.
+[INFO] The original artifact has been renamed to E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-report-service\target\smartgrade-report-service-1.0.0.jar.original
+[INFO] 
+[INFO] --------------< com.swu:smartgrade-notification-service >---------------
+[INFO] Building smartgrade-notification-service 1.0.0                   [10/11]
+[INFO]   from smartgrade-notification-service\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.2:clean (default-clean) @ smartgrade-notification-service ---
+[INFO] Deleting E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-notification-service\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ smartgrade-notification-service ---
+[INFO] Copying 2 resources from src\main\resources to target\classes
+[INFO] Copying 3 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ smartgrade-notification-service ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] Compiling 16 source files with javac [debug release 17] to target\classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ smartgrade-notification-service ---
+[INFO] skip non existing resourceDirectory E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-notification-service\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ smartgrade-notification-service ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] Compiling 1 source file with javac [debug release 17] to target\test-classes
+[INFO] 
+[INFO] --- surefire:3.1.2:test (default-test) @ smartgrade-notification-service ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.swu.smartgrade.notification.SmsDispatchServiceTest
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.120 s -- in com.swu.smartgrade.notification.SmsDispatchServiceTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] 
+[INFO] --- jar:3.3.0:jar (default-jar) @ smartgrade-notification-service ---
+[INFO] Building jar: E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-notification-service\target\smartgrade-notification-service-1.0.0.jar
+[INFO] 
+[INFO] --- spring-boot:3.2.9:repackage (repackage) @ smartgrade-notification-service ---
+[INFO] Replacing main artifact E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-notification-service\target\smartgrade-notification-service-1.0.0.jar with repackaged archive, adding nested dependencies in BOOT-INF/.
+[INFO] The original artifact has been renamed to E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\smartgrade-notification-service\target\smartgrade-notification-service-1.0.0.jar.original
+[INFO] 
+[INFO] -----------------------< com.swu:smartgrade-web >-----------------------
+[INFO] Building smartgrade-web 1.0.0                                    [11/11]
+[INFO]   from smartgrade-web\pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.3.2:clean (default-clean) @ smartgrade-web ---
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for smartgrade-platform 1.0.0:
+[INFO] 
+[INFO] smartgrade-platform ................................ SUCCESS [  0.284 s]
+[INFO] smartgrade-common .................................. SUCCESS [  8.895 s]
+[INFO] smartgrade-gateway ................................. SUCCESS [  5.071 s]
+[INFO] smartgrade-user-service ............................ SUCCESS [ 15.595 s]
+[INFO] smartgrade-rubric-service .......................... SUCCESS [ 14.047 s]
+[INFO] smartgrade-answer-service .......................... SUCCESS [ 22.604 s]
+[INFO] smartgrade-grading-service ......................... SUCCESS [ 18.080 s]
+[INFO] smartgrade-review-service .......................... SUCCESS [ 56.918 s]
+[INFO] smartgrade-report-service .......................... SUCCESS [  6.196 s]
+[INFO] smartgrade-notification-service .................... SUCCESS [ 16.275 s]
+[INFO] smartgrade-web ..................................... SUCCESS [  0.002 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  02:44 min
+[INFO] Finished at: 2026-11-28T17:50:37+08:00
+[INFO] ------------------------------------------------------------------------

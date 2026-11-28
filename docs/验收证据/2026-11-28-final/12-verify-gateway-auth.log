@@ -1,0 +1,6 @@
+
+ValidStatus   : 200
+GatewayMarker : {smartgrade-gateway}
+InvalidStatus : 401
+
+PASS: valid token is forwarded, invalid token is rejected, and the gateway marker is present.

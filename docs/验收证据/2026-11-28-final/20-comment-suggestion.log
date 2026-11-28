@@ -1,0 +1,34 @@
+{
+  "voiceInstruction": {
+    "suggestedComments": [
+      "根据本次作答。本题得分 18/20.00，已识别要点：有理想、作答篇幅、能吃苦、肯奋斗、敢担当。建议结合证据继续完善关键步骤。请结合原文证据核对遗漏。",
+      "从现有作答看，你已经覆盖了 有理想、作答篇幅、能吃苦、肯奋斗、敢担当；可再检查遗漏要点和表达准确性。请结合原文证据核对遗漏。"
+    ],
+    "evidenceRefs": [
+      "E393E1396101A438D",
+      "E6ABD57B14F1D4D13",
+      "E8BAD116DBFFB40EF",
+      "E960179E787524EA7",
+      "EBF83FE7B2D5A4E2B"
+    ],
+    "styleTag": "暂未设置",
+    "profileVersion": 0,
+    "generationMode": "TEMPLATE"
+  },
+  "plain": {
+    "suggestedComments": [
+      "根据本次作答。本题得分 18/20.00，已识别要点：有理想、作答篇幅、能吃苦、肯奋斗、敢担当。建议结合证据继续完善关键步骤。请结合原文证据核对遗漏。",
+      "从现有作答看，你已经覆盖了 有理想、作答篇幅、能吃苦、肯奋斗、敢担当；可再检查遗漏要点和表达准确性。请结合原文证据核对遗漏。"
+    ],
+    "evidenceRefs": [
+      "E393E1396101A438D",
+      "E6ABD57B14F1D4D13",
+      "E8BAD116DBFFB40EF",
+      "E960179E787524EA7",
+      "EBF83FE7B2D5A4E2B"
+    ],
+    "styleTag": "暂未设置",
+    "profileVersion": 0,
+    "generationMode": "TEMPLATE"
+  }
+}

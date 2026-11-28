@@ -1,0 +1,13 @@
+Seata transaction will stay open for 5 seconds. Refresh the Seata console now.
+mysql: [Warning] Using a password on the command line interface can be insecure.
+mysql: [Warning] Using a password on the command line interface can be insecure.
+{
+  "batchId": "B3BBAAE86B46745CC",
+  "answerStatus": "FAILED",
+  "reviewCountAfter": 0,
+  "holdSeconds": 5,
+  "answerId": "A1AF71970B7D644DF",
+  "reviewCountBefore": 0,
+  "xid": "See answer/review logs for SEATA_DEMO_FAIL_AFTER_REMOTE"
+}
+PASS: review projection rolled back and answer is reachable as FAILED.

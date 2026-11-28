@@ -1,0 +1,17 @@
+Sending 40 concurrent GET requests through Gateway route answer-service...
+
+HttpStatus Count
+---------- -----
+200            8
+429           32
+
+Sample blocked response: {"code":42900,"message":"请求过于集中，请稍后重试"}
+Sentinel live resource counters:
+
+resource       oneMinutePass oneMinuteBlock oneMinuteTotal
+--------       ------------- -------------- --------------
+answer-service            10             32             42
+
+
+PASS: Sentinel returned real HTTP 429 responses through smartgrade-gateway.
+Refresh http://127.0.0.1:8858 and open smartgrade-gateway -> Real-time Monitoring / Gateway Flow Control.

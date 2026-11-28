@@ -25,7 +25,9 @@ $configs = @(
 )
 
 foreach ($config in $configs) {
-    $content = Get-Content -Raw -LiteralPath (Join-Path $configRoot $config.File)
+    # Windows PowerShell 5.1 defaults to the system ANSI code page; read source files as UTF-8 so
+    # Chinese comments and configuration values are published to Nacos without corruption.
+    $content = Get-Content -Raw -LiteralPath (Join-Path $configRoot $config.File) -Encoding UTF8
     $body = @{
         dataId = $config.DataId
         groupName = "DEFAULT_GROUP"

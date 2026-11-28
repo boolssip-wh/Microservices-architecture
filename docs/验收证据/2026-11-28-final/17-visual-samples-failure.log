@@ -1,0 +1,17 @@
+Command: .\scripts\verify-visual-samples.ps1
+
+Result: FAILED
+
+Observed error:
+Evidence mismatch for 2026100: expected 4 content hits, actual 0
+
+Root cause from logs/answer.log:
+未配置手写识别模型。请设置 VISION_API_BASE_URL、VISION_MODEL 和 VISION_API_KEY
+
+Meaning:
+The upload, orchestration, failure propagation, and manual-review fallback worked.
+The external visual model was not configured for this run, so image transcription could not run.
+
+Cleanup:
+The failed test batch B6DBCA5DA607B4302 and its 10 answer records were removed after diagnosis.
+

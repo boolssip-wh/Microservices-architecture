@@ -1,0 +1,70 @@
+
+[1/4] Spring Boot health
+
+Port Status
+---- ------
+8080 UP
+8081 UP
+8082 UP
+8083 UP
+8084 UP
+8085 UP
+8086 UP
+8087 UP
+
+
+[2/4] Nacos live registry
+
+name                            healthyInstanceCount ipCount
+----                            -------------------- -------
+smartgrade-answer-service                          1       1
+smartgrade-gateway                                 1       1
+smartgrade-grading-service                         1       1
+smartgrade-notification-service                    1       1
+smartgrade-report-service                          1       1
+smartgrade-review-service                          1       1
+smartgrade-rubric-service                          1       1
+smartgrade-user-service                            1       1
+
+
+[3/4] Sentinel live applications and gateway rules
+
+App                             Healthy CommandPort
+---                             ------- -----------
+smartgrade-answer-service          True        8724
+smartgrade-gateway                False        8728
+smartgrade-grading-service         True        8723
+smartgrade-notification-service    True        8726
+smartgrade-report-service          True        8721
+smartgrade-review-service          True        8727
+smartgrade-rubric-service          True        8725
+smartgrade-user-service            True        8722
+
+Sentinel dashboard could not read the client command port. The answer-service Gateway rule definition exists; run scripts/demo-sentinel-limit.ps1 for the live 429 proof.
+Answer-service rules loaded from Nacos:
+
+resource      count grade
+--------      ----- -----
+answer-import  5.00     1
+
+
+resource                                 count timeWindow grade
+--------                                 ----- ---------- -----
+POST:http://smartgrade-grading-service    0.50         10     0
+GET:http://smartgrade-rubric-service   3000.00         10     0
+
+
+[4/4] Gateway route and response marker
+
+route_id             uri
+--------             ---
+answer-service       lb://smartgrade-answer-service
+notification-service lb://smartgrade-notification-service
+report-service       lb://smartgrade-report-service
+review-service       lb://smartgrade-review-service
+rubric-service       lb://smartgrade-rubric-service
+user-service         lb://smartgrade-user-service
+
+X-SmartGrade-Gateway: smartgrade-gateway
+
+PASS: Nacos registration, Sentinel heartbeat/rules, and Gateway routing are all live.

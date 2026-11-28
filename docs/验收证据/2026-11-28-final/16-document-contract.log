@@ -1,0 +1,16 @@
+PASS all 8 applications and Flyway migrations are healthy
+PASS new batch starts DRAFT
+PASS custom base score is persisted
+PASS rule version frozen
+PASS a second rubric in the same batch freezes version 2
+PASS import idempotency returns original job
+PASS async grading creates one review projection
+PASS original answer download preserves the uploaded bytes
+PASS another teacher cannot read the original answer
+PASS custom base score reaches grading and review
+PASS confirmed scores synchronize batch completion
+PASS final score preserves decimals
+PASS confirmed score exports XLSX
+PASS export download returns a nonempty file
+PASS completion events produce notifications
+CONTRACT CHECK PASSED. Logs: E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\.runtime\contract-3f447da84eca4a9a9e4224884f798f69

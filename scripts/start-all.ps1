@@ -9,7 +9,13 @@ foreach ($environmentName in @(
     "VISION_OCR_PROVIDER",
     "VISION_API_BASE_URL",
     "VISION_MODEL",
-    "VISION_API_KEY"
+    "VISION_API_KEY",
+    "SMS_PROVIDER",
+    "SMTP_HOST",
+    "SMTP_PORT",
+    "SMTP_USERNAME",
+    "SMTP_PASSWORD",
+    "SMTP_FROM"
 )) {
     if (-not [Environment]::GetEnvironmentVariable($environmentName, "Process")) {
         $storedValue = [Environment]::GetEnvironmentVariable($environmentName, "User")
@@ -109,7 +115,9 @@ try {
             $javaArguments += @(
                 "-javaagent:`"$skyWalkingAgent`"",
                 "-Dskywalking.agent.service_name=$($service.AgentName)",
-                "-Dskywalking.collector.backend_service=$skyWalkingCollector"
+                "-Dskywalking.collector.backend_service=$skyWalkingCollector",
+                # Keep agent logs inside this writable checkout instead of the tool installation directory.
+                "-Dskywalking.logging.dir=`"$logs\skywalking\$($service.Name)`""
             )
         }
         $javaArguments += @(

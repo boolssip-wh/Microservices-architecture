@@ -8,6 +8,18 @@ $ErrorActionPreference = "Stop"
 $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $java = "D:\SmartGradeTools\jdk17\bin\java.exe"
 $agent = "D:\SmartGradeTools\skywalking-agent\skywalking-agent.jar"
+# Single-service startup reloads persisted model and SMTP settings from the Windows user environment.
+foreach ($environmentName in @(
+    "VISION_OCR_PROVIDER", "VISION_API_BASE_URL", "VISION_MODEL", "VISION_API_KEY",
+    "SMS_PROVIDER", "SMTP_HOST", "SMTP_PORT", "SMTP_USERNAME", "SMTP_PASSWORD", "SMTP_FROM"
+)) {
+    if (-not [Environment]::GetEnvironmentVariable($environmentName, "Process")) {
+        $storedValue = [Environment]::GetEnvironmentVariable($environmentName, "User")
+        if ($storedValue) {
+            [Environment]::SetEnvironmentVariable($environmentName, $storedValue, "Process")
+        }
+    }
+}
 # A1 单服务演示映射：ServiceName 对应项目模块、Nacos 服务名和固定端口。
 # Gateway 是统一入口；其余 7 项才是架构图中的业务服务。
 $services = @{
@@ -55,7 +67,8 @@ if (Test-Path -LiteralPath $agent) {
     $args += @(
         "-javaagent:`"$agent`"",
         "-Dskywalking.agent.service_name=$($service.Name)",
-        "-Dskywalking.collector.backend_service=127.0.0.1:11800"
+        "-Dskywalking.collector.backend_service=127.0.0.1:11800",
+        "-Dskywalking.logging.dir=`"$projectRoot\logs\skywalking\$ServiceName`""
     )
 }
 $args += @(

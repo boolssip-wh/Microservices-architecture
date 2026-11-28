@@ -1,0 +1,11 @@
+CIM process discovery is unavailable; falling back to project ports and PID records.
+Stopped report (PID 24892).
+Stopped notification (PID 30060).
+Stopped gateway (PID 30140).
+Stopped review (PID 38800).
+Stopped sentinel-dashboard (PID 40524).
+Stopped answer (PID 42828).
+Stopped rubric (PID 44048).
+Stopped grading (PID 44084).
+Stopped user (PID 44440).
+Stopped web (PID 45396).
