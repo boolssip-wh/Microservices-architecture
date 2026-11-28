@@ -20,7 +20,7 @@ import static org.mockito.Mockito.when;
 class ReviewDeliveryCoordinatorTest {
     private final ReviewClient reviews = mock(ReviewClient.class);
     private final AnswerRepository answers = mock(AnswerRepository.class);
-    private final ReviewDeliveryCoordinator coordinator = new ReviewDeliveryCoordinator(reviews, answers, false);
+    private final ReviewDeliveryCoordinator coordinator = new ReviewDeliveryCoordinator(reviews, answers, false, 0);
 
     @Test
     void successCommitsReviewAndAnswerStatusTogether() {

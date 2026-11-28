@@ -33,4 +33,14 @@ public class InternalSeataDemoController {
         coordinator.setFailAfterRemote(enabled);
         return ApiResponse.ok(Map.of("failAfterRemote", coordinator.isFailAfterRemote()), TraceId.current());
     }
+
+    @PutMapping("/hold-millis/{millis}")
+    public ApiResponse<Map<String, Object>> setHoldMillis(@PathVariable long millis) {
+        if (!remoteControlEnabled) {
+            throw BusinessException.forbidden("当前环境未开放 Seata 演示故障开关");
+        }
+        coordinator.setHoldBeforeFailureMillis(millis);
+        return ApiResponse.ok(Map.of("holdBeforeFailureMillis",
+                coordinator.getHoldBeforeFailureMillis()), TraceId.current());
+    }
 }

@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Seata AT 短事务边界：远程写入 review-service 与本地写入 answer-service 在同一全局事务，
@@ -23,13 +24,17 @@ public class ReviewDeliveryCoordinator {
     private final ReviewClient reviewClient;
     private final AnswerRepository answerRepository;
     private final AtomicBoolean failAfterRemote;
+    private final AtomicLong holdBeforeFailureMillis;
 
     public ReviewDeliveryCoordinator(ReviewClient reviewClient, AnswerRepository answerRepository,
                                      @Value("${app.seata-demo.fail-after-remote:false}")
-                                     boolean failAfterRemote) {
+                                     boolean failAfterRemote,
+                                     @Value("${app.seata-demo.hold-before-failure-millis:0}")
+                                     long holdBeforeFailureMillis) {
         this.reviewClient = reviewClient;
         this.answerRepository = answerRepository;
         this.failAfterRemote = new AtomicBoolean(failAfterRemote);
+        this.holdBeforeFailureMillis = new AtomicLong(Math.max(0, holdBeforeFailureMillis));
     }
 
     @GlobalTransactional(name = "deliver-grading-result", rollbackFor = Exception.class)
@@ -37,6 +42,7 @@ public class ReviewDeliveryCoordinator {
     public void deliver(ReviewClient.CreateResultRequest request, Answer answer, String nextStatus) {
         reviewClient.create(request);
         if (failAfterRemote.get()) {
+            holdTransactionOpen();
             throw new IllegalStateException("SEATA_DEMO_FAIL_AFTER_REMOTE：远程写成功后模拟本地提交失败");
         }
         answer.setStatus(nextStatus);
@@ -51,5 +57,25 @@ public class ReviewDeliveryCoordinator {
 
     public void setFailAfterRemote(boolean enabled) {
         failAfterRemote.set(enabled);
+    }
+
+    public long getHoldBeforeFailureMillis() {
+        return holdBeforeFailureMillis.get();
+    }
+
+    public void setHoldBeforeFailureMillis(long millis) {
+        holdBeforeFailureMillis.set(Math.max(0, millis));
+    }
+
+    private void holdTransactionOpen() {
+        long millis = holdBeforeFailureMillis.get();
+        if (millis <= 0) return;
+        try {
+            log.info("Seata 演示事务保持 {} 毫秒，便于控制台查看活跃事务", millis);
+            Thread.sleep(millis);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Seata 演示等待被中断", ex);
+        }
     }
 }

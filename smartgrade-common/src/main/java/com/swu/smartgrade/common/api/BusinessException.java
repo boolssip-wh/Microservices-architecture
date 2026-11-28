@@ -1,6 +1,7 @@
 package com.swu.smartgrade.common.api;
 
-public class BusinessException extends RuntimeException {
+public class
+BusinessException extends RuntimeException {
     private final int code;
     private final int httpStatus;
 

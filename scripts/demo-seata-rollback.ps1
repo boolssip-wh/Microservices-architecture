@@ -5,7 +5,8 @@ param(
     [string]$MysqlUser = "smartgrade",
     [string]$MysqlPassword = "smartgrade123",
     [string]$StudentNo = "RBTEST2026",
-    [string]$ServiceToken = "local-service-token"
+    [string]$ServiceToken = "local-service-token",
+    [int]$HoldSeconds = 10
 )
 
 $ErrorActionPreference = "Stop"
@@ -23,8 +24,19 @@ function Set-FailMode {
     }
 }
 
+function Set-HoldMillis {
+    param([long]$Millis)
+    $response = Invoke-RestMethod -Method Put `
+        -Uri "http://127.0.0.1:8083/internal/demo/seata/hold-millis/$Millis" `
+        -Headers @{ "X-Service-Token" = $script:serviceToken } -TimeoutSec 10
+    if ($response.code -ne 0) {
+        throw "Could not set Seata demo hold time: $($response.message)"
+    }
+}
+
 trap {
     try { Set-FailMode $false } catch { }
+    try { Set-HoldMillis 0 } catch { }
     throw
 }
 
@@ -62,6 +74,11 @@ $login = Invoke-RestMethod -Method Post -Uri "$BaseUrl/api/auth/login" `
 $script:auth = @{ Authorization = "Bearer $($login.data.accessToken)" }
 
 Set-FailMode $true
+$holdMillis = [Math]::Max(0, $HoldSeconds) * 1000L
+Set-HoldMillis $holdMillis
+if ($holdMillis -gt 0) {
+    Write-Host "Seata 演示事务将在远端写入后保持 $HoldSeconds 秒，请在此期间查看 Seata 控制台。"
+}
 $before = Review-Count
 $nonce = [guid]::NewGuid().ToString("N").Substring(0, 8)
 $batch = Call-Api POST "/api/batches" @{
@@ -129,6 +146,7 @@ if ($answer.processStatus -ne "FAILED") {
     throw "Expected FAILED answer status after injected failure, got $($answer.processStatus)."
 }
 Set-FailMode $false
+Set-HoldMillis 0
 
 @{
     batchId = $batch.batchId
@@ -136,6 +154,7 @@ Set-FailMode $false
     reviewCountBefore = $before
     reviewCountAfter = $after
     answerStatus = $answer.processStatus
+    holdSeconds = $HoldSeconds
     xid = "See answer/review logs for SEATA_DEMO_FAIL_AFTER_REMOTE"
 } | ConvertTo-Json | Tee-Object -FilePath (Join-Path $PSScriptRoot "..\.runtime\seata-rollback-report.json")
 Write-Host "PASS: review projection rolled back and answer is reachable as FAILED."
