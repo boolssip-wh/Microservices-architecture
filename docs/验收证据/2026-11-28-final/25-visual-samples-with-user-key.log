@@ -1,0 +1,15 @@
+
+studentNo expectedHitCount actualContentHitCount evidenceIds
+--------- ---------------- --------------------- -----------                                                            
+2026100                  4                     4 {E14AA12EEC8F64306, E1FB784C4F6CC469A, E568D082642B24F5F, E6D756387A37…
+2026111                  3                     3 {ECD8F54E53DA64959, ED1748A584BE14E41, ED69D17B160CC4877}              
+2026999                  3                     3 {E287BA318F8064197, E7CDCDE37BDDB4AB4, EC30AEC4B38164CFB}              
+2026104                  3                     3 {E692961551ACB4E67, EEDB3CB92A48D4F19, EF74F4A776B5845E8}              
+2026105                  3                     3 {E029A4C9F8AB2462A, E0FABDC15E2914625, E18C0C3ACD7B74AE4}              
+2026106                  3                     3 {E57686D7A04A24AD8, E7A58885981814759, E830CF0C9EACB4C4C}              
+2026107                  3                     3 {E8BD622E666814D50, EA1ADDB762CAB4CFF, EDD207C8943A34EF9}              
+2026108                  3                     3 {E1E7F0B7852044DE8, E5368FE4E13234EB9, EE1E5F05DB4FF416B}              
+2026109                  4                     4 {E49B84EDF74364514, E92D480A5FC5F4B80, EA230B533219843E1, EFEFD921C863…
+2026110                  0                     0 {}                                                                     
+
+PASS: visual grading completed for all 10 samples. Report: E:\西南大学\班级\课：微服务与分布式架构\1101作业\smartgrade-platform\.runtime\visual-sample-verification.json

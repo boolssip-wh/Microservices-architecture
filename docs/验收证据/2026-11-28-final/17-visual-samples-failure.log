@@ -10,8 +10,13 @@ Root cause from logs/answer.log:
 
 Meaning:
 The upload, orchestration, failure propagation, and manual-review fallback worked.
-The external visual model was not configured for this run, so image transcription could not run.
+The first grading-service process was launched by the Codex sandbox account and could not see the
+VISION_API_KEY stored in the desktop user's environment.
 
 Cleanup:
 The failed test batch B6DBCA5DA607B4302 and its 10 answer records were removed after diagnosis.
+
+Resolution:
+grading-service and review-service were restarted under the ThinkBook desktop user.
+The ten-image test then passed, and both AI comment paths returned generationMode=AI.
 
