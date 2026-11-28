@@ -4,7 +4,7 @@ param(
     [int]$MysqlPort = 3307,
     [string]$MysqlUser = "smartgrade",
     [string]$MysqlPassword = "smartgrade123",
-    [string]$StudentNo = "RBTEST2026",
+    [string]$StudentNo = "",
     [string]$ServiceToken = "local-service-token",
     [int]$HoldSeconds = 10
 )
@@ -12,6 +12,10 @@ param(
 $ErrorActionPreference = "Stop"
 Add-Type -AssemblyName System.Net.Http
 $script:serviceToken = $ServiceToken
+$runNonce = [guid]::NewGuid().ToString("N").Substring(0, 8)
+if ([string]::IsNullOrWhiteSpace($StudentNo)) {
+    $StudentNo = "RB$runNonce"
+}
 
 function Set-FailMode {
     param([bool]$Enabled)
@@ -35,9 +39,10 @@ function Set-HoldMillis {
 }
 
 trap {
+    $failure = $_
     try { Set-FailMode $false } catch { }
     try { Set-HoldMillis 0 } catch { }
-    throw
+    throw $failure
 }
 
 function Call-Api {
@@ -80,7 +85,7 @@ if ($holdMillis -gt 0) {
     Write-Host "Seata transaction will stay open for $HoldSeconds seconds. Refresh the Seata console now."
 }
 $before = Review-Count
-$nonce = [guid]::NewGuid().ToString("N").Substring(0, 8)
+$nonce = $runNonce
 $batch = Call-Api POST "/api/batches" @{
     examName = "Seata rollback verification $nonce"
     questionNo = "Q1"
@@ -125,11 +130,13 @@ try {
     $client.Dispose()
 }
 
-$deadline = (Get-Date).AddSeconds(90)
+$deadline = (Get-Date).AddSeconds(180)
 do {
     $answers = Call-Api GET "/api/batches/$($batch.batchId)/answers?page=1&size=20"
     $answer = @($answers.items | Where-Object studentNo -eq $StudentNo) | Select-Object -First 1
-    if ($answer -and $answer.processStatus -notin @("PENDING", "RUNNING")) {
+    $batchDetail = Call-Api GET "/api/batches/$($batch.batchId)"
+    if (($batchDetail.status -notin @("CREATED", "DRAFT", "PROCESSING")) -and
+        $answer -and ($answer.processStatus -notin @("PENDING", "RUNNING"))) {
         break
     }
     Start-Sleep -Seconds 2
